@@ -29,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\Kamilla.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -40,11 +41,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Network\Logging\LoggedPacket.cs" />
+    <Compile Include="Network\Logging\NetworkLog.cs" />
+    <Compile Include="Network\Logging\PacketAddedEventArgs.cs" />
     <Compile Include="Network\Packet.cs" />
     <Compile Include="Network\PacketFlags.cs" />
     <Compile Include="Network\TransferDirection.cs" />
     <Compile Include="Network\TransferDirectionExtensions.cs" />
+    <Compile Include="Network\Viewing\INetworkLogViewer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Network\Parsing\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

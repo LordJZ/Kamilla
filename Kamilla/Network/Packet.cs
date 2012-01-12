@@ -41,6 +41,11 @@ namespace Kamilla.Network
         public uint ArrivalTicks { get { return m_arrivalTicks; } }
 
         /// <summary>
+        /// Gets the data of the current <see cref="Kamilla.Network.Packet"/>.
+        /// </summary>
+        public byte[] Data { get { return m_data; } }
+
+        /// <summary>
         /// Initializes a new instance of <see cref="Kamilla.Network.Packet"/> class
         /// with the specified data and <see cref="Kamilla.Network.TransferDirection"/>.
         /// </summary>
