@@ -40,6 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Network\Packet.cs" />
+    <Compile Include="Network\PacketFlags.cs" />
+    <Compile Include="Network\TransferDirection.cs" />
+    <Compile Include="Network\TransferDirectionExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
