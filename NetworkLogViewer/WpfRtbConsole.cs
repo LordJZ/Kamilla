@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using Kamilla;
-using a553.WPF;
+using Kamilla.WPF;
 
 namespace NetworkLogViewer
 {

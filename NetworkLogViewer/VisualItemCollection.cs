@@ -1,35 +1,15 @@
-﻿using System.Collections;
-using System;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using a553.WPF;
-using Kamilla;
-using Kamilla.Network;
-using Kamilla.Network.Logging;
-using Kamilla.Network.Parsing;
-using Kamilla.Network.Protocols;
-using Kamilla.Network.Viewing;
-using Microsoft.Win32;
+using UnderlyingArrayItem = System.String;
 
 namespace NetworkLogViewer
 {
-    class VisualItemCollection : IList, IList<object[]>, INotifyPropertyChanged, INotifyCollectionChanged
+    class VisualItemCollection : IList, IList<UnderlyingArrayItem[]>, INotifyPropertyChanged, INotifyCollectionChanged
     {
-        List<object[]> m_list;
+        List<UnderlyingArrayItem[]> m_list;
         int m_expectedArrayLength;
 
         #region .ctor
@@ -38,7 +18,7 @@ namespace NetworkLogViewer
         /// </summary>
         public VisualItemCollection()
         {
-            m_list = new List<object[]>();
+            m_list = new List<UnderlyingArrayItem[]>();
             m_expectedArrayLength = -1;
         }
         #endregion
@@ -97,7 +77,7 @@ namespace NetworkLogViewer
             this.OnCollectionChanged(NotifyCollectionChangedAction.Remove, item, index);
         }
 
-        public void Add(object[] value)
+        public void Add(UnderlyingArrayItem[] value)
         {
             if (value.Length != m_expectedArrayLength)
                 throw new ArgumentException();
@@ -109,12 +89,12 @@ namespace NetworkLogViewer
             this.OnCollectionChanged(NotifyCollectionChangedAction.Add, value, m_list.Count - 1);
         }
 
-        public bool Contains(object[] value)
+        public bool Contains(UnderlyingArrayItem[] value)
         {
             return m_list.Contains(value);
         }
 
-        public bool Remove(object[] value)
+        public bool Remove(UnderlyingArrayItem[] value)
         {
             int idx = this.IndexOf(value);
 
@@ -127,12 +107,12 @@ namespace NetworkLogViewer
             return false;
         }
 
-        public int IndexOf(object[] value)
+        public int IndexOf(UnderlyingArrayItem[] value)
         {
             return m_list.IndexOf(value);
         }
 
-        public void Insert(int index, object[] value)
+        public void Insert(int index, UnderlyingArrayItem[] value)
         {
             if (value.Length != m_expectedArrayLength)
                 throw new ArgumentException();
@@ -144,7 +124,7 @@ namespace NetworkLogViewer
             this.OnCollectionChanged(NotifyCollectionChangedAction.Add, value, index);
         }
 
-        public object[] this[int index]
+        public UnderlyingArrayItem[] this[int index]
         {
             get
             {
@@ -169,7 +149,7 @@ namespace NetworkLogViewer
             }
         }
 
-        public IEnumerator<object[]> GetEnumerator()
+        public IEnumerator<UnderlyingArrayItem[]> GetEnumerator()
         {
             return m_list.GetEnumerator();
         }
@@ -220,7 +200,7 @@ namespace NetworkLogViewer
         #region IEnumerable implementation
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ((IEnumerable<object[]>)this).GetEnumerator();
+            return ((IEnumerable<UnderlyingArrayItem[]>)this).GetEnumerator();
         }
         #endregion
 
@@ -231,10 +211,10 @@ namespace NetworkLogViewer
         }
         #endregion
 
-        #region ICollection<object[]> implementation
-        void ICollection<object[]>.CopyTo(object[][] array, int index)
+        #region ICollection<UnderlyingArrayItem[]> implementation
+        void ICollection<UnderlyingArrayItem[]>.CopyTo(UnderlyingArrayItem[][] array, int index)
         {
-            ((ICollection<object[]>)m_list).CopyTo(array, index);
+            ((ICollection<UnderlyingArrayItem[]>)m_list).CopyTo(array, index);
         }
         #endregion
 
@@ -243,18 +223,18 @@ namespace NetworkLogViewer
         {
             get
             {
-                return ((IList<object[]>)this)[index];
+                return ((IList<UnderlyingArrayItem[]>)this)[index];
             }
             set
             {
                 if (value == null)
                     throw new ArgumentNullException();
 
-                var val = value as object[];
+                var val = value as UnderlyingArrayItem[];
                 if (val == null)
                     throw new ArgumentException();
 
-                ((IList<object[]>)this)[index] = val;
+                ((IList<UnderlyingArrayItem[]>)this)[index] = val;
             }
         }
 
@@ -263,11 +243,11 @@ namespace NetworkLogViewer
             if (value == null)
                 throw new ArgumentNullException();
 
-            var val = value as object[];
+            var val = value as UnderlyingArrayItem[];
             if (val == null)
                 throw new ArgumentException();
 
-            ((IList<object[]>)this).Add(val);
+            ((IList<UnderlyingArrayItem[]>)this).Add(val);
 
             return this.Count - 1;
         }
@@ -277,11 +257,11 @@ namespace NetworkLogViewer
             if (value == null)
                 throw new ArgumentNullException();
 
-            var val = value as object[];
+            var val = value as UnderlyingArrayItem[];
             if (val == null)
                 throw new ArgumentException();
 
-            return ((IList<object[]>)this).Contains(val);
+            return ((IList<UnderlyingArrayItem[]>)this).Contains(val);
         }
 
         int IList.IndexOf(object value)
@@ -289,11 +269,11 @@ namespace NetworkLogViewer
             if (value == null)
                 throw new ArgumentNullException();
 
-            var val = value as object[];
+            var val = value as UnderlyingArrayItem[];
             if (val == null)
                 throw new ArgumentException();
 
-            return ((IList<object[]>)this).IndexOf(val);
+            return ((IList<UnderlyingArrayItem[]>)this).IndexOf(val);
         }
 
         void IList.Insert(int index, object value)
@@ -301,11 +281,11 @@ namespace NetworkLogViewer
             if (value == null)
                 throw new ArgumentNullException();
 
-            var val = value as object[];
+            var val = value as UnderlyingArrayItem[];
             if (val == null)
                 throw new ArgumentException();
 
-            ((IList<object[]>)this).Insert(index, val);
+            ((IList<UnderlyingArrayItem[]>)this).Insert(index, val);
         }
 
         void IList.Remove(object value)
@@ -313,11 +293,11 @@ namespace NetworkLogViewer
             if (value == null)
                 throw new ArgumentNullException();
 
-            var val = value as object[];
+            var val = value as UnderlyingArrayItem[];
             if (val == null)
                 throw new ArgumentException();
 
-            ((IList<object[]>)this).Remove(val);
+            ((IList<UnderlyingArrayItem[]>)this).Remove(val);
         }
         #endregion
 

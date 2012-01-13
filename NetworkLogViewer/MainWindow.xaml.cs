@@ -15,8 +15,8 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using a553.WPF;
 using Kamilla;
+using Kamilla.WPF;
 using Kamilla.Network;
 using Kamilla.Network.Logging;
 using Kamilla.Network.Parsing;
@@ -186,24 +186,24 @@ namespace NetworkLogViewer
         OpenFileDialog m_openFileDialog;
         void ApplicationOpen_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            //if (m_openFileDialog == null)
-            //{
-            //    m_openFileDialog = new OpenFileDialog();
-            //    m_openFileDialog.AddExtension = false;
-            //    m_openFileDialog.Filter = PacketDumpFactory.AllFileFiltersWithAny;
-            //    m_openFileDialog.FilterIndex = PacketDumpFactory.AllFileFiltersWithAnyCount;
-            //    m_openFileDialog.CheckFileExists = true;
-            //    m_openFileDialog.FileName = Configuration.GetValue("Open File Name", string.Empty);
-            //    m_openFileDialog.Multiselect = false;
-            //}
+            if (m_openFileDialog == null)
+            {
+                m_openFileDialog = new OpenFileDialog();
+                m_openFileDialog.AddExtension = false;
+                m_openFileDialog.Filter = NetworkLogFactory.AllFileFiltersWithAny;
+                m_openFileDialog.FilterIndex = NetworkLogFactory.AllFileFiltersWithAnyCount;
+                m_openFileDialog.CheckFileExists = true;
+                m_openFileDialog.FileName = Configuration.GetValue("Open File Name", string.Empty);
+                m_openFileDialog.Multiselect = false;
+            }
 
-            //var result = m_openFileDialog.ShowDialog(this);
-            //if (true == result)
-            //{
-            //    var filename = m_openFileDialog.FileName;
-            //    Configuration.SetValue("Open File Name", filename);
-            //    OpenFile(filename);
-            //}
+            var result = m_openFileDialog.ShowDialog(this);
+            if (true == result)
+            {
+                var filename = m_openFileDialog.FileName;
+                Configuration.SetValue("Open File Name", filename);
+                OpenFile(filename);
+            }
         }
 
         void OpenConsole_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -468,11 +468,44 @@ namespace NetworkLogViewer
 
                 if (newProtocol != null)
                 {
+                    var typename = newProtocol.GetType().Name;
+                    int nColumns = newProtocol.ListViewColumns;
+                    if (nColumns < 0)
+                        throw new InvalidOperationException("Protocol.ListViewColumns is invalid.");
+
+                    var headers = newProtocol.ListViewColumnHeaders;
+                    if (headers == null || headers.Length != nColumns || headers.Any(val => val == null))
+                        throw new InvalidOperationException("Protocol.ListViewColumnHeaders is invalid.");
+
+                    int[] widths = Configuration.GetValue("Column Widths - " + typename, (int[])null);
+                    if (widths == null || widths.Length != nColumns)
+                    {
+                        widths = newProtocol.ListViewColumnWidths;
+
+                        if (widths == null || widths.Length != nColumns)
+                            throw new InvalidOperationException("Protocol.ListViewColumnWidths is invalid.");
+                    }
+
+                    int[] columnOrder = Configuration.GetValue("Column Order - " + typename, (int[])null);
+                    if (columnOrder == null || columnOrder.Length != nColumns
+                        || columnOrder.Any(val => val >= nColumns || val < 0))
+                        columnOrder = Enumerable.Range(0, nColumns).ToArray();
+
+                    // Everything is valid
                     var view = new GridView();
 
-                    ui_lvPackets.View = view;
+                    for (int i = 0; i < nColumns; i++)
+                    {
+                        int col = columnOrder[i];
 
-                    throw new NotImplementedException();
+                        var item = new GridViewColumn();
+                        item.Header = headers[col];
+                        item.Width = widths[col];
+                        item.DisplayMemberBinding = new Binding(".[" + i + "]");
+                        view.Columns.Add(item);
+                    }
+
+                    ui_lvPackets.View = view;
                 }
                 else
                 {
