@@ -14,15 +14,15 @@ namespace Kamilla.Network.Logging
         readonly List<LoggedPacket> m_packets = new List<LoggedPacket>();
 
         /// <summary>
-        /// Gets a copy of the internal <see cref="Kamilla.Network.Logging.LoggedPacket"/> storage.
+        /// Gets the internal <see cref="Kamilla.Network.Logging.LoggedPacket"/> storage.
         /// </summary>
-        public LoggedPacket[] Packets
+        public IEnumerable<LoggedPacket> Packets
         {
             get
             {
                 // TODO: Write-Only
 
-                return m_packets.ToArray();
+                return m_packets;
             }
         }
 

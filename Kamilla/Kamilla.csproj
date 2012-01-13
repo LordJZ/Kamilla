@@ -41,19 +41,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration.cs" />
     <Compile Include="Network\Logging\LoggedPacket.cs" />
     <Compile Include="Network\Logging\NetworkLog.cs" />
     <Compile Include="Network\Logging\PacketAddedEventArgs.cs" />
     <Compile Include="Network\Packet.cs" />
     <Compile Include="Network\PacketFlags.cs" />
+    <Compile Include="Network\Parsing\PacketParser.cs" />
+    <Compile Include="Network\Parsing\PacketParserAttribute.cs" />
+    <Compile Include="Network\Protocols\Protocol.cs" />
+    <Compile Include="Network\Protocols\ProtocolManager.cs" />
+    <Compile Include="Network\SpecialOpcodes.cs" />
     <Compile Include="Network\TransferDirection.cs" />
     <Compile Include="Network\TransferDirectionExtensions.cs" />
     <Compile Include="Network\Viewing\INetworkLogViewer.cs" />
+    <Compile Include="Network\Viewing\INetworkLogViewerPlugin.cs" />
+    <Compile Include="Network\Viewing\NetworkLogViewerPluginAttribute.cs" />
+    <Compile Include="Network\Viewing\ProtocolChangedEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TypeManager.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Network\Parsing\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

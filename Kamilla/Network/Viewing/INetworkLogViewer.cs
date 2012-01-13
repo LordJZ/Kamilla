@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Kamilla.Network.Logging;
+using Kamilla.Network.Protocols;
 
 namespace Kamilla.Network.Viewing
 {
@@ -20,5 +18,15 @@ namespace Kamilla.Network.Viewing
         /// Gets the currently viewed <see cref="Kamilla.Network.Logging.NetworkLog"/>. This value can be null.
         /// </summary>
         NetworkLog CurrentLog { get; }
+
+        /// <summary>
+        /// Gets the currently used <see cref="Kamilla.Network.Protocols.Protocol"/>. This value can be null.
+        /// </summary>
+        Protocol CurrentProtocol { get; }
+
+        /// <summary>
+        /// Occurs when the <see href="Kamilla.Network.Viewing.CurrentProtocol"/> property changes.
+        /// </summary>
+        event ProtocolChangedEventHandler ProtocolChanged;
     }
 }

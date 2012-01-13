@@ -1,0 +1,67 @@
+﻿<Window x:Class="NetworkLogViewer.MainWindow" x:ClassModifier="internal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:viewer="clr-namespace:NetworkLogViewer"
+        Style="{StaticResource KamillaStyle}" Title="{x:Static viewer:Strings.NetworkLogViewer_Title}" Height="428" Width="698" Closing="Window_Closing" Loaded="Window_Loaded" Icon="/NetworkLogViewer;component/Properties/NetworkLogViewerIcon.ico">
+  <Grid Name="VerticalGrid">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="23" />
+      <RowDefinition Height="256*" />
+      <RowDefinition Height="107*" />
+    </Grid.RowDefinitions>
+    <Menu Name="MainMenu">
+      <MenuItem>
+        <MenuItem.Header>
+          <TextBlock Text="{x:Static viewer:Strings.Menu_File}"/>
+        </MenuItem.Header>
+        <MenuItem InputGestureText="Ctrl+O" Command="Open">
+          <MenuItem.Header>
+            <TextBlock Text="{x:Static viewer:Strings.Menu_OpenEllipsis}"/>
+          </MenuItem.Header>
+        </MenuItem>
+        <MenuItem Header="{x:Static viewer:Strings.Menu_OpenConsole}" InputGestureText="F10" Command="viewer:NetworkLogViewerCommands.OpenConsole"/>
+        <MenuItem Header="{x:Static viewer:Strings.Menu_Exit}" InputGestureText="Alt+X" Command="Close"/>
+      </MenuItem>
+      <MenuItem>
+        <MenuItem.Header>
+          <TextBlock Text="{x:Static viewer:Strings.Menu_Edit}"/>
+        </MenuItem.Header>
+        <MenuItem Header="{x:Static viewer:Strings.Menu_Protocols}" Name="ui_miProtocol">
+          <MenuItem Header="{x:Static viewer:Strings.Menu_NullProtocol}" Tag="{x:Null}" IsChecked="true"/>
+        </MenuItem>
+      </MenuItem>
+      <MenuItem>
+        <MenuItem.Header>
+          <TextBlock Text="{x:Static viewer:Strings.Menu_View}"/>
+        </MenuItem.Header>
+
+        <MenuItem Name="ui_miSkins">
+          <MenuItem.Header>
+            <TextBlock Text="{x:Static viewer:Strings.Menu_Skins}"/>
+          </MenuItem.Header>
+        </MenuItem>
+
+        <MenuItem>
+          <MenuItem.Header>
+            <TextBlock Text="Number of Columns" />
+          </MenuItem.Header>
+
+          <MenuItem Header="1" />
+          <MenuItem Header="2" />
+          <MenuItem Header="3" />
+          <MenuItem Header="4" />
+          <MenuItem Header="5" />
+          <MenuItem Header="6" />
+        </MenuItem>
+      </MenuItem>
+    </Menu>
+    <GridSplitter Grid.Row="2" Height="6" HorizontalAlignment="Stretch" Name="VerticalGridSplitter" VerticalAlignment="Top" ResizeDirection="Rows" Margin="0,-3,0,0" />
+    <ListView Grid.Row="1" Name="ui_lvPackets" SelectionMode="Single" IsTextSearchEnabled="False">
+      <ListView.View>
+        <GridView>
+          <GridViewColumn DisplayMemberBinding="{Binding Path=.[0]}" Header="My Column"/>
+        </GridView>
+      </ListView.View>
+    </ListView>
+  </Grid>
+</Window>
