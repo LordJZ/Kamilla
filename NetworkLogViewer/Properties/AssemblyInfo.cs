@@ -4,11 +4,11 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 
-[assembly: AssemblyTitle("NetworkLogViewer")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Network Log Viewer")]
+[assembly: AssemblyDescription("Kamilla Network Log Viewer Application")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("LordJZ")]
-[assembly: AssemblyProduct("NetworkLogViewer")]
+[assembly: AssemblyProduct("Network Log Viewer")]
 [assembly: AssemblyCopyright("Copyright © LordJZ 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
