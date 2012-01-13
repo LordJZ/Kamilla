@@ -104,6 +104,17 @@
         </Style>
 
         <Style TargetType="MenuItem">
+
+          <Style.Resources>
+            <LinearGradientBrush x:Key="HighlightedBackgroundBrush" EndPoint="0,1">
+              <LinearGradientBrush.GradientStops>
+                <GradientStop Color="#FF3F3F3F" Offset="0.0"/>
+                <GradientStop Color="#FF424242" Offset="0.67"/>
+                <GradientStop Color="#FF454545" Offset="1.0"/>
+              </LinearGradientBrush.GradientStops>
+            </LinearGradientBrush>
+          </Style.Resources>
+
           <Setter Property="Foreground" Value="{Binding Path=Foreground,
             RelativeSource={RelativeSource AncestorType={x:Type MenuBase}}}"/>
           <Setter Property="Background" Value="{Binding Path=Background,
@@ -235,17 +246,10 @@
 
                   <!-- Using the system colors for the Menu Highlight and IsEnabled-->
                   <Trigger Property="IsHighlighted" Value="true">
-                    <Setter Property="Background" TargetName="Border">
-                      <Setter.Value>
-                        <LinearGradientBrush EndPoint="0,1">
-                          <LinearGradientBrush.GradientStops>
-                            <GradientStop Color="#FF3F3F3F" Offset="0.0"/>
-                            <GradientStop Color="#FF424242" Offset="0.67"/>
-                            <GradientStop Color="#FF454545" Offset="1.0"/>
-                          </LinearGradientBrush.GradientStops>
-                        </LinearGradientBrush>
-                      </Setter.Value>
-                    </Setter>
+                    <Setter Property="Background" TargetName="Border" Value="{StaticResource HighlightedBackgroundBrush}"/>
+                  </Trigger>
+                  <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Background" TargetName="Border" Value="{StaticResource HighlightedBackgroundBrush}"/>
                   </Trigger>
                   <Trigger Property="IsEnabled" Value="false">
                     <Setter Property="Foreground" Value="#FF727272"/>
