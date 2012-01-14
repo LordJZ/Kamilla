@@ -49,7 +49,7 @@ namespace Kamilla.Network.Logging
         public byte[] HeaderBytes { get; set; }
 
         /// <summary>
-        /// Gets or sets the <see cref="Kamilla.PacketLogging.NetworkLogFlags"/> of the underlying packet dump reading class.
+        /// Gets or sets the <see cref="Kamilla.Network.Logging.NetworkLogFlags"/> of the underlying packet dump reading class.
         /// </summary>
         public NetworkLogFlags Flags { get; set; }
     }

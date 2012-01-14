@@ -187,9 +187,6 @@ namespace Kamilla
         /// <param name="collection2">
         /// Second collection to compare elements in.
         /// </param>
-        /// <param name="comparer">
-        /// Equality comparer for the elements of the collections.
-        /// </param>
         /// <returns>
         /// true if the elements of the collections are equal according to
         /// the default equality comparer; otherwise, false.
@@ -511,12 +508,12 @@ namespace Kamilla
         /// The zero-based index of the first occurrence of item within the entire
         /// <see cref="System.Collections.Generic.IEnumerable&lt;T&gt;"/>, if found; otherwise, –1.
         /// </returns>
-        public static int IndexOf<T>(this IEnumerable<T> array, T value)
+        public static int IndexOf<T>(this IEnumerable<T> collection, T value)
         {
             var eqcmp = EqualityComparer<T>.Default;
             int i = 0;
 
-            foreach (var item in array)
+            foreach (var item in collection)
             {
                 if (eqcmp.Equals(value, item))
                     return i;

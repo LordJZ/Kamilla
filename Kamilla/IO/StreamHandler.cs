@@ -36,7 +36,7 @@ namespace Kamilla.IO
         protected Stream m_stream;
 
         /// <summary>
-        /// Gets the underlying stream of the <see cref="Kamilla.StreamHandler"/>.
+        /// Gets the underlying stream of the <see cref="Kamilla.IO.StreamHandler"/>.
         /// </summary>
         public Stream BaseStream
         {
@@ -134,7 +134,7 @@ namespace Kamilla.IO
 
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="Kamilla.StreamHandler"/> class
+        /// Initializes a new instance of the <see cref="Kamilla.IO.StreamHandler"/> class
         /// based on the supplied stream and a specific character encoding.
         /// </summary>
         /// <param name="output">The output stream.</param>
@@ -151,14 +151,14 @@ namespace Kamilla.IO
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Kamilla.StreamHandler"/> class
+        /// Initializes a new instance of the <see cref="Kamilla.IO.StreamHandler"/> class
         /// based on the supplied stream and a specific character encoding.
         /// </summary>
         /// <param name="output">The output stream.</param>
         /// <param name="encoding">The character encoding.</param>
         /// <param name="closeStream">
         /// true, if the output stream should be closed when
-        /// the <see cref="Kamilla.StreamHandler"/> is disposed; otherwise, false.
+        /// the <see cref="Kamilla.IO.StreamHandler"/> is disposed; otherwise, false.
         /// </param>
         /// <exception cref="System.ArgumentException">
         /// The stream does not support writing, or the stream is already closed.
@@ -183,7 +183,7 @@ namespace Kamilla.IO
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Kamilla.StreamHandler"/> class
+        /// Initializes a new instance of the <see cref="Kamilla.IO.StreamHandler"/> class
         /// based on the supplied stream and using UTF-8 as the encoding for strings.
         /// </summary>
         /// <param name="output">The output stream.</param>
@@ -199,13 +199,13 @@ namespace Kamilla.IO
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Kamilla.StreamHandler"/> class
+        /// Initializes a new instance of the <see cref="Kamilla.IO.StreamHandler"/> class
         /// based on the supplied stream and using UTF-8 as the encoding for strings.
         /// </summary>
         /// <param name="output">The output stream.</param>
         /// <param name="closeStream">
         /// true, if the output stream should be closed when
-        /// the <see cref="Kamilla.StreamHandler"/> is disposed; otherwise, false.
+        /// the <see cref="Kamilla.IO.StreamHandler"/> is disposed; otherwise, false.
         /// </param>
         /// <exception cref="System.ArgumentException">
         /// The stream does not support writing, or the stream is already closed.
@@ -219,7 +219,7 @@ namespace Kamilla.IO
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Kamilla.StreamHandler"/> class
+        /// Initializes a new instance of the <see cref="Kamilla.IO.StreamHandler"/> class
         /// using a new resizeable <see cref="System.IO.MemoryStream"/> and using UTF-8 as the encoding for strings.
         /// </summary>
         public StreamHandler()
@@ -228,7 +228,7 @@ namespace Kamilla.IO
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Kamilla.StreamHandler"/> class
+        /// Initializes a new instance of the <see cref="Kamilla.IO.StreamHandler"/> class
         /// using a new <see cref="System.IO.FileStream"/> in reading or writing mode
         /// and using UTF-8 as the encoding for strings.
         /// </summary>
@@ -241,13 +241,13 @@ namespace Kamilla.IO
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Kamilla.StreamHandler"/> class
+        /// Initializes a new instance of the <see cref="Kamilla.IO.StreamHandler"/> class
         /// using a new <see cref="System.IO.FileStream"/> in the specified mode
         /// and using UTF-8 as the encoding for strings.
         /// </summary>
         /// <param name="path">
         /// A relative or absolute path for the file that the current
-        /// <see cref="Kamilla.StreamHandler"/> object will encapsulate.
+        /// <see cref="Kamilla.IO.StreamHandler"/> object will encapsulate.
         /// </param>
         /// <param name="mode">
         /// A <see cref="System.IO.FileMode"/> constant that determines how to open or create the file.
@@ -258,13 +258,13 @@ namespace Kamilla.IO
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Kamilla.StreamHandler"/> class
+        /// Initializes a new instance of the <see cref="Kamilla.IO.StreamHandler"/> class
         /// using a new <see cref="System.IO.FileStream"/> in the specified mode
         /// and using the specified encoding for strings.
         /// </summary>
         /// <param name="path">
         /// A relative or absolute path for the file that the current
-        /// <see cref="Kamilla.StreamHandler"/> object will encapsulate.
+        /// <see cref="Kamilla.IO.StreamHandler"/> object will encapsulate.
         /// </param>
         /// <param name="mode">
         /// A <see cref="System.IO.FileMode"/> constant that determines how to open or create the file.
@@ -278,7 +278,7 @@ namespace Kamilla.IO
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Kamilla.StreamHandler"/> class
+        /// Initializes a new instance of the <see cref="Kamilla.IO.StreamHandler"/> class
         /// based on the supplied byte array.
         /// </summary>
         /// <param name="buffer">The byte array containing data to be read or to be written into.</param>
@@ -298,7 +298,7 @@ namespace Kamilla.IO
 
         #region Misc Methods
         /// <summary>
-        /// Closes the current <see cref="Kamilla.StreamHandler"/> and the underlying stream.
+        /// Closes the current <see cref="Kamilla.IO.StreamHandler"/> and the underlying stream.
         /// </summary>
         public virtual void Close()
         {
@@ -306,7 +306,7 @@ namespace Kamilla.IO
         }
 
         /// <summary>
-        /// Releases the unmanaged resources used by the <see cref="Kamilla.StreamHandler"/>
+        /// Releases the unmanaged resources used by the <see cref="Kamilla.IO.StreamHandler"/>
         /// and optionally releases the managed resources.
         /// </summary>
         /// <param name="disposing">
@@ -323,7 +323,7 @@ namespace Kamilla.IO
         }
 
         /// <summary>
-        /// Releases all resources used by the current instance of the <see cref="Kamilla.StreamHandler"/> class.
+        /// Releases all resources used by the current instance of the <see cref="Kamilla.IO.StreamHandler"/> class.
         /// </summary>
         public void Dispose()
         {
@@ -399,7 +399,7 @@ namespace Kamilla.IO
         /// <summary>
         /// Flushes the unaligned bit buffer of the current stream.
         /// </summary>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public StreamHandler FlushUnalignedBits()
         {
             if (m_unalignedBits != 8)
@@ -445,7 +445,7 @@ namespace Kamilla.IO
         /// <param name="value">
         /// The bit value to write.
         /// </param>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public StreamHandler UnalignedWriteBit(bool value)
         {
             InternalUnalignedWrite(value ? 1UL : 0UL, 1);
@@ -461,7 +461,7 @@ namespace Kamilla.IO
         /// <param name="bits">
         /// Number of bits to write.
         /// </param>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public StreamHandler UnalignedWriteInt(ulong value, int bits)
         {
             CheckBits(bits, 64);
@@ -479,7 +479,7 @@ namespace Kamilla.IO
         /// <param name="bits">
         /// Number of bits to write.
         /// </param>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public StreamHandler UnalignedWriteInt(uint value, int bits)
         {
             CheckBits(bits, 32);
@@ -497,7 +497,7 @@ namespace Kamilla.IO
         /// <param name="bits">
         /// Number of bits to write.
         /// </param>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public StreamHandler UnalignedWriteInt(ushort value, int bits)
         {
             CheckBits(bits, 16);
@@ -515,7 +515,7 @@ namespace Kamilla.IO
         /// <param name="bits">
         /// Number of bits to write.
         /// </param>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public StreamHandler UnalignedWriteInt(byte value, int bits)
         {
             CheckBits(bits, 8);
@@ -538,7 +538,7 @@ namespace Kamilla.IO
         /// <exception cref="System.ObjectDisposedException">
         /// The stream is closed.
         /// </exception>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public StreamHandler WriteBoolean(bool value)
         {
             this.FlushUnalignedBits();
@@ -562,7 +562,7 @@ namespace Kamilla.IO
         /// <exception cref="System.ObjectDisposedException">
         /// The stream is closed.
         /// </exception>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public StreamHandler WriteByte(byte value)
         {
             this.FlushUnalignedBits();
@@ -587,7 +587,7 @@ namespace Kamilla.IO
         /// <exception cref="System.ArgumentNullException">
         /// buffer is null.
         /// </exception>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public StreamHandler WriteBytes(byte[] buffer)
         {
             if (buffer == null)
@@ -617,7 +617,7 @@ namespace Kamilla.IO
         /// <exception cref="System.ArgumentException">
         /// ch is a single surrogate character.
         /// </exception>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public unsafe StreamHandler WriteChar(char ch)
         {
             if (char.IsSurrogate(ch))
@@ -654,7 +654,7 @@ namespace Kamilla.IO
         /// <exception cref="System.IO.IOException">
         /// An I/O error occurs.
         /// </exception>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public StreamHandler WriteChars(char[] chars)
         {
             if (chars == null)
@@ -679,7 +679,7 @@ namespace Kamilla.IO
         /// <exception cref="System.ObjectDisposedException">
         /// The stream is closed.
         /// </exception>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public StreamHandler WriteDecimal(decimal value)
         {
             int[] bits = decimal.GetBits(value);
@@ -707,7 +707,7 @@ namespace Kamilla.IO
         /// <exception cref="System.ObjectDisposedException">
         /// The stream is closed.
         /// </exception>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public unsafe StreamHandler WriteDouble(double value)
         {
             fixed (byte* buf = m_buffer)
@@ -733,7 +733,7 @@ namespace Kamilla.IO
         /// <exception cref="System.ObjectDisposedException">
         /// The stream is closed.
         /// </exception>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public unsafe StreamHandler WriteSingle(float value)
         {
             fixed (byte* buf = m_buffer)
@@ -759,7 +759,7 @@ namespace Kamilla.IO
         /// <exception cref="System.ObjectDisposedException">
         /// The stream is closed.
         /// </exception>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public unsafe StreamHandler WriteInt32(int value)
         {
             fixed (byte* buf = m_buffer)
@@ -785,7 +785,7 @@ namespace Kamilla.IO
         /// <exception cref="System.ObjectDisposedException">
         /// The stream is closed.
         /// </exception>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public unsafe StreamHandler WriteInt64(long value)
         {
             fixed (byte* buf = m_buffer)
@@ -811,7 +811,7 @@ namespace Kamilla.IO
         /// <exception cref="System.ObjectDisposedException">
         /// The stream is closed.
         /// </exception>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public StreamHandler WriteSByte(sbyte value)
         {
             this.FlushUnalignedBits();
@@ -834,7 +834,7 @@ namespace Kamilla.IO
         /// <exception cref="System.ObjectDisposedException">
         /// The stream is closed.
         /// </exception>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public unsafe StreamHandler WriteInt16(short value)
         {
             fixed (byte* buf = m_buffer)
@@ -849,7 +849,7 @@ namespace Kamilla.IO
 
         /// <summary>
         /// Writes a null-terminated string to the current stream in the current encoding of
-        /// the <see cref="Kamilla.StreamHandler"/>, and advances the current position of the stream
+        /// the <see cref="Kamilla.IO.StreamHandler"/>, and advances the current position of the stream
         /// by the length of the string plus one.
         /// </summary>
         /// <param name="value">
@@ -868,7 +868,7 @@ namespace Kamilla.IO
         /// value contains a null character before a not-null character.
         /// </exception>
         /// <returns>
-        /// The current instance of <see cref="Kamilla.StreamHandler"/>.
+        /// The current instance of <see cref="Kamilla.IO.StreamHandler"/>.
         /// </returns>
         public StreamHandler WriteCString(string value)
         {
@@ -902,7 +902,7 @@ namespace Kamilla.IO
         /// <exception cref="System.ObjectDisposedException">
         /// The stream is closed.
         /// </exception>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public unsafe StreamHandler WriteUInt32(uint value)
         {
             fixed (byte* buf = m_buffer)
@@ -928,7 +928,7 @@ namespace Kamilla.IO
         /// <exception cref="System.ObjectDisposedException">
         /// The stream is closed.
         /// </exception>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public unsafe StreamHandler WriteUInt64(ulong value)
         {
             fixed (byte* buf = m_buffer)
@@ -954,7 +954,7 @@ namespace Kamilla.IO
         /// <exception cref="System.ObjectDisposedException">
         /// The stream is closed.
         /// </exception>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public unsafe StreamHandler WriteUInt16(ushort value)
         {
             fixed (byte* buf = m_buffer)
@@ -972,10 +972,10 @@ namespace Kamilla.IO
         /// and advances the stream position by eight bytes.
         /// </summary>
         /// <param name="vector">
-        /// The <see cref="Microsoft.Xna.Framework.Vector2"/> to write.
+        /// The <see cref="Kamilla.Vector2"/> to write.
         /// </param>
         /// <returns>
-        /// The current instance of <see cref="Kamilla.StreamHandler"/>.
+        /// The current instance of <see cref="Kamilla.IO.StreamHandler"/>.
         /// </returns>
         /// <exception cref="System.IO.IOException">
         /// An I/O error occurs.
@@ -1000,10 +1000,10 @@ namespace Kamilla.IO
         /// and advances the stream position by twelve bytes.
         /// </summary>
         /// <param name="vector">
-        /// The <see cref="Microsoft.Xna.Framework.Vector3"/> to write.
+        /// The <see cref="Kamilla.Vector3"/> to write.
         /// </param>
         /// <returns>
-        /// The current instance of <see cref="Kamilla.StreamHandler"/>.
+        /// The current instance of <see cref="Kamilla.IO.StreamHandler"/>.
         /// </returns>
         /// <exception cref="System.IO.IOException">
         /// An I/O error occurs.
@@ -1050,7 +1050,7 @@ namespace Kamilla.IO
         /// <exception cref="System.ObjectDisposedException">
         /// The stream is closed.
         /// </exception>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public StreamHandler WriteBytes(byte[] buffer, int index, int count)
         {
             this.FlushUnalignedBits();
@@ -1089,7 +1089,7 @@ namespace Kamilla.IO
         /// <exception cref="System.ObjectDisposedException">
         /// The stream is closed.
         /// </exception>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public StreamHandler WriteChars(char[] chars, int index, int count)
         {
             byte[] buffer = m_encoding.GetBytes(chars, index, count);
@@ -1110,7 +1110,7 @@ namespace Kamilla.IO
         /// <param name="structure">
         /// A structure to write into the current stream.
         /// </param>
-        /// <returns>The current instance of <see cref="Kamilla.StreamHandler"/>.</returns>
+        /// <returns>The current instance of <see cref="Kamilla.IO.StreamHandler"/>.</returns>
         public StreamHandler WriteStruct<T>(T structure) where T : struct
         {
             lock (StructHelper<T>.SyncRoot)
@@ -1584,7 +1584,7 @@ namespace Kamilla.IO
         /// The next byte read from the current stream.
         /// </param>
         /// <returns>
-        /// The current instance of <see cref="Kamilla.StreamHandler"/>.
+        /// The current instance of <see cref="Kamilla.IO.StreamHandler"/>.
         /// </returns>
         /// <exception cref="System.IO.EndOfStreamException">
         /// The end of the stream is reached.
@@ -1804,7 +1804,7 @@ namespace Kamilla.IO
         /// An 8-byte floating point value read from the current stream.
         /// </param>
         /// <returns>
-        /// The current instance of <see cref="Kamilla.StreamHandler"/>.
+        /// The current instance of <see cref="Kamilla.IO.StreamHandler"/>.
         /// </returns>
         /// <exception cref="System.IO.EndOfStreamException">
         /// The end of the stream is reached.
@@ -1860,7 +1860,7 @@ namespace Kamilla.IO
         /// A 2-byte signed integer read from the current stream.
         /// </param>
         /// <returns>
-        /// The current instance of <see cref="Kamilla.StreamHandler"/>.
+        /// The current instance of <see cref="Kamilla.IO.StreamHandler"/>.
         /// </returns>
         /// <exception cref="System.IO.EndOfStreamException">
         /// The end of the stream is reached.
@@ -1916,7 +1916,7 @@ namespace Kamilla.IO
         /// A 4-byte signed integer read from the current stream.
         /// </param>
         /// <returns>
-        /// The current instance of <see cref="Kamilla.StreamHandler"/>.
+        /// The current instance of <see cref="Kamilla.IO.StreamHandler"/>.
         /// </returns>
         /// <exception cref="System.IO.EndOfStreamException">
         /// The end of the stream is reached.
@@ -1972,7 +1972,7 @@ namespace Kamilla.IO
         /// An 8-byte signed integer read from the current stream.
         /// </param>
         /// <returns>
-        /// The current instance of <see cref="Kamilla.StreamHandler"/>.
+        /// The current instance of <see cref="Kamilla.IO.StreamHandler"/>.
         /// </returns>
         /// <exception cref="System.IO.EndOfStreamException">
         /// The end of the stream is reached.
@@ -2027,7 +2027,7 @@ namespace Kamilla.IO
         /// A signed byte read from the current stream.
         /// </param>
         /// <returns>
-        /// The current instance of <see cref="Kamilla.StreamHandler"/>.
+        /// The current instance of <see cref="Kamilla.IO.StreamHandler"/>.
         /// </returns>
         /// <exception cref="System.IO.EndOfStreamException">
         /// The end of the stream is reached.
@@ -2081,7 +2081,7 @@ namespace Kamilla.IO
         /// A 4-byte floating point value read from the current stream.
         /// </param>
         /// <returns>
-        /// The current instance of <see cref="Kamilla.StreamHandler"/>.
+        /// The current instance of <see cref="Kamilla.IO.StreamHandler"/>.
         /// </returns>
         /// <exception cref="System.IO.EndOfStreamException">
         /// The end of the stream is reached.
@@ -2261,7 +2261,7 @@ namespace Kamilla.IO
         /// A 4-byte unsigned integer read from this stream.
         /// </param>
         /// <returns>
-        /// The current instance of <see cref="Kamilla.StreamHandler"/>.
+        /// The current instance of <see cref="Kamilla.IO.StreamHandler"/>.
         /// </returns>
         /// <exception cref="System.IO.EndOfStreamException">
         /// The end of the stream is reached.
@@ -2317,7 +2317,7 @@ namespace Kamilla.IO
         /// An 8-byte unsigned integer read from this stream.
         /// </param>
         /// <returns>
-        /// The current instance of <see cref="Kamilla.StreamHandler"/>.
+        /// The current instance of <see cref="Kamilla.IO.StreamHandler"/>.
         /// </returns>
         /// <exception cref="System.IO.EndOfStreamException">
         /// The end of the stream is reached.
@@ -2345,7 +2345,7 @@ namespace Kamilla.IO
         /// and advences the position of the stream by twelve bytes.
         /// </summary>
         /// <returns>
-        /// A <see cref="Microsoft.Xna.Framework.Vector3"/> read from the stream.
+        /// A <see cref="Kamilla.Vector3"/> read from the stream.
         /// </returns>
         /// <exception cref="System.IO.EndOfStreamException">
         /// The end of the stream is reached.
@@ -2370,7 +2370,7 @@ namespace Kamilla.IO
         /// and advences the position of the stream by eight bytes.
         /// </summary>
         /// <returns>
-        /// A <see cref="Microsoft.Xna.Framework.Vector2"/> read from the stream.
+        /// A <see cref="Kamilla.Vector2"/> read from the stream.
         /// </returns>
         /// <exception cref="System.IO.EndOfStreamException">
         /// The end of the stream is reached.

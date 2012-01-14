@@ -10,7 +10,6 @@ using Stub = Kamilla.ConfigurationStub;
 
 namespace Kamilla
 {
-#pragma warning disable 1591
     [Browsable(false)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public class ConfigurationStub
@@ -42,7 +41,6 @@ namespace Kamilla
             public List<Option> Options;
         }
     }
-#pragma warning restore 1591
 
     /// <summary>
     /// Stores configuration options.

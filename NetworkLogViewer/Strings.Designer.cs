@@ -61,6 +61,15 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loading file:\r\n\r\n{0}.
+        /// </summary>
+        public static string LoadingFile {
+            get {
+                return ResourceManager.GetString("LoadingFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit.
         /// </summary>
         public static string Menu_Edit {

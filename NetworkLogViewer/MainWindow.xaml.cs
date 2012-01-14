@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -16,12 +16,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using Kamilla;
-using Kamilla.WPF;
 using Kamilla.Network;
 using Kamilla.Network.Logging;
 using Kamilla.Network.Parsing;
 using Kamilla.Network.Protocols;
 using Kamilla.Network.Viewing;
+using Kamilla.WPF;
 using Microsoft.Win32;
 
 namespace NetworkLogViewer
@@ -265,8 +265,26 @@ namespace NetworkLogViewer
         string m_currentFile;
         void OpenFile(string filename)
         {
+            var log = NetworkLogFactory.GetNetworkLog(filename);
+            if (log == null)
+                throw new NotImplementedException("Select Network Log window is not implemented");
+
+            this.OpenFile(filename, log);
+        }
+
+        void OpenFile(string filename, NetworkLog log)
+        {
+            if (filename == null)
+                throw new ArgumentNullException("filename");
+
+            if (log == null)
+                throw new ArgumentNullException("log");
+
             m_currentFile = filename;
-            // TODO
+            m_currentLog = log;
+
+            LoadingStatePush(new LoadingState(string.Format(Strings.LoadingFile, filename)));
+            ui_readingWorker.RunWorkerAsync();
         }
 
         private void ui_readingWorker_DoWork(object sender, DoWorkEventArgs e)

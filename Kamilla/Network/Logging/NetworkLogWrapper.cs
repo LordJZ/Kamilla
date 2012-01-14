@@ -48,10 +48,10 @@ namespace Kamilla.Network.Logging
         {
             if (IsReadOnly)
             {
-                if (mode == NetworkLogMode.WriteOnly)
+                if (mode == NetworkLogMode.Writing)
                     throw new NotSupportedException("This dump reading class does not support writing data.");
 
-                mode = NetworkLogMode.Normal;
+                mode = NetworkLogMode.Abstract;
             }
 
             try

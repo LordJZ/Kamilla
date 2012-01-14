@@ -109,7 +109,7 @@ namespace Kamilla.Network.Logging
             if (extFittingDumps.Count == 0)
                 extFittingDumps = s_logs;
             else if (extFittingDumps.Count == 1)
-                return extFittingDumps[0].Activate(NetworkLogMode.Normal);
+                return extFittingDumps[0].Activate(NetworkLogMode.Reading);
 
             byte[] header;
             using (var sh = new StreamHandler(filename, FileMode.Open))
@@ -118,7 +118,7 @@ namespace Kamilla.Network.Logging
             foreach (var wrapper in extFittingDumps)
             {
                 if (wrapper.Fits(header))
-                    return wrapper.Activate(NetworkLogMode.Normal);
+                    return wrapper.Activate(NetworkLogMode.Reading);
             }
 
             return null;

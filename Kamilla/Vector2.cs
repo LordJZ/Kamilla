@@ -34,24 +34,24 @@ namespace Kamilla
         public static readonly Vector2 UnitY = new Vector2(0.0f, 1.0f);
 
         /// <summary>
-        /// The X component of the <see cref="a553.Vector2"/>.
+        /// The X component of the <see cref="Kamilla.Vector2"/>.
         /// </summary>
         public float X;
 
         /// <summary>
-        /// The Y component of the <see cref="a553.Vector2"/>.
+        /// The Y component of the <see cref="Kamilla.Vector2"/>.
         /// </summary>
         public float Y;
 
         /// <summary>
-        /// Initializes a new instance of <see cref="a553.Vector2"/>
+        /// Initializes a new instance of <see cref="Kamilla.Vector2"/>
         /// with the specified vector components.
         /// </summary>
         /// <param name="x">
-        /// The X component of the <see cref="a553.Vector2"/>.
+        /// The X component of the <see cref="Kamilla.Vector2"/>.
         /// </param>
         /// <param name="y">
-        /// The Y component of the <see cref="a553.Vector2"/>.
+        /// The Y component of the <see cref="Kamilla.Vector2"/>.
         /// </param>
         public Vector2(float x, float y)
         {
@@ -60,10 +60,10 @@ namespace Kamilla
         }
 
         /// <summary>
-        /// Calculates the length of the <see cref="a553.Vector2"/>.
+        /// Calculates the length of the <see cref="Kamilla.Vector2"/>.
         /// </summary>
         /// <returns>
-        /// Length of the <see cref="a553.Vector2"/>.
+        /// Length of the <see cref="Kamilla.Vector2"/>.
         /// </returns>
         public float GetLength()
         {
@@ -73,17 +73,17 @@ namespace Kamilla
         }
 
         /// <summary>
-        /// Multiplies a <see cref="a553.Vector2"/> and a scalar value.
+        /// Multiplies a <see cref="Kamilla.Vector2"/> and a scalar value.
         /// </summary>
         /// <param name="vector">
-        /// The <see cref="a553.Vector2"/> used in the multiplication.
+        /// The <see cref="Kamilla.Vector2"/> used in the multiplication.
         /// </param>
         /// <param name="coeff">
         /// The scalar value used in the multiplication.
         /// </param>
         /// <returns>
-        /// The <see cref="a553.Vector2"/> that is a multiplication of
-        /// the original <see cref="a553.Vector2"/> and the scalar value.
+        /// The <see cref="Kamilla.Vector2"/> that is a multiplication of
+        /// the original <see cref="Kamilla.Vector2"/> and the scalar value.
         /// </returns>
         public static Vector2 operator *(Vector2 vector, float coeff)
         {
@@ -91,16 +91,16 @@ namespace Kamilla
         }
 
         /// <summary>
-        /// Sums two instances of <see cref="a553.Vector2"/> structure.
+        /// Sums two instances of <see cref="Kamilla.Vector2"/> structure.
         /// </summary>
         /// <param name="vector1">
-        /// First instance of <see cref="a553.Vector2"/> structure.
+        /// First instance of <see cref="Kamilla.Vector2"/> structure.
         /// </param>
         /// <param name="vector2">
-        /// Second instance of <see cref="a553.Vector2"/> structure.
+        /// Second instance of <see cref="Kamilla.Vector2"/> structure.
         /// </param>
         /// <returns>
-        /// Sum of two instances of <see cref="a553.Vector2"/> structure.
+        /// Sum of two instances of <see cref="Kamilla.Vector2"/> structure.
         /// </returns>
         public static Vector2 operator +(Vector2 vector1, Vector2 vector2)
         {
