@@ -14,57 +14,11 @@ namespace Kamilla.Network.Protocols
     /// </summary>
     public static class ProtocolManager
     {
-        /// <summary>
-        /// Contains identification data of a
-        /// <see cref="Kamilla.Network.Protocols.Protocol"/>.
-        /// </summary>
-        public class ProtocolWrapper
-        {
-            internal ProtocolWrapper(int index, Protocol protocol)
-            {
-                this.Index = index;
-                this.Type = protocol.GetType();
-                this.TypeName = this.Type.Name;
-                this.Instance = protocol;
-                this.Name = protocol.Name;
-            }
-
-            /// <summary>
-            /// Gets the zero-based index of the underlying
-            /// <see cref="Kamilla.Network.Protocols.Protocol"/>.
-            /// </summary>
-            public readonly int Index;
-
-            /// <summary>
-            /// Gets the <see cref="System.Type"/> of the
-            /// underlying <see cref="Kamilla.Network.Protocols.Protocol"/>.
-            /// </summary>
-            public readonly Type Type;
-
-            /// <summary>
-            /// Gets the name of the <see cref="System.Type"/>
-            /// of the underlying <see cref="Kamilla.Network.Protocols.Protocol"/>.
-            /// </summary>
-            public readonly string TypeName;
-
-            /// <summary>
-            /// Gets the instance of the underlying
-            /// <see cref="Kamilla.Network.Protocols.Protocol"/>.
-            /// </summary>
-            public readonly Protocol Instance;
-
-            /// <summary>
-            /// Gets the name of the underlying
-            /// <see cref="Kamilla.Network.Protocols.Protocol"/>.
-            /// </summary>
-            public readonly string Name;
-        }
-
         static bool s_initialized;
         static ProtocolWrapper[] s_wrappers;
 
         /// <summary>
-        /// Gets the loaded instances of <see cref="Kamilla.Network.Protocols.ProtocolManager.ProtocolWrapper"/>.
+        /// Gets the loaded instances of <see cref="Kamilla.Network.Protocols.ProtocolWrapper"/>.
         /// </summary>
         public static IEnumerable<ProtocolWrapper> ProtocolWrappers
         {
@@ -82,10 +36,10 @@ namespace Kamilla.Network.Protocols
         /// Finds a <see cref="Kamilla.Network.Protocols.Protocol"/> of the specified type.
         /// </summary>
         /// <param name="type">
-        /// <see cref="System.Type"/> of the <see cref="Kamilla.Network.Protocols.Protocol"/>.
+        /// <see cref="System.Type"/> of the <see cref="Kamilla.Network.Protocols.ProtocolWrapper"/>.
         /// </param>
         /// <returns>
-        /// <see cref="Kamilla.Network.Protocols.Protocol"/> of the
+        /// <see cref="Kamilla.Network.Protocols.ProtocolWrapper"/> of the
         /// specified <see cref="System.Type"/> if found; otherwise, null.
         /// </returns>
         /// <exception cref="System.ArgumentNullException">
@@ -94,7 +48,7 @@ namespace Kamilla.Network.Protocols
         /// <exception cref="System.ArgumentException">
         /// type is not subtype of <see cref="Kamilla.Network.Protocols.Protocol"/>
         /// </exception>
-        public static Protocol FindProtocol(Type type)
+        public static ProtocolWrapper FindWrapper(Type type)
         {
             if (type == null)
                 throw new ArgumentNullException();
@@ -102,23 +56,23 @@ namespace Kamilla.Network.Protocols
             if (!type.IsSubclassOf(Protocol.Type))
                 throw new ArgumentException();
 
-            return FindProtocol(wrapper => wrapper.Type == type);
+            return FindWrapper(wrapper => wrapper.Type == type);
         }
 
         /// <summary>
-        /// Finds a <see cref="Kamilla.Network.Protocols.Protocol"/> matching the specified predicate.
+        /// Finds a <see cref="Kamilla.Network.Protocols.ProtocolWrapper"/> matching the specified predicate.
         /// </summary>
         /// <param name="predicate">
         /// Predicate that should be matched.
         /// </param>
         /// <returns>
-        /// An instance of <see cref="Kamilla.Network.Protocols.Protocol"/> that
+        /// An instance of <see cref="Kamilla.Network.Protocols.ProtocolWrapper"/> that
         /// matches the specified predicate, if found; otherwise, null.
         /// </returns>
         /// <exception cref="System.ArgumentNullException">
         /// predicate is null.
         /// </exception>
-        public static Protocol FindProtocol(Func<ProtocolWrapper, bool> predicate)
+        public static ProtocolWrapper FindWrapper(Func<ProtocolWrapper, bool> predicate)
         {
             if (predicate == null)
                 throw new ArgumentNullException();
@@ -127,7 +81,7 @@ namespace Kamilla.Network.Protocols
             if (wrapper == null)
                 return null;
 
-            return wrapper.Instance;
+            return wrapper;
         }
         #endregion
 
@@ -166,7 +120,7 @@ namespace Kamilla.Network.Protocols
             {
                 try
                 {
-                    s_wrappers[i] = new ProtocolWrapper(i, (Protocol)Activator.CreateInstance(protocolTypes[i]));
+                    s_wrappers[i] = new ProtocolWrapper(i, protocolTypes[i]);
                 }
                 catch
                 {
@@ -185,7 +139,7 @@ namespace Kamilla.Network.Protocols
                     if (attr.Opcode == SpecialOpcodes.UnknownOpcode)
                         continue;
 
-                    var protocol = FindProtocol(attr.ProtocolType);
+                    var protocol = FindWrapper(attr.ProtocolType);
                     if (protocol == null)
                     {
                         Console.WriteLine("Error: Cannot find protocol '{0}' for parser type '{1}'",
@@ -205,7 +159,7 @@ namespace Kamilla.Network.Protocols
 
                 foreach (var attr in attrs)
                 {
-                    var protocol = FindProtocol(attr.ProtocolType);
+                    var protocol = FindWrapper(attr.ProtocolType);
                     if (protocol == null)
                     {
                         Console.WriteLine("Error: Cannot find protocol '{0}' for plugin type '{1}'",

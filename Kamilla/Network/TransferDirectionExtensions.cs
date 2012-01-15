@@ -31,7 +31,7 @@ namespace Kamilla.Network
             if (direction == TransferDirection.ToServer)
                 return TransferDirection.ToClient;
 
-            throw new ArgumentException();
+            throw new ArgumentException("direction");
         }
     }
 }

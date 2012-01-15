@@ -22,10 +22,12 @@ namespace Kamilla.Network.Logging
         {
             m_type = type;
 
-            this.Name = attr.Name;
             this.FileExtension = attr.FileExtension;
             this.Flags = attr.Flags;
             this.ReqHeader = attr.HeaderBytes;
+
+            using (var dummy = this.Activate(NetworkLogMode.Abstract))
+                this.Name = dummy.Name;
 
             this.FileFilter = this.Name + " (*." + this.FileExtension + ")|*." + this.FileExtension;
         }

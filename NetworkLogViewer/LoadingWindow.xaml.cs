@@ -26,13 +26,13 @@ namespace NetworkLogViewer
         {
             ui_btnCancel.IsEnabled = state.OnCancel != null;
             m_onCancel = state.OnCancel;
-            ui_pbMain.Value = state.Progress * 100;
+            ui_pbMain.Value = 0.0;
             ui_tbJobDescription.Text = state.Description;
         }
 
-        public void SetProgress(float progress)
+        public void SetProgress(int progress)
         {
-            ui_pbMain.Value = progress * 100;
+            ui_pbMain.Value = progress;
         }
     }
 }

@@ -190,14 +190,18 @@ namespace Kamilla
                 string value = InternalGetValue(owner, name);
                 if (value == null)
                 {
-                    string stringValue;
-                    if (defaultValue is IConvertible)
-                        stringValue = (defaultValue as IConvertible).ToString(CultureInfo.InvariantCulture);
-                    else
-                        stringValue = InternalSerialize(defaultValue);
+                    if (defaultValue != null)
+                    {
+                        string stringValue;
+                        if (defaultValue is IConvertible)
+                            stringValue = (defaultValue as IConvertible).ToString(CultureInfo.InvariantCulture);
+                        else
+                            stringValue = InternalSerialize(defaultValue);
 
-                    InternalAddValue(owner, name, stringValue);
-                    SaveConfiguration();
+                        InternalAddValue(owner, name, stringValue);
+                        SaveConfiguration();
+                    }
+
                     return defaultValue;
                 }
                 else if (defaultValue is Enum)

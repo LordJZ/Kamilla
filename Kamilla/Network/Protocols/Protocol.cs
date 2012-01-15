@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Kamilla.Network.Parsing;
+using Kamilla.Network.Viewing;
 
 namespace Kamilla.Network.Protocols
 {
@@ -16,7 +18,7 @@ namespace Kamilla.Network.Protocols
         public static readonly Type Type = typeof(Protocol);
 
         /// <summary>
-        /// Gets the name of the current <see cref="Kamilla.Network.Protocols.Protocol"/>.
+        /// Gets the localized name of the current <see cref="Kamilla.Network.Protocols.Protocol"/>.
         /// </summary>
         public abstract string Name { get; }
 
@@ -37,5 +39,30 @@ namespace Kamilla.Network.Protocols
         /// <see cref="Kamilla.Network.Protocols.Protocol"/> are displayed in a ListView.
         /// </summary>
         public abstract int[] ListViewColumnWidths { get; }
+
+        /// <summary>
+        /// When implemented in a derived class,
+        /// loads the current instance of <see cref="Kamilla.Network.Protocols.Protocol"/>
+        /// and attachs to the provided <see cref="Kamilla.Network.Viewing.INetworkLogViewer"/>.
+        /// </summary>
+        /// <param name="viewer">
+        /// The instance of <see cref="Kamilla.Network.Viewing.INetworkLogViewer"/> to attach to.
+        /// </param>
+        /// <exception cref="System.InvalidOperationException">
+        /// The current instance of <see cref="Kamilla.Network.Protocols.Protocol"/> is already
+        /// attached to a <see cref="Kamilla.Network.Viewing.INetworkLogViewer"/>.
+        /// </exception>
+        public abstract void Load(INetworkLogViewer viewer);
+
+        /// <summary>
+        /// When implemented in a derived class,
+        /// unloads and releases all resources used by
+        /// the current instance of <see cref="Kamilla.Network.Protocols.Protocol"/>.
+        /// </summary>
+        /// <exception cref="System.InvalidOperationException">
+        /// The current instance of <see cref="Kamilla.Network.Protocols.Protocol"/> is not
+        /// attached to a <see cref="Kamilla.Network.Viewing.INetworkLogViewer"/>.
+        /// </exception>
+        public abstract void Unload();
     }
 }

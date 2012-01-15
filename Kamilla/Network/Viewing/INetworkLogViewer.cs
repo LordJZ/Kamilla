@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Kamilla.Network.Logging;
 using Kamilla.Network.Protocols;
 
@@ -25,8 +26,28 @@ namespace Kamilla.Network.Viewing
         Protocol CurrentProtocol { get; }
 
         /// <summary>
+        /// Gets the collection of items currently loaded.
+        /// </summary>
+        IEnumerable<ViewerItem> Items { get; }
+
+        /// <summary>
         /// Occurs when the <see href="Kamilla.Network.Viewing.CurrentProtocol"/> property changes.
         /// </summary>
         event ProtocolChangedEventHandler ProtocolChanged;
+
+        /// <summary>
+        /// Occurs when the <see href="Kamilla.Network.Viewing.CurrentLog"/> property changes.
+        /// </summary>
+        event NetworkLogChangedEventHandler NetworkLogChanged;
+
+        /// <summary>
+        /// Occurs when data of a <see cref="Kamilla.Network.Viewing.ViewerItem"/> is queried.
+        /// </summary>
+        event ViewerItemEventHandler ItemQueried;
+
+        /// <summary>
+        /// Occurs when a <see cref="Kamilla.Network.Viewing.ViewerItem"/> is added.
+        /// </summary>
+        event ViewerItemEventHandler ItemAdded;
     }
 }

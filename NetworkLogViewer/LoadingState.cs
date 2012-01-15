@@ -21,6 +21,5 @@ namespace NetworkLogViewer
 
         public readonly string Description;
         public readonly Action OnCancel;
-        public float Progress;
     }
 }

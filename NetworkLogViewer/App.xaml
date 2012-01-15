@@ -89,7 +89,7 @@
                 <Border Name="Border"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="2">
+                        BorderThickness="1">
                   <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
                 </Border>
                 <ControlTemplate.Triggers>

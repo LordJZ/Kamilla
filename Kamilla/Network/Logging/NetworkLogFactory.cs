@@ -25,7 +25,7 @@ namespace Kamilla.Network.Logging
 
             s_initialized = true;
 
-            var ctorTypes = new Type[] { typeof(NetworkLogMode) };
+            var ctorTypes = new[] { typeof(NetworkLogMode) };
             var networkLogType = typeof(NetworkLog);
             var networkLogAttrType = typeof(NetworkLogAttribute);
 

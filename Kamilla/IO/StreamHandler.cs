@@ -26,7 +26,8 @@ namespace Kamilla.IO
         /// </summary>
         private int m_unalignedBits = 8;
 
-        private byte[] m_buffer = new byte[16];
+        const int s_bufferSize = 16;
+        private byte[] m_buffer = new byte[s_bufferSize];
         private byte[] m_charBytes;
         private char[] m_singleChar;
 
@@ -99,16 +100,8 @@ namespace Kamilla.IO
         /// </exception>
         public long Position
         {
-            get
-            {
-                this.Flush();
-                return m_stream.Position;
-            }
-            set
-            {
-                this.Flush();
-                m_stream.Position = value;
-            }
+            get { return m_stream.Position; }
+            set { m_stream.Position = value; }
         }
 
         /// <summary>
@@ -1311,6 +1304,39 @@ namespace Kamilla.IO
             return m_stream.Read(buffer, offset, count);
         }
 
+        public unsafe int Read(byte* ptr, int count)
+        {
+            if (ptr == null)
+                throw new ArgumentNullException();
+
+            if (count < 0)
+                throw new ArgumentOutOfRangeException();
+
+            this.InternalResetUnalignedBits();
+
+            int bufferSize = s_bufferSize;
+            if (bufferSize != 16)
+                throw new NotImplementedException();
+
+            fixed (byte* buffer = m_buffer)
+            {
+                var intptr = new IntPtr(ptr);
+                for (int i = count; i > 0; i -= bufferSize)
+                {
+                    int shouldRead = i >= bufferSize ? bufferSize : i;
+                    int read = m_stream.Read(m_buffer, 0, shouldRead);
+                    if (read != shouldRead)
+                        throw new EndOfStreamException();
+
+                    Marshal.Copy(m_buffer, 0, intptr, bufferSize);
+
+                    intptr += bufferSize;
+                }
+            }
+
+            return count;
+        }
+
         /// <summary>
         /// Reads the specified number of characters from the stream, starting from a
         /// specified point in the character array.
@@ -2455,11 +2481,16 @@ namespace Kamilla.IO
         /// <returns>The result of the function.</returns>
         public TResult DoAt<TArg, TResult>(long position, Func<TArg, TResult> func, TArg arg)
         {
-            long old_position = this.Position;
-            this.Position = position;
-            TResult result = func(arg);
-            this.Position = old_position;
-            return result;
+            if (position == this.Position)
+                return func(arg);
+            else
+            {
+                long old_position = this.Position;
+                this.Position = position;
+                TResult result = func(arg);
+                this.Position = old_position;
+                return result;
+            }
         }
 
         /// <summary>
@@ -2471,11 +2502,16 @@ namespace Kamilla.IO
         /// <returns>The result of the function.</returns>
         public TResult DoAt<TResult>(long position, Func<TResult> func)
         {
-            long old_position = this.Position;
-            this.Position = position;
-            TResult result = func();
-            this.Position = old_position;
-            return result;
+            if (position == this.Position)
+                return func();
+            else
+            {
+                long old_position = this.Position;
+                this.Position = position;
+                TResult result = func();
+                this.Position = old_position;
+                return result;
+            }
         }
 
         /// <summary>
@@ -2487,10 +2523,15 @@ namespace Kamilla.IO
         /// <param name="arg">The argument passed to the function.</param>
         public void DoAt<TArg>(long position, Action<TArg> func, TArg arg)
         {
-            long old_position = this.Position;
-            this.Position = position;
-            func(arg);
-            this.Position = old_position;
+            if (position == this.Position)
+                func(arg);
+            else
+            {
+                long old_position = this.Position;
+                this.Position = position;
+                func(arg);
+                this.Position = old_position;
+            }
         }
 
         /// <summary>
@@ -2500,10 +2541,15 @@ namespace Kamilla.IO
         /// <param name="func">The function to run at the given position.</param>
         public void DoAt(long position, Action func)
         {
-            long old_position = this.Position;
-            this.Position = position;
-            func();
-            this.Position = old_position;
+            if (position == this.Position)
+                func();
+            else
+            {
+                long old_position = this.Position;
+                this.Position = position;
+                func();
+                this.Position = old_position;
+            }
         }
         #endregion
     }

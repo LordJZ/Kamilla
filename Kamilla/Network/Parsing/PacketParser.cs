@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Kamilla.Network.Viewing;
 
 namespace Kamilla.Network.Parsing
 {
@@ -12,5 +13,6 @@ namespace Kamilla.Network.Parsing
     /// </summary>
     public abstract class PacketParser
     {
+        public ViewerItem Item { get; internal set; }
     }
 }

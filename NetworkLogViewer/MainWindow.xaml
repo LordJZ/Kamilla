@@ -26,9 +26,7 @@
         <MenuItem.Header>
           <TextBlock Text="{x:Static viewer:Strings.Menu_Edit}"/>
         </MenuItem.Header>
-        <MenuItem Header="{x:Static viewer:Strings.Menu_Protocols}" Name="ui_miProtocol">
-          <MenuItem Header="{x:Static viewer:Strings.Menu_NullProtocol}" Tag="{x:Null}" IsChecked="true"/>
-        </MenuItem>
+        <MenuItem Header="{x:Static viewer:Strings.Menu_Protocols}" Name="ui_miProtocol"/>
       </MenuItem>
       <MenuItem>
         <MenuItem.Header>

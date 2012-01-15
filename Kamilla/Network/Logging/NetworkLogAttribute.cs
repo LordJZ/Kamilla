@@ -12,11 +12,6 @@ namespace Kamilla.Network.Logging
     public sealed class NetworkLogAttribute : Attribute
     {
         /// <summary>
-        /// Gets or sets the name of the underlying packet dump reader format.
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
         /// Gets or sets the file extension of the underlying dump reader format.
         /// </summary>
         public string FileExtension { get; set; }

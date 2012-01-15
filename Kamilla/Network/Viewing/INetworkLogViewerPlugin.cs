@@ -19,7 +19,14 @@ namespace Kamilla.Network.Viewing
         /// The <see cref="Kamilla.Network.Viewing.INetworkLogViewer"/>
         /// that the current plugin is attached to.
         /// </param>
-        void Load(INetworkLogViewer viewer);
+        /// <returns>
+        /// true if the plugin has successfully integrated with
+        /// the <see cref="Kamilla.Network.Viewing.INetworkLogViewer"/>,
+        /// the current <see cref="Kamilla.Network.Logging.NetworkLog"/>,
+        /// and the current <see cref="Kamilla.Network.Protocols.Protocol"/>;
+        /// otherwise, false.
+        /// </returns>
+        bool Load(INetworkLogViewer viewer);
 
         /// <summary>
         /// Unloads and releases all resources used by the current instance of

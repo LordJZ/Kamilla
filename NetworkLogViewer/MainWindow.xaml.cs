@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -33,6 +34,8 @@ namespace NetworkLogViewer
         BackgroundWorker ui_parsingWorker;
         BackgroundWorker ui_loadingWorker;
         BackgroundWorker ui_readingWorker;
+
+        PacketAddedEventHandler m_packetAddedHandler;
 
         #region .ctor
         public MainWindow()
@@ -68,7 +71,7 @@ namespace NetworkLogViewer
                 WorkerSupportsCancellation = true
             };
             this.ui_loadingWorker.DoWork += new DoWorkEventHandler(this.ui_loadingWorker_DoWork);
-            this.ui_loadingWorker.RunWorkerCompleted+=new RunWorkerCompletedEventHandler(this.ui_loadingWorker_RunWorkerCompleted);
+            this.ui_loadingWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.ui_loadingWorker_RunWorkerCompleted);
 
             this.ui_readingWorker = new BackgroundWorker()
             {
@@ -78,28 +81,42 @@ namespace NetworkLogViewer
             this.ui_readingWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.ui_readingWorker_RunWorkerCompleted);
 
             this.ProtocolChanged += new ProtocolChangedEventHandler(MainWindow_ProtocolChanged);
-            this.m_visualItems = new VisualItemCollection()
-            {
-                ExpectedArrayLength = 1
-            };
 
-            for (int i = 0; i < 300000; i++)
-            {
-                m_visualItems.Add(new[] { i.ToString() });
-            }
+            m_items = new ViewerItemCollection();
+            m_items.ItemQueried += new ViewerItemEventHandler(m_items_ItemQueried);
 
             m_interopHelper = new WindowInteropHelper(this);
 
-            ui_lvPackets.ItemsSource = m_visualItems;
+            ui_lvPackets.ItemsSource = m_items;
+
+            m_packetAddedHandler = new PacketAddedEventHandler(m_currentLog_PacketAdded);
 
             Console.WriteLine("MainWindow initialized.");
+        }
+
+        void m_items_ItemQueried(object sender, ViewerItemEventArgs e)
+        {
+            this.ThreadSafe(_ =>
+            {
+                if (this.ItemQueried != null)
+                    this.ItemQueried(this, e);
+            });
         }
         #endregion
 
         #region INetworkLogViewer Implementation
         Protocol m_currentProtocol;
         NetworkLog m_currentLog;
+        int m_packetItr;
 
+        /// <summary>
+        /// Gets the collection of items currently loaded.
+        /// </summary>
+        public IEnumerable<ViewerItem> Items { get { return m_items; } }
+
+        /// <summary>
+        /// Gets or sets the current <see cref="Kamilla.Network.Protocols.Protocol"/>.
+        /// </summary>
         public Protocol CurrentProtocol
         {
             get { return m_currentProtocol; }
@@ -108,28 +125,77 @@ namespace NetworkLogViewer
                 if (m_currentProtocol == value)
                     return;
 
-                var old = m_currentProtocol;
-                m_currentProtocol = value;
+                this.ThreadSafe(_ =>
+                {
+                    var old = m_currentProtocol;
+                    if (old != null)
+                        old.Unload();
 
-                if (ProtocolChanged != null)
-                    ProtocolChanged(this, new ProtocolChangedEventArgs(old, value));
+                    m_currentProtocol = value;
+                    m_currentProtocol.Load(this);
+
+                    if (ProtocolChanged != null)
+                        ProtocolChanged(this, new ProtocolChangedEventArgs(old, value));
+                });
             }
         }
 
+        /// <summary>
+        /// Gets the currently loaded <see cref="Kamilla.Network.Logging.NetworkLog"/>.
+        /// </summary>
         public NetworkLog CurrentLog
         {
             get { return m_currentLog; }
+            set
+            {
+                if (m_currentLog == value)
+                    return;
+
+                this.ThreadSafe(_ =>
+                {
+                    var old = m_currentLog;
+                    if (old != null)
+                        old.PacketAdded -= m_packetAddedHandler;
+
+                    m_currentLog = value;
+                    m_currentLog.PacketAdded += m_packetAddedHandler;
+
+                    if (this.NetworkLogChanged != null)
+                        this.NetworkLogChanged(this, new NetworkLogChangedEventArgs(old, value));
+                });
+            }
         }
 
+        /// <summary>
+        /// Gets the handle of the window.
+        /// </summary>
         public IntPtr WindowHandle
         {
             get { return m_interopHelper.Handle; }
         }
 
+        /// <summary>
+        /// Occurs when <see href="NetworkLogViewer.MainWindow.CurrentProtocol"/> changes.
+        /// </summary>
         public event ProtocolChangedEventHandler ProtocolChanged;
+
+        /// <summary>
+        /// Occurs when the <see href="NetworkLogViewer.MainWindow.CurrentLog"/> property changes.
+        /// </summary>
+        public event NetworkLogChangedEventHandler NetworkLogChanged;
+
+        /// <summary>
+        /// Occurs when data of a <see cref="Kamilla.Network.Viewing.ViewerItem"/> is queried.
+        /// </summary>
+        public event ViewerItemEventHandler ItemQueried;
+
+        /// <summary>
+        /// Occurs when a <see cref="Kamilla.Network.Viewing.ViewerItem"/> is added.
+        /// </summary>
+        public event ViewerItemEventHandler ItemAdded;
         #endregion
 
-        readonly VisualItemCollection m_visualItems;
+        readonly ViewerItemCollection m_items;
 
         #region Loading Window
         Stack<LoadingState> m_loadingStateStack = new Stack<LoadingState>();
@@ -152,7 +218,7 @@ namespace NetworkLogViewer
             });
         }
 
-        void LoadingStateSetProgress(float percent)
+        void LoadingStateSetProgress(int percent)
         {
             this.ThreadSafe(safeThis =>
             {
@@ -193,7 +259,9 @@ namespace NetworkLogViewer
                 m_openFileDialog.Filter = NetworkLogFactory.AllFileFiltersWithAny;
                 m_openFileDialog.FilterIndex = NetworkLogFactory.AllFileFiltersWithAnyCount;
                 m_openFileDialog.CheckFileExists = true;
-                m_openFileDialog.FileName = Configuration.GetValue("Open File Name", string.Empty);
+                var file = Configuration.GetValue("Open File Name", string.Empty);
+                m_openFileDialog.FileName = Path.GetFileName(file);
+                m_openFileDialog.InitialDirectory = Path.GetDirectoryName(file);
                 m_openFileDialog.Multiselect = false;
             }
 
@@ -281,152 +349,40 @@ namespace NetworkLogViewer
                 throw new ArgumentNullException("log");
 
             m_currentFile = filename;
-            m_currentLog = log;
+            this.CurrentLog = log;
 
-            LoadingStatePush(new LoadingState(string.Format(Strings.LoadingFile, filename)));
             ui_readingWorker.RunWorkerAsync();
+            this.LoadingStatePush(new LoadingState(string.Format(Strings.LoadingFile, filename)));
+        }
+
+        void m_currentLog_PacketAdded(object sender, PacketAddedEventArgs e)
+        {
+            this.ThreadSafe(_ =>
+            {
+                var item = new ViewerItem(this, (NetworkLog)sender, m_packetItr++, e.Packet);
+                m_items.Add(item);
+
+                if (this.ItemAdded != null)
+                    this.ItemAdded(this, new ViewerItemEventArgs(item));
+            });
         }
 
         private void ui_readingWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            //e.Result = null;
+            var sw = Stopwatch.StartNew();
 
-            //LoadingStatePush(new LoadingState("Loading dump '" + m_currentFile + "'...", () =>
-            //{
-            //    if (ui_readingWorker.IsBusy)
-            //        ui_readingWorker.CancelAsync();
+            this.CurrentLog.OpenForReading(m_currentFile);
 
-            //    CloseFile();
-            //}));
+            var suggestedProtocol = this.CurrentLog.SuggestedProtocol;
+            if (suggestedProtocol != null)
+                this.CurrentProtocol = suggestedProtocol.Activate();
 
-            //this.ThreadSafe(x => x.Title = Path.GetFileNameWithoutExtension(m_currentFile) + " - Packet Viewer");
-
-            //var sw = System.Diagnostics.Stopwatch.StartNew();
-            //var packets = new List<CollectedPacket>();
-
-            //PacketDumpPacketCallback packetCallback = x =>
-            //{
-            //    if (ui_readingWorker.CancellationPending)
-            //        throw new OperationCanceledException();
-
-            //    packets.Add(x);
-            //};
-            //PacketDumpProgressCallback progressCallback = (current, total) =>
-            //{
-            //    if (ui_readingWorker.CancellationPending)
-            //        throw new OperationCanceledException();
-
-            //    LoadingStateSetProgress((float)current / (float)total);
-            //};
-
-            //try
-            //{
-            //    Console.WriteLine("Debug: Initializing read file");
-            //    GameDescriptor desc = CurrentDump.InitializeReadFile(m_currentFile);
-            //    if (desc == null)
-            //    {
-            //        // here we show window
-            //        throw new Exception("Not implemented window");
-            //    }
-            //    Console.WriteLine("Debug: Selected descriptor: {0}", desc.GetType());
-            //    this.CurrentDescriptor = desc;
-            //    if (CurrentDump.PacketCount > 0)
-            //        packets.Capacity = CurrentDump.PacketCount;
-
-            //    CurrentDump.DoReadFile(packetCallback, progressCallback);
-            //    Console.WriteLine("Debug: Read file finished");
-            //}
-            //catch (PacketDumpFormatException ex)
-            //{
-            //    e.Result = ex;
-            //}
-            //catch (Exception ex)
-            //{
-            //    e.Result = new PacketDumpFormatException("Early error reading dump file." + Environment.NewLine + ex, ex);
-            //}
-
-            //Console.WriteLine("Loaded file in {0} ms.", sw.Elapsed);
-            //sw.Restart();
-
-            //// TODO
-            ////InitializeCollectedPackets(packets);
-
-            //Console.WriteLine("Initialized packets in {0} ms.", sw.Elapsed);
-
-            //LoadingStatePop();
-
-            //// TODO
-            ///*int position = (int)e.Argument;
-            //if (position >= 0)
-            //    this.GoToItem(position);*/
+            this.CurrentLog.Read(progress => LoadingStateSetProgress(progress));
         }
 
         private void ui_readingWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            //object result = e.Result;
-            //if (result != null && result is Exception)
-            //{
-            //    var ex = result as Exception;
-
-            //    if (ex is OperationCanceledException)
-            //        return;
-
-            //    if (ex is PacketDumpFormatException)
-            //    {
-            //        //ShowSelectFileReader(ex.Message);
-            //    }
-            //    else
-            //    {
-            //        // TODO
-            //        //MessageBox.Show(this, ex.ToString(), "Error Reading File", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //        CloseFile();
-            //        return;
-            //    }
-            //}
-
-            //// We do not need to apply filters here, as it is done in NewPacket
-
-            //lock (m_itemsSyncRoot)
-            //{
-            //    // TODO
-            //    //ui_lvPackets.VirtualListSize = m_filterMap.Length;
-
-            //    if (ItemListUpdate != null)
-            //        ItemListUpdate(this, new ItemListUpdateEventArgs(m_items));
-
-            //    if (FilterMapUpdate != null)
-            //        FilterMapUpdate(this, new FilterMapUpdateEventArgs(m_filterMap));
-            //}
-
-            //// TODO
-            ///*ui_readerNameLabel.Text = string.Concat(
-            //    CurrentDump != null ? CurrentDump.Name : "No Packet Dump",
-            //    " | ",
-            //    CurrentDescriptor != null ? CurrentDescriptor.Name : "No Descriptor");*/
-
-            ////if (PacketViewer.CurrentDumpInfo.SnifferId != SnifferId.UnknownSniffer)
-            ////    _statusLabel.Text += string.Format(CultureInfo.InvariantCulture, " | {0} ({0:D})", PacketViewer.CurrentDumpInfo.SnifferId);
-
-            ////if (!string.IsNullOrEmpty(PacketViewer.CurrentDumpInfo.SnifferDesc))
-            ////    _statusLabel.Text += " | " + PacketViewer.CurrentDumpInfo.SnifferDesc;
-
-            ////if (PacketViewer.CurrentDumpInfo.Lang != null || PacketViewer.CurrentDumpInfo.Locale != Locales.Unknown)
-            ////    _statusLabel.Text += string.Format(CultureInfo.InvariantCulture, " | {0}/{1}",
-            ////        Encoding.UTF8.GetString(PacketViewer.CurrentDumpInfo.Lang), PacketViewer.CurrentDumpInfo.Locale);
-
-            ////if (PacketViewer.CurrentDumpInfo.SessionLength != 0)
-            ////    _statusLabel.Text += string.Format(CultureInfo.InvariantCulture, " | Length: {0}",
-            ////        PacketViewer.CurrentDumpInfo.SessionLength.AsSimpleTimeString());
-
-            ////if (PacketViewer.CurrentDumpInfo.CreatedOnUnix != 0)
-            ////    _statusLabel.Text += string.Format(CultureInfo.InvariantCulture, " | Started: {0}",
-            ////        PacketViewer.CurrentDumpInfo.CreatedOnUnix.AsUnixTime());
-
-            ////if (PacketViewer.CurrentDumpInfo.ClientBuild != 0)
-            ////    _statusLabel.Text += " | Client Build: " + PacketViewer.CurrentDumpInfo.ClientBuild;
-
-            //if (!ui_parsingWorker.IsBusy)
-            //    ui_parsingWorker.RunWorkerAsync();
+            LoadingStatePop();
         }
         #endregion
 
@@ -441,6 +397,7 @@ namespace NetworkLogViewer
             TypeManager.Initialize();
             ProtocolManager.Initialize();
             InitializeProtocols();
+            NetworkLogFactory.Initialize();
         }
 
         private void ui_loadingWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -459,8 +416,13 @@ namespace NetworkLogViewer
                 {
                     var item = new MenuItem();
                     item.Header = wrapper.Name;
-                    item.Tag = wrapper.Instance;
+                    item.Tag = wrapper;
                     item.Click += new RoutedEventHandler(protocolItem_Click);
+                    if (this.CurrentProtocol == null)
+                    {
+                        this.CurrentProtocol = wrapper.Activate();
+                        item.IsChecked = true;
+                    }
                     mi.Items.Add(item);
                 }
 
@@ -471,65 +433,69 @@ namespace NetworkLogViewer
         void protocolItem_Click(object sender, RoutedEventArgs e)
         {
             var item = (MenuItem)sender;
-            var protocol = (Protocol)item.Tag;
+            var wrapper = (ProtocolWrapper)item.Tag;
+
+            var protocol = wrapper.Activate();
 
             this.CurrentProtocol = protocol;
         }
 
         void MainWindow_ProtocolChanged(object sender, ProtocolChangedEventArgs e)
         {
-            this.ThreadSafe(_ =>
+            var newProtocol = e.NewProtocol;
+            Type newProtocolType = null;
+            if (newProtocol != null)
+                newProtocolType = newProtocol.GetType();
+
+            foreach (MenuItem itrItem in ui_miProtocol.Items)
+                itrItem.IsChecked = itrItem.Tag == null ? newProtocol == null :
+                    newProtocolType == ((ProtocolWrapper)itrItem.Tag).Type;
+
+            if (newProtocol != null)
             {
-                var newProtocol = e.NewProtocol;
-                foreach (MenuItem itrItem in ui_miProtocol.Items)
-                    itrItem.IsChecked = newProtocol == (Protocol)itrItem.Tag;
+                var typename = newProtocolType.Name;
+                int nColumns = newProtocol.ListViewColumns;
+                if (nColumns < 0)
+                    throw new InvalidOperationException("Protocol.ListViewColumns is invalid.");
 
-                if (newProtocol != null)
+                var headers = newProtocol.ListViewColumnHeaders;
+                if (headers == null || headers.Length != nColumns || headers.Any(val => val == null))
+                    throw new InvalidOperationException("Protocol.ListViewColumnHeaders is invalid.");
+
+                int[] widths = Configuration.GetValue("Column Widths - " + typename, (int[])null);
+                if (widths == null || widths.Length != nColumns)
                 {
-                    var typename = newProtocol.GetType().Name;
-                    int nColumns = newProtocol.ListViewColumns;
-                    if (nColumns < 0)
-                        throw new InvalidOperationException("Protocol.ListViewColumns is invalid.");
+                    widths = newProtocol.ListViewColumnWidths;
 
-                    var headers = newProtocol.ListViewColumnHeaders;
-                    if (headers == null || headers.Length != nColumns || headers.Any(val => val == null))
-                        throw new InvalidOperationException("Protocol.ListViewColumnHeaders is invalid.");
-
-                    int[] widths = Configuration.GetValue("Column Widths - " + typename, (int[])null);
                     if (widths == null || widths.Length != nColumns)
-                    {
-                        widths = newProtocol.ListViewColumnWidths;
-
-                        if (widths == null || widths.Length != nColumns)
-                            throw new InvalidOperationException("Protocol.ListViewColumnWidths is invalid.");
-                    }
-
-                    int[] columnOrder = Configuration.GetValue("Column Order - " + typename, (int[])null);
-                    if (columnOrder == null || columnOrder.Length != nColumns
-                        || columnOrder.Any(val => val >= nColumns || val < 0))
-                        columnOrder = Enumerable.Range(0, nColumns).ToArray();
-
-                    // Everything is valid
-                    var view = new GridView();
-
-                    for (int i = 0; i < nColumns; i++)
-                    {
-                        int col = columnOrder[i];
-
-                        var item = new GridViewColumn();
-                        item.Header = headers[col];
-                        item.Width = widths[col];
-                        item.DisplayMemberBinding = new Binding(".[" + i + "]");
-                        view.Columns.Add(item);
-                    }
-
-                    ui_lvPackets.View = view;
+                        throw new InvalidOperationException("Protocol.ListViewColumnWidths is invalid.");
                 }
-                else
+
+                int[] columnOrder = Configuration.GetValue("Column Order - " + typename, (int[])null);
+                if (columnOrder == null || columnOrder.Length != nColumns
+                    || columnOrder.Any(val => val >= nColumns || val < 0))
+                    columnOrder = Enumerable.Range(0, nColumns).ToArray();
+
+                // Everything is valid
+                var view = new GridView();
+
+                for (int i = 0; i < nColumns; i++)
                 {
-                    ui_lvPackets.View = null;
+                    int col = columnOrder[i];
+
+                    var item = new GridViewColumn();
+                    item.Header = headers[col];
+                    item.Width = widths[col];
+                    item.DisplayMemberBinding = new Binding(".Data[" + i + "]");
+                    view.Columns.Add(item);
                 }
-            });
+
+                ui_lvPackets.View = view;
+            }
+            else
+            {
+                ui_lvPackets.View = null;
+            }
         }
         #endregion
 
@@ -602,7 +568,15 @@ namespace NetworkLogViewer
             foreach (MenuItem item in ui_miSkins.Items)
                 item.IsChecked = name == (string)item.Tag;
         }
-
         #endregion
+
+        void ClearAll()
+        {
+            m_items.Clear();
+            ui_lvPackets.View = null;
+            this.CurrentProtocol = null;
+            this.CurrentLog = null;
+            m_packetItr = 0;
+        }
     }
 }

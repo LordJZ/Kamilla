@@ -100,7 +100,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
-    <Compile Include="VisualItemCollection.cs" />
+    <Compile Include="ViewerItemCollection.cs" />
     <Compile Include="WpfRtbConsole.cs" />
   </ItemGroup>
   <ItemGroup>

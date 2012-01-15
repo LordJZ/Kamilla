@@ -28,6 +28,11 @@ namespace Kamilla.Network.Logging
         /// File stream handler in Writing/Reading modes.
         /// </summary>
         protected StreamHandler m_stream;
+        protected long m_streamOriginalPosition;
+        /// <summary>
+        /// Indicates whether the dump loaded from stream or file.
+        /// </summary>
+        protected bool m_isLoaded;
         #endregion
 
         #region .ctor
@@ -51,6 +56,10 @@ namespace Kamilla.Network.Logging
                     m_packets = new List<Packet>();
                     break;
                 case NetworkLogMode.Writing:
+                    if (this is INetworkLogWithStartTicks)
+                        ((INetworkLogWithStartTicks)this).StartTicks = (uint)Environment.TickCount;
+                    if (this is INetworkLogWithStartTime)
+                        ((INetworkLogWithStartTime)this).StartTime = DateTime.Now;
                     break;
                 default:
                     throw new ArgumentException("mode");
@@ -59,6 +68,11 @@ namespace Kamilla.Network.Logging
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Gets the localized name of the current <see cref="Kamilla.Network.Logging.NetworkLog"/>.
+        /// </summary>
+        public abstract string Name { get; }
+
         /// <summary>
         /// Gets or sets the number of packets the internal
         /// data structure can contain without resizing.
@@ -77,7 +91,7 @@ namespace Kamilla.Network.Logging
         /// <exception cref="System.ObjectDisposedException">
         /// The current instance of <see cref="Kamilla.Network.Logging.NetworkLog"/> is disposed.
         /// </exception>
-        protected int Capacity
+        public int Capacity
         {
             get
             {
@@ -91,13 +105,46 @@ namespace Kamilla.Network.Logging
             }
             set
             {
-                if (m_mode == NetworkLogMode.Writing || m_mode == NetworkLogMode.Reading)
+                if (m_mode == NetworkLogMode.Reading)
+                    throw new InvalidOperationException();
+
+                this.InternalSetCapacity(value);
+            }
+        }
+
+        protected void InternalSetCapacity(int capacity)
+        {
+            if (m_mode == NetworkLogMode.Writing)
+                throw new InvalidOperationException();
+
+            if (m_packets == null)
+                throw new ObjectDisposedException("NetworkLog");
+
+            m_packets.Capacity = capacity;
+        }
+
+        /// <summary>
+        /// Gets the number of packets currently stored inside
+        /// the current <see cref="Kamilla.Network.Logging.NetworkLog"/>.
+        /// </summary>
+        /// <exception cref="System.InvalidOperationException">
+        /// The current <see cref="Kamilla.Network.Logging.NetworkLog"/>
+        /// was opened in <see href="Kamilla.Network.Logging.NetworkLogMode.Writing"/> mode.
+        /// </exception>
+        /// <exception cref="System.ObjectDisposedException">
+        /// The current instance of <see cref="Kamilla.Network.Logging.NetworkLog"/> is disposed.
+        /// </exception>
+        public int Count
+        {
+            get
+            {
+                if (m_mode == NetworkLogMode.Writing)
                     throw new InvalidOperationException();
 
                 if (m_packets == null)
                     throw new ObjectDisposedException("NetworkLog");
 
-                m_packets.Capacity = value;
+                return m_packets.Count;
             }
         }
 
@@ -129,6 +176,15 @@ namespace Kamilla.Network.Logging
 
                 return m_packets;
             }
+        }
+
+        /// <summary>
+        /// Gets the <see cref="Kamilla.Network.Protocols.ProtocolWrapper"/> of a protocol
+        /// that is most likely the real network protocol of the stored packets in the log.
+        /// </summary>
+        public virtual ProtocolWrapper SuggestedProtocol
+        {
+            get { return null; }
         }
         #endregion
 
@@ -330,6 +386,7 @@ namespace Kamilla.Network.Logging
         protected virtual void InternalOpenForWriting(Stream stream)
         {
             m_stream = new StreamHandler(stream);
+            m_streamOriginalPosition = stream.Position;
         }
 
         /// <summary>
@@ -470,10 +527,6 @@ namespace Kamilla.Network.Logging
         /// <param name="filename">
         /// Name of the file to open for reading.
         /// </param>
-        /// <returns>
-        /// An instance of <see cref="Kamilla.Network.Protocols.Protocol"/> if
-        /// matching found for the specified file; otherwise, null.
-        /// </returns>
         /// <exception cref="System.ArgumentNullException">
         /// filename is null.
         /// </exception>
@@ -488,10 +541,15 @@ namespace Kamilla.Network.Logging
         /// was not opened in <see href="Kamilla.Network.Logging.NetworkLogMode.Reading"/> mode.
         /// -or-
         /// A stream is already opened.
+        /// -or-
+        /// The current <see cref="Kamilla.Network.Logging.NetworkLog"/> is already loaded.
         /// </exception>
-        public Protocol OpenForReading(string filename)
+        public void OpenForReading(string filename)
         {
-            if (m_mode != NetworkLogMode.Writing)
+            if (m_mode != NetworkLogMode.Reading)
+                throw new InvalidOperationException();
+
+            if (m_isLoaded)
                 throw new InvalidOperationException();
 
             if (m_stream != null)
@@ -510,7 +568,7 @@ namespace Kamilla.Network.Logging
                 throw new ArgumentException("Failed to open file.", e);
             }
 
-            return this.InternalOpenForReading(stream);
+            this.InternalOpenForReading(stream, true);
         }
 
         /// <summary>
@@ -518,6 +576,10 @@ namespace Kamilla.Network.Logging
         /// </summary>
         /// <param name="stream">
         /// The <see cref="System.IO.Stream"/> to open for reading.
+        /// </param>
+        /// <param name="closeStream">
+        /// Indicates whether the <see cref="System.IO.Stream"/> should be
+        /// closed when the reading is complete.
         /// </param>
         /// <exception cref="System.ArgumentNullException">
         /// stream is null.
@@ -530,10 +592,15 @@ namespace Kamilla.Network.Logging
         /// was not opened in <see href="Kamilla.Network.Logging.NetworkLogMode.Reading"/> mode.
         /// -or-
         /// A stream is already opened.
+        /// -or-
+        /// The current <see cref="Kamilla.Network.Logging.NetworkLog"/> is already loaded.
         /// </exception>
-        public Protocol OpenForReading(Stream stream)
+        public void OpenForReading(Stream stream, bool closeStream)
         {
             if (m_mode != NetworkLogMode.Reading)
+                throw new InvalidOperationException();
+
+            if (m_isLoaded)
                 throw new InvalidOperationException();
 
             if (m_stream != null)
@@ -545,13 +612,32 @@ namespace Kamilla.Network.Logging
             if (!stream.CanRead)
                 throw new EndOfStreamException();
 
-            return this.InternalOpenForReading(stream);
+            this.InternalOpenForReading(stream, closeStream);
         }
 
-        protected abstract Protocol InternalOpenForReading(Stream stream);
+        protected virtual void InternalOpenForReading(Stream stream, bool closeStream)
+        {
+            m_isLoaded = true;
+
+            if (stream.CanSeek)
+            {
+                var data = new byte[stream.Length - stream.Position];
+                stream.Read(data, 0, data.Length);
+                m_stream = new StreamHandler(data);
+                m_streamOriginalPosition = 0;
+
+                if (closeStream)
+                    stream.Close();
+            }
+            else
+            {
+                m_stream = new StreamHandler(stream, closeStream);
+                m_streamOriginalPosition = stream.Position;
+            }
+        }
 
         /// <summary>
-        /// Reads the contents of the file.
+        /// Reads the contents of the underlying stream.
         /// </summary>
         /// <exception cref="System.IO.IOException">
         /// An I/O exception occured.
@@ -563,7 +649,7 @@ namespace Kamilla.Network.Logging
         /// <exception cref="System.ObjectDisposedException">
         /// The underlying <see cref="System.IO.Stream"/> is closed.
         /// </exception>
-        public void ReadStream()
+        public void Read()
         {
             if (m_mode != NetworkLogMode.Reading)
                 throw new InvalidOperationException();
@@ -574,11 +660,11 @@ namespace Kamilla.Network.Logging
             if (!m_stream.BaseStream.CanRead)
                 throw new EndOfStreamException();
 
-            this.InternalReadStream(null);
+            this.InternalRead(null);
         }
 
         /// <summary>
-        /// Reads the contents of the file and reports progress if can.
+        /// Reads the contents of the underlying stream and reports progress if can.
         /// </summary>
         /// <param name="reportProgressDelegate">
         /// Delegate to report progress with. The argument is progress in percents (0-100).
@@ -596,7 +682,7 @@ namespace Kamilla.Network.Logging
         /// <exception cref="System.ArgumentNullException">
         /// reportProgressDelegate is null.
         /// </exception>
-        public void ReadStream(Action<int> reportProgressDelegate)
+        public void Read(Action<int> reportProgressDelegate)
         {
             if (m_mode != NetworkLogMode.Reading)
                 throw new InvalidOperationException();
@@ -610,10 +696,10 @@ namespace Kamilla.Network.Logging
             if (!m_stream.BaseStream.CanRead)
                 throw new EndOfStreamException();
 
-            this.InternalReadStream(null);
+            this.InternalRead(reportProgressDelegate);
         }
 
-        protected abstract void InternalReadStream(Action<int> reportProgressDelegate);
+        protected abstract void InternalRead(Action<int> reportProgressDelegate);
         #endregion
 
         #region Misc

@@ -4,7 +4,7 @@ using Kamilla.Network.Protocols;
 namespace Kamilla.Network.Viewing
 {
     /// <summary>
-    /// Handles <see href="Kamilla.Network.Viewing.INetworkLogViewer.ProtocolSwitch"/> event.
+    /// Handles <see href="Kamilla.Network.Viewing.INetworkLogViewer.ProtocolChanged"/> event.
     /// </summary>
     /// <param name="sender">
     /// The current <see cref="Kamilla.Network.Viewing.INetworkLogViewer"/>.
@@ -17,7 +17,7 @@ namespace Kamilla.Network.Viewing
 
     /// <summary>
     /// Contains data related to
-    /// <see href="Kamilla.Network.Viewing.INetworkLogViewer.ProtocolSwitch"/> event.
+    /// <see href="Kamilla.Network.Viewing.INetworkLogViewer.ProtocolChanged"/> event.
     /// </summary>
     public sealed class ProtocolChangedEventArgs : EventArgs
     {
