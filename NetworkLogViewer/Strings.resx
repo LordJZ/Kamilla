@@ -120,6 +120,9 @@
   <data name="LoadingFile" xml:space="preserve">
     <value>Loading file:\r\n\r\n{0}</value>
   </data>
+  <data name="Menu_CloseFile" xml:space="preserve">
+    <value>Close File</value>
+  </data>
   <data name="Menu_Edit" xml:space="preserve">
     <value>Edit</value>
   </data>
@@ -150,6 +153,9 @@
   <data name="Menu_View" xml:space="preserve">
     <value>View</value>
   </data>
+  <data name="Menu_ViewPanels" xml:space="preserve">
+    <value>View Panels</value>
+  </data>
   <data name="NetworkLogViewer_Title" xml:space="preserve">
     <value>Network Log Viewer</value>
   </data>
@@ -158,5 +164,20 @@
   </data>
   <data name="Skin_Windows" xml:space="preserve">
     <value>Windows Style</value>
+  </data>
+  <data name="View_BinaryContents" xml:space="preserve">
+    <value>Binary Data</value>
+  </data>
+  <data name="View_Image" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="View_PacketContents" xml:space="preserve">
+    <value>Contents</value>
+  </data>
+  <data name="View_ParsedText" xml:space="preserve">
+    <value>Parsed</value>
+  </data>
+  <data name="View_TextContents" xml:space="preserve">
+    <value>Text Data</value>
   </data>
 </root>

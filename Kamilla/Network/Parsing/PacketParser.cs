@@ -13,6 +13,10 @@ namespace Kamilla.Network.Parsing
     /// </summary>
     public abstract class PacketParser
     {
+        /// <summary>
+        /// Gets the <see cref="Kamilla.Network.Viewing.ViewerItem"/> to which
+        /// the current <see cref="Kamilla.Network.Parsing.PacketParser"/> is attached.
+        /// </summary>
         public ViewerItem Item { get; internal set; }
     }
 }

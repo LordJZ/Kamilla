@@ -101,6 +101,13 @@
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
     <Compile Include="ViewerItemCollection.cs" />
+    <Compile Include="ViewTabs\PacketContents.xaml.cs">
+      <DependentUpon>PacketContents.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewTabs\ParsedText.xaml.cs">
+      <DependentUpon>ParsedText.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewTabs\IViewTab.cs" />
     <Compile Include="WpfRtbConsole.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -146,6 +153,14 @@
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ViewTabs\PacketContents.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ViewTabs\ParsedText.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

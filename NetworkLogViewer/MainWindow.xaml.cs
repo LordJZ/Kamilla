@@ -24,6 +24,7 @@ using Kamilla.Network.Protocols;
 using Kamilla.Network.Viewing;
 using Kamilla.WPF;
 using Microsoft.Win32;
+using NetworkLogViewer.ViewTabs;
 
 namespace NetworkLogViewer
 {
@@ -50,12 +51,13 @@ namespace NetworkLogViewer
                 new CommandBinding(ApplicationCommands.Close, ApplicationClose_Executed),
                 new CommandBinding(ApplicationCommands.Open, ApplicationOpen_Executed),
                 new CommandBinding(NetworkLogViewerCommands.OpenConsole, OpenConsole_Executed),
+                new CommandBinding(NetworkLogViewerCommands.CloseFile, CloseFile_Executed),
             });
 
             // Key Bindings
             this.InputBindings.AddRange(new[] {
                 new KeyBinding(ApplicationCommands.Close, Key.X, ModifierKeys.Alt),
-                new KeyBinding(ApplicationCommands.Open, Key.O, ModifierKeys.Control),
+                new KeyBinding(ApplicationCommands.Open, (KeyGesture)ApplicationCommands.Open.InputGestures[0]),
                 new KeyBinding(NetworkLogViewerCommands.OpenConsole, Key.F10, ModifierKeys.None),
             });
 
@@ -93,21 +95,13 @@ namespace NetworkLogViewer
 
             Console.WriteLine("MainWindow initialized.");
         }
-
-        void m_items_ItemQueried(object sender, ViewerItemEventArgs e)
-        {
-            this.ThreadSafe(_ =>
-            {
-                if (this.ItemQueried != null)
-                    this.ItemQueried(this, e);
-            });
-        }
         #endregion
 
         #region INetworkLogViewer Implementation
         Protocol m_currentProtocol;
         NetworkLog m_currentLog;
         int m_packetItr;
+        readonly ViewerItemCollection m_items;
 
         /// <summary>
         /// Gets the collection of items currently loaded.
@@ -158,7 +152,8 @@ namespace NetworkLogViewer
                         old.PacketAdded -= m_packetAddedHandler;
 
                     m_currentLog = value;
-                    m_currentLog.PacketAdded += m_packetAddedHandler;
+                    if (value != null)
+                        value.PacketAdded += m_packetAddedHandler;
 
                     if (this.NetworkLogChanged != null)
                         this.NetworkLogChanged(this, new NetworkLogChangedEventArgs(old, value));
@@ -194,8 +189,6 @@ namespace NetworkLogViewer
         /// </summary>
         public event ViewerItemEventHandler ItemAdded;
         #endregion
-
-        readonly ViewerItemCollection m_items;
 
         #region Loading Window
         Stack<LoadingState> m_loadingStateStack = new Stack<LoadingState>();
@@ -259,9 +252,15 @@ namespace NetworkLogViewer
                 m_openFileDialog.Filter = NetworkLogFactory.AllFileFiltersWithAny;
                 m_openFileDialog.FilterIndex = NetworkLogFactory.AllFileFiltersWithAnyCount;
                 m_openFileDialog.CheckFileExists = true;
-                var file = Configuration.GetValue("Open File Name", string.Empty);
-                m_openFileDialog.FileName = Path.GetFileName(file);
-                m_openFileDialog.InitialDirectory = Path.GetDirectoryName(file);
+                try
+                {
+                    var file = Configuration.GetValue("Open File Name", string.Empty);
+                    m_openFileDialog.FileName = Path.GetFileName(file);
+                    m_openFileDialog.InitialDirectory = Path.GetDirectoryName(file);
+                }
+                catch
+                {
+                }
                 m_openFileDialog.Multiselect = false;
             }
 
@@ -285,6 +284,11 @@ namespace NetworkLogViewer
                 console.Focus();
         }
 
+        void CloseFile_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.CloseFile();
+        }
+
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             // TODO: Save Settings Here
@@ -292,43 +296,17 @@ namespace NetworkLogViewer
             App.ConsoleWindow.m_closing = true;
             App.ConsoleWindow.Close();
         }
+
+        void CloseFile()
+        {
+            m_items.Clear();
+            this.CurrentLog = null;
+            m_packetItr = 0;
+        }
         #endregion
 
         #region Reading
         // Code that reads the dump file.
-
-        void CloseFile()
-        {
-            //if (ui_lvPackets.Items.Count > 0)
-            //    ui_lvPackets.ScrollIntoView(ui_lvPackets.Items[0]);
-
-            //if (ui_parsingWorker.IsBusy)
-            //    ui_parsingWorker.CancelAsync();
-
-            ///* TODO
-            //foreach (var tc in m_currentViews)
-            //{
-            //    foreach (PacketViewTabs.PacketViewTabPage tab in tc.Controls)
-            //        tab.Reset();
-            //}*/
-            //ui_lvPackets.Items.Clear();
-
-            //lock (m_itemsSyncRoot)
-            //{
-            //    m_items = new PacketViewerItem[0];
-            //    if (ItemListUpdate != null)
-            //        ItemListUpdate(this, new ItemListUpdateEventArgs(m_items));
-
-            //    m_filterMap = new int[0];
-            //    if (FilterMapUpdate != null)
-            //        FilterMapUpdate(this, new FilterMapUpdateEventArgs(m_filterMap));
-
-            //    // TODO
-            //    //ui_lvPackets.VirtualListSize = 0;
-            //}
-
-            //this.Title = "Packet Viewer";
-        }
 
         string m_currentFile;
         void OpenFile(string filename)
@@ -359,7 +337,7 @@ namespace NetworkLogViewer
         {
             this.ThreadSafe(_ =>
             {
-                var item = new ViewerItem(this, (NetworkLog)sender, m_packetItr++, e.Packet);
+                var item = new ViewerItem(this, (NetworkLog)sender, e.Packet, m_packetItr++);
                 m_items.Add(item);
 
                 if (this.ItemAdded != null)
@@ -386,6 +364,7 @@ namespace NetworkLogViewer
         }
         #endregion
 
+        #region Loading
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             ui_loadingWorker.RunWorkerAsync();
@@ -398,12 +377,16 @@ namespace NetworkLogViewer
             ProtocolManager.Initialize();
             InitializeProtocols();
             NetworkLogFactory.Initialize();
+
+            int val = Configuration.GetValue("Number of Views", 2);
+            this.ThreadSafe(_ => _.SetNViews(val));
         }
 
         private void ui_loadingWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             this.LoadingStatePop();
         }
+        #endregion
 
         #region Protocol
         void InitializeProtocols()
@@ -570,13 +553,172 @@ namespace NetworkLogViewer
         }
         #endregion
 
-        void ClearAll()
+        #region Viewing
+        void m_items_ItemQueried(object sender, ViewerItemEventArgs e)
         {
-            m_items.Clear();
-            ui_lvPackets.View = null;
-            this.CurrentProtocol = null;
-            this.CurrentLog = null;
-            m_packetItr = 0;
+            this.ThreadSafe(_ =>
+            {
+                if (this.ItemQueried != null)
+                    this.ItemQueried(this, e);
+            });
         }
+
+        static Type[] s_viewTabTypes = new[]
+        {
+            typeof(PacketContents),
+            typeof(ParsedText)
+        };
+
+        int m_currentNViews;
+        GridSplitter[] m_splitters = new GridSplitter[0];
+        TabControl[] m_currentViews = new TabControl[0];
+
+        private void ui_miViewsCount_Click(object sender, EventArgs e)
+        {
+            var str = ((MenuItem)sender).Tag.ToString();
+            int nViews = int.Parse(str);
+
+            if (nViews != m_currentNViews)
+                this.SetNViews(nViews);
+        }
+
+        void SetNViews(int nViews)
+        {
+            if (m_currentNViews != 0)
+                this.SaveCurrentViews();
+
+            m_currentNViews = nViews;
+
+            //Win32.SuspendDrawing(this.WindowHandle);
+
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+
+            ViewsGrid.ColumnDefinitions.Clear();
+            ViewsGrid.Children.Clear();
+
+            m_splitters = new GridSplitter[nViews - 1];
+            m_currentViews = new TabControl[nViews];
+
+            var distances = Configuration.GetValue("View" + nViews + " Distances Pct",
+                Enumerable.Repeat(1.0 / nViews, nViews).ToArray());
+
+            Array.Resize(ref distances, nViews);
+
+            double totalLength = this.ViewsGrid.ActualWidth;
+            for (int i = 0; i < nViews; ++i)
+            {
+                var column = new ColumnDefinition();
+                column.Width = new GridLength(totalLength * distances[i], GridUnitType.Star);
+                column.MinWidth = 50.0;
+                ViewsGrid.ColumnDefinitions.Add(column);
+            }
+
+            for (int i = 0; i < m_splitters.Length; ++i)
+            {
+                var splitter = new GridSplitter();
+                Panel.SetZIndex(splitter, 100);
+                splitter.Background = Brushes.Transparent;
+                splitter.Width = 6;
+                splitter.HorizontalAlignment = HorizontalAlignment.Left;
+                splitter.VerticalAlignment = VerticalAlignment.Stretch;
+                splitter.Margin = new Thickness(-3.0, 0.0, 0.0, 0.0);
+                ViewsGrid.Children.Add(splitter);
+                Grid.SetColumn(splitter, i + 1);
+            }
+
+            var selectedTabs = Configuration.GetValue("View" + nViews + " Selected Tabs",
+                Enumerable.Range(0, nViews).ToArray());
+
+            Array.Resize(ref selectedTabs, nViews);
+            for (int i = 0; i < selectedTabs.Length; ++i)
+            {
+                if (selectedTabs[i] >= s_viewTabTypes.Length)
+                    selectedTabs[i] %= s_viewTabTypes.Length;
+            }
+
+            for (int i = 0; i < nViews; ++i)
+            {
+                var tc = new TabControl();
+                ViewsGrid.Children.Add(tc);
+                Grid.SetColumn(tc, i);
+                m_currentViews[i] = tc;
+
+                // Initialize Tab Control
+
+                foreach (var type in s_viewTabTypes)
+                {
+                    var content = (IViewTab)Activator.CreateInstance(type);
+
+                    var tabItem = new TabItem();
+                    tabItem.Content = content;
+                    tabItem.Header = content.Header;
+                    tc.Items.Add(tabItem);
+                }
+
+                tc.SelectedItem = tc.Items[selectedTabs[i]];
+                tc.SelectionChanged += new SelectionChangedEventHandler(tc_Selected);
+            }
+
+            var nViewsStr = nViews.ToString();
+            foreach (MenuItem item in ui_miViewsColumns.Items)
+                item.IsChecked = item.Tag.ToString() == nViewsStr;
+
+            //Win32.ResumeDrawing(this.WindowHandle);
+
+            sw.Stop();
+            Console.WriteLine("Debug: Spent {0} on building {1} views", sw.Elapsed, m_currentNViews);
+
+            UpdateViews();
+        }
+
+        void tc_Selected(object sender, SelectionChangedEventArgs e)
+        {
+            int index = ui_lvPackets.SelectedIndex;
+
+            if (index >= 0)
+            {
+                var tab = (IViewTab)((TabItem)((TabControl)sender).SelectedItem).Content;
+                if (!tab.IsFilled)
+                    tab.Fill(this.CurrentProtocol, m_items[index]);
+            }
+        }
+
+        void UpdateViews()
+        {
+            var protocol = this.CurrentProtocol;
+            int index = ui_lvPackets.SelectedIndex;
+
+            foreach (var tc in m_currentViews)
+            {
+                foreach (TabItem tab in tc.Items)
+                    ((IViewTab)tab.Content).Reset();
+
+                if (index >= 0)
+                    ((IViewTab)((TabItem)tc.SelectedItem).Content).Fill(protocol, m_items[index]);
+            }
+        }
+
+        void SaveCurrentViews()
+        {
+            var nViews = m_currentNViews;
+            var distances = new double[nViews];
+            var selectedTabs = new int[nViews];
+            double totalLength = this.ViewsGrid.ActualWidth;
+
+            for (int i = 0; i < nViews; i++)
+                distances[i] = this.ViewsGrid.ColumnDefinitions[i].Width.Value / totalLength;
+
+            for (int i = 0; i < nViews; i++)
+                selectedTabs[i] = m_currentViews[i].SelectedIndex;
+
+            Configuration.SetValue("View" + nViews + " Distances Pct", distances);
+            Configuration.SetValue("View" + nViews + " Selected Tabs", selectedTabs);
+        }
+
+        private void ui_lvPackets_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.UpdateViews();
+        }
+        #endregion
     }
 }

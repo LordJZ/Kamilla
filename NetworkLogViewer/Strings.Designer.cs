@@ -70,6 +70,15 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close File.
+        /// </summary>
+        public static string Menu_CloseFile {
+            get {
+                return ResourceManager.GetString("Menu_CloseFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit.
         /// </summary>
         public static string Menu_Edit {
@@ -160,6 +169,15 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to View Panels.
+        /// </summary>
+        public static string Menu_ViewPanels {
+            get {
+                return ResourceManager.GetString("Menu_ViewPanels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Network Log Viewer.
         /// </summary>
         public static string NetworkLogViewer_Title {
@@ -183,6 +201,51 @@ namespace NetworkLogViewer {
         public static string Skin_Windows {
             get {
                 return ResourceManager.GetString("Skin_Windows", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Binary Data.
+        /// </summary>
+        public static string View_BinaryContents {
+            get {
+                return ResourceManager.GetString("View_BinaryContents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image.
+        /// </summary>
+        public static string View_Image {
+            get {
+                return ResourceManager.GetString("View_Image", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Contents.
+        /// </summary>
+        public static string View_PacketContents {
+            get {
+                return ResourceManager.GetString("View_PacketContents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parsed.
+        /// </summary>
+        public static string View_ParsedText {
+            get {
+                return ResourceManager.GetString("View_ParsedText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text Data.
+        /// </summary>
+        public static string View_TextContents {
+            get {
+                return ResourceManager.GetString("View_TextContents", resourceCulture);
             }
         }
     }

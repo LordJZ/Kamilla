@@ -5,7 +5,10 @@ using System.Text;
 
 namespace Kamilla.Network.Parsing
 {
-    class UndefinedPacketParser : PacketParser
+    /// <summary>
+    /// Represents an unkown or undefined packet parser.  This parser does nothing.
+    /// </summary>
+    public sealed class UndefinedPacketParser : PacketParser
     {
     }
 }

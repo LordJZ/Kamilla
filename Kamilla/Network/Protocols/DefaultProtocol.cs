@@ -9,11 +9,11 @@ namespace Kamilla.Network.Protocols
 {
     public sealed class DefaultProtocol : Protocol
     {
-        ViewerItemEventHandler m_itemAddedHandler;
+        ViewerItemEventHandler m_itemQueriedHandler;
 
         public DefaultProtocol()
         {
-            m_itemAddedHandler = new ViewerItemEventHandler(viewer_ItemAdded);
+            m_itemQueriedHandler = new ViewerItemEventHandler(viewer_ItemQueried);
         }
 
         #region Immutable Overrides
@@ -60,17 +60,7 @@ namespace Kamilla.Network.Protocols
 
         INetworkLogViewer m_viewer;
 
-        public override void Load(INetworkLogViewer viewer)
-        {
-            if (m_viewer != null)
-                throw new InvalidOperationException();
-
-            viewer.ItemAdded += m_itemAddedHandler;
-
-            m_viewer = viewer;
-        }
-
-        void viewer_ItemAdded(object sender, ViewerItemEventArgs e)
+        void viewer_ItemQueried(object sender, ViewerItemEventArgs e)
         {
             var item = e.Item;
 
@@ -103,12 +93,22 @@ namespace Kamilla.Network.Protocols
             item.Data = arr;
         }
 
+        public override void Load(INetworkLogViewer viewer)
+        {
+            if (m_viewer != null)
+                throw new InvalidOperationException();
+
+            viewer.ItemQueried += m_itemQueriedHandler;
+
+            m_viewer = viewer;
+        }
+
         public override void Unload()
         {
             if (m_viewer == null)
                 throw new InvalidOperationException();
 
-            m_viewer.ItemAdded -= m_itemAddedHandler;
+            m_viewer.ItemQueried -= m_itemQueriedHandler;
 
             m_viewer = null;
         }

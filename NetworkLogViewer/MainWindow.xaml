@@ -10,56 +10,33 @@
       <RowDefinition Height="107*" />
     </Grid.RowDefinitions>
     <Menu Name="MainMenu">
-      <MenuItem>
-        <MenuItem.Header>
-          <TextBlock Text="{x:Static viewer:Strings.Menu_File}"/>
-        </MenuItem.Header>
-        <MenuItem InputGestureText="Ctrl+O" Command="Open">
-          <MenuItem.Header>
-            <TextBlock Text="{x:Static viewer:Strings.Menu_OpenEllipsis}"/>
-          </MenuItem.Header>
-        </MenuItem>
+      <MenuItem Header="{x:Static viewer:Strings.Menu_File}">
+        <MenuItem Command="Open" Header="{x:Static viewer:Strings.Menu_OpenEllipsis}"/>
+        <MenuItem Command="viewer:NetworkLogViewerCommands.CloseFile" Header="{x:Static viewer:Strings.Menu_CloseFile}"/>
+        <Separator/>
         <MenuItem Header="{x:Static viewer:Strings.Menu_OpenConsole}" InputGestureText="F10" Command="viewer:NetworkLogViewerCommands.OpenConsole"/>
-        <MenuItem Header="{x:Static viewer:Strings.Menu_Exit}" InputGestureText="Alt+X" Command="Close"/>
+        <Separator/>
+        <MenuItem Header="{x:Static viewer:Strings.Menu_Exit}" Command="Close"/>
       </MenuItem>
-      <MenuItem>
-        <MenuItem.Header>
-          <TextBlock Text="{x:Static viewer:Strings.Menu_Edit}"/>
-        </MenuItem.Header>
+      <MenuItem Header="{x:Static viewer:Strings.Menu_Edit}">
         <MenuItem Header="{x:Static viewer:Strings.Menu_Protocols}" Name="ui_miProtocol"/>
       </MenuItem>
-      <MenuItem>
-        <MenuItem.Header>
-          <TextBlock Text="{x:Static viewer:Strings.Menu_View}"/>
-        </MenuItem.Header>
+      <MenuItem Header="{x:Static viewer:Strings.Menu_View}">
+        <MenuItem Name="ui_miSkins" Header="{x:Static viewer:Strings.Menu_Skins}"/>
 
-        <MenuItem Name="ui_miSkins">
-          <MenuItem.Header>
-            <TextBlock Text="{x:Static viewer:Strings.Menu_Skins}"/>
-          </MenuItem.Header>
-        </MenuItem>
-
-        <MenuItem>
-          <MenuItem.Header>
-            <TextBlock Text="Number of Columns" />
-          </MenuItem.Header>
-
-          <MenuItem Header="1" />
-          <MenuItem Header="2" />
-          <MenuItem Header="3" />
-          <MenuItem Header="4" />
-          <MenuItem Header="5" />
-          <MenuItem Header="6" />
+        <MenuItem Header="{x:Static viewer:Strings.Menu_ViewPanels}" Name="ui_miViewsColumns">
+          <MenuItem Header="1" Click="ui_miViewsCount_Click" Tag="1" />
+          <MenuItem Header="2" Click="ui_miViewsCount_Click" Tag="2" />
+          <MenuItem Header="3" Click="ui_miViewsCount_Click" Tag="3" />
+          <MenuItem Header="4" Click="ui_miViewsCount_Click" Tag="4" />
+          <MenuItem Header="5" Click="ui_miViewsCount_Click" Tag="5" />
+          <MenuItem Header="6" Click="ui_miViewsCount_Click" Tag="6" />
         </MenuItem>
       </MenuItem>
     </Menu>
-    <GridSplitter Grid.Row="2" Height="6" HorizontalAlignment="Stretch" Name="VerticalGridSplitter" VerticalAlignment="Top" ResizeDirection="Rows" Margin="0,-3,0,0" />
-    <ListView Grid.Row="1" Name="ui_lvPackets" SelectionMode="Single" IsTextSearchEnabled="False">
-      <ListView.View>
-        <GridView>
-          <GridViewColumn DisplayMemberBinding="{Binding Path=.[0]}" Header="My Column"/>
-        </GridView>
-      </ListView.View>
-    </ListView>
+    <ListView Grid.Row="1" Name="ui_lvPackets" SelectionMode="Single" IsTextSearchEnabled="False" SelectionChanged="ui_lvPackets_SelectionChanged"/>
+    <Grid Grid.Row="2" Name="ViewsGrid" Margin="0,3,0,0">
+    </Grid>
+    <GridSplitter Grid.Row="2" Height="6" Name="VerticalGridSplitter" VerticalAlignment="Top" ResizeDirection="Rows" Margin="0,0,0,0" HorizontalAlignment="Stretch" Background="Transparent" Panel.ZIndex="101" />
   </Grid>
 </Window>

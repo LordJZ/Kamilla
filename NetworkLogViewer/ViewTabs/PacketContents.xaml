@@ -1,0 +1,6 @@
+﻿<UserControl x:Class="NetworkLogViewer.ViewTabs.PacketContents" x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             >
+  <TextBox Name="ui_tbMain" FontFamily="Lucida Console" BorderThickness="0" VerticalScrollBarVisibility="Auto" />
+</UserControl>
