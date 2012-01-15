@@ -70,6 +70,15 @@ namespace Kamilla.Network {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} out of {1} {1?plural-en:byte:bytes} read.
+        /// </summary>
+        public static string BytesRead {
+            get {
+                return ResourceManager.GetString("BytesRead", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to C-&gt;S.
         /// </summary>
         public static string CH_C2S {
@@ -142,7 +151,25 @@ namespace Kamilla.Network {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Default.
+        ///   Looks up a localized string similar to Parser: {0}.
+        /// </summary>
+        public static string ParserClass {
+            get {
+                return ResourceManager.GetString("ParserClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exception in parser:.
+        /// </summary>
+        public static string ParserException {
+            get {
+                return ResourceManager.GetString("ParserException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default Protocol.
         /// </summary>
         public static string Protocol_Default {
             get {

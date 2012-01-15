@@ -10,5 +10,8 @@ namespace Kamilla.Network.Parsing
     /// </summary>
     public sealed class UndefinedPacketParser : PacketParser
     {
+        protected override void InternalParse()
+        {
+        }
     }
 }

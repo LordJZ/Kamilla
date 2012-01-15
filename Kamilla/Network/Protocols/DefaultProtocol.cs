@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Kamilla.Network.Viewing;
 using Kamilla.Network.Logging;
+using Kamilla.Network.Parsing;
+using Kamilla.Network.Viewing;
 
 namespace Kamilla.Network.Protocols
 {
@@ -24,18 +22,8 @@ namespace Kamilla.Network.Protocols
 
         public override int ListViewColumns
         {
-            get { return s_columns.Length; }
+            get { return s_columnWidths.Length; }
         }
-
-        static readonly string[] s_columns = new string[]
-        {
-            NetworkStrings.CH_Number,
-            NetworkStrings.CH_Time,
-            NetworkStrings.CH_Ticks,
-            NetworkStrings.CH_C2S,
-            NetworkStrings.CH_S2C,
-            NetworkStrings.CH_Length,
-        };
 
         static readonly int[] s_columnWidths = new int[]
         {
@@ -49,7 +37,18 @@ namespace Kamilla.Network.Protocols
 
         public override string[] ListViewColumnHeaders
         {
-            get { return s_columns; }
+            get
+            {
+                return new string[]
+                {
+                    NetworkStrings.CH_Number,
+                    NetworkStrings.CH_Time,
+                    NetworkStrings.CH_Ticks,
+                    NetworkStrings.CH_C2S,
+                    NetworkStrings.CH_S2C,
+                    NetworkStrings.CH_Length,
+                };
+            }
         }
 
         public override int[] ListViewColumnWidths
@@ -111,6 +110,11 @@ namespace Kamilla.Network.Protocols
             m_viewer.ItemQueried -= m_itemQueriedHandler;
 
             m_viewer = null;
+        }
+
+        protected override PacketParser InternalCreateParser(ViewerItem item)
+        {
+            return null;
         }
     }
 }

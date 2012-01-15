@@ -98,9 +98,13 @@
     <Compile Include="StringExtensions.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="TypeManager.cs" />
+    <Compile Include="UICulture.cs" />
     <Compile Include="Vector2.cs" />
     <Compile Include="Vector3.cs" />
     <Compile Include="Win32.cs" />
+    <Compile Include="WPF\MessageWindow.xaml.cs">
+      <DependentUpon>MessageWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPF\WindowBehavior.cs" />
     <Compile Include="WPF\WpfExtensions.cs" />
   </ItemGroup>
@@ -110,6 +114,12 @@
       <LastGenOutput>NetworkStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Network\NetworkStrings.ru.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="WPF\MessageWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

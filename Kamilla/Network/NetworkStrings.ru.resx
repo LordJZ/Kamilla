@@ -147,4 +147,13 @@
   <data name="Protocol_Default" xml:space="preserve">
     <value>Протокол по-умолчанию</value>
   </data>
+  <data name="BytesRead" xml:space="preserve">
+    <value>{0?plural-ru:Прочитан:Прочитано:Прочитано} {0} {0?plural-ru:байт:байта:байт} из {1}</value>
+  </data>
+  <data name="ParserClass" xml:space="preserve">
+    <value>Парсер: {0}</value>
+  </data>
+  <data name="ParserException" xml:space="preserve">
+    <value>Ошибка в парсере:</value>
+  </data>
 </root>

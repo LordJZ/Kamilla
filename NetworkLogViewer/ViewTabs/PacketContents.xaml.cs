@@ -30,7 +30,6 @@ namespace NetworkLogViewer.ViewTabs
 
         void IViewTab.Reset()
         {
-            ui_tbMain.Clear();
             this.IsFilled = false;
         }
 

@@ -145,6 +145,15 @@
     <value>KRPD v2</value>
   </data>
   <data name="Protocol_Default" xml:space="preserve">
-    <value>Default</value>
+    <value>Default Protocol</value>
+  </data>
+  <data name="BytesRead" xml:space="preserve">
+    <value>{0} out of {1} {1?plural-en:byte:bytes} read</value>
+  </data>
+  <data name="ParserClass" xml:space="preserve">
+    <value>Parser: {0}</value>
+  </data>
+  <data name="ParserException" xml:space="preserve">
+    <value>Exception in parser:</value>
   </data>
 </root>

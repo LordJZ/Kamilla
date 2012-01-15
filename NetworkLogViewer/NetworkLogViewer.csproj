@@ -101,6 +101,9 @@
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
     <Compile Include="ViewerItemCollection.cs" />
+    <Compile Include="ViewTabs\ImageContents.xaml.cs">
+      <DependentUpon>ImageContents.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewTabs\PacketContents.xaml.cs">
       <DependentUpon>PacketContents.xaml</DependentUpon>
     </Compile>
@@ -153,6 +156,10 @@
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ViewTabs\ImageContents.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ViewTabs\PacketContents.xaml">
       <SubType>Designer</SubType>

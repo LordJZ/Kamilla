@@ -41,10 +41,66 @@ namespace NetworkLogViewer
         #region .ctor
         public MainWindow()
         {
-            InitializeComponent();
+            UICulture.Initialize();
+            UICulture.UICultureChanged += new EventHandler(UICulture_UICultureChanged);
 
             App.InitializeConsole();
-            InitializeSkins();
+
+            InitializeComponent();
+
+            // Perform operations that alter UI here
+            {
+                // Use Minimized as special value
+                var stateNotSet = WindowState.Minimized;
+                var state = Configuration.GetValue("Window State", stateNotSet);
+
+                if (state != WindowState.Maximized)
+                {
+                    var screenHeight = SystemParameters.PrimaryScreenHeight;
+                    var screenWidth = SystemParameters.PrimaryScreenWidth;
+                    var height = Configuration.GetValue("Window Height", this.Height);
+                    var width = Configuration.GetValue("Window Width", this.Width);
+
+                    if (width / screenWidth > 0.8)
+                        width = screenWidth * 0.8;
+
+                    if (height / screenHeight > 0.8)
+                        height = screenHeight * 0.8;
+
+                    this.Width = width;
+                    this.Height = height;
+
+                    var left = Math.Max(Configuration.GetValue("Window Left", this.Left), 0.0);
+                    var top = Math.Max(Configuration.GetValue("Window Top", this.Top), 0.0);
+
+                    if (left != 0.0 && top != 0.0)
+                    {
+                        if (left + width > screenWidth)
+                            left = screenWidth - width;
+
+                        if (top + height > screenHeight)
+                            top = screenHeight - top;
+
+                        this.Left = left;
+                        this.Top = top;
+                    }
+                }
+
+                if (state != stateNotSet)
+                    this.WindowState = state;
+
+                int val = Configuration.GetValue("Number of Views", 2);
+                this.SetNViews(val);
+
+                var result = Configuration.GetValue("Vertical Splitter", (double[])null);
+                if (result != null && result.Length == 2)
+                {
+                    this.VerticalGrid.RowDefinitions[1].Height = new GridLength(result[0], GridUnitType.Star);
+                    this.VerticalGrid.RowDefinitions[2].Height = new GridLength(result[1], GridUnitType.Star);
+                }
+
+                InitializeSkins();
+            }
 
             // Command Bindings
             this.CommandBindings.AddRange(new[] {
@@ -83,6 +139,7 @@ namespace NetworkLogViewer
             this.ui_readingWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.ui_readingWorker_RunWorkerCompleted);
 
             this.ProtocolChanged += new ProtocolChangedEventHandler(MainWindow_ProtocolChanged);
+            this.NetworkLogChanged += new NetworkLogChangedEventHandler(MainWindow_NetworkLogChanged);
 
             m_items = new ViewerItemCollection();
             m_items.ItemQueried += new ViewerItemEventHandler(m_items_ItemQueried);
@@ -97,11 +154,77 @@ namespace NetworkLogViewer
         }
         #endregion
 
+        #region Languages
+        static CultureInfo[] s_supportedCultures = new[]
+        {
+            CultureInfo.GetCultureInfo("en"),
+            CultureInfo.GetCultureInfo("ru"),
+        };
+
+        void InitializeLanguages()
+        {
+            this.ThreadSafe(_ =>
+            {
+                foreach (var culture in s_supportedCultures)
+                {
+                    var item = new MenuItem();
+
+                    item.Header = culture.EnglishName;
+                    item.Tag = culture;
+                    item.Click += new RoutedEventHandler(LanguageItem_Click);
+
+                    ui_miLanguage.Items.Add(item);
+                }
+
+                SetLanguageItemForCulture(UICulture.Culture);
+            });
+        }
+
+        void LanguageItem_Click(object sender, RoutedEventArgs e)
+        {
+            var item = (MenuItem)sender;
+            var culture = (CultureInfo)item.Tag;
+
+            UICulture.Culture = culture;
+            // Items modified in event handler
+        }
+
+        void UICulture_UICultureChanged(object sender, EventArgs e)
+        {
+            SetLanguageItemForCulture(UICulture.Culture);
+        }
+
+        void SetLanguageItemForCulture(CultureInfo culture)
+        {
+            var code = culture.Name.Substring(0, 2);
+            foreach (MenuItem item in ui_miLanguage.Items)
+                item.IsChecked = ((CultureInfo)item.Tag).Name.SubstringEquals(0, code);
+        }
+        #endregion
+
         #region INetworkLogViewer Implementation
         Protocol m_currentProtocol;
         NetworkLog m_currentLog;
         int m_packetItr;
         readonly ViewerItemCollection m_items;
+
+        /// <summary>
+        /// Retrieves an object that contains style information. This value can be null.
+        /// </summary>
+        object INetworkLogViewer.Style { get { return this.Style; } }
+
+        /// <summary>
+        /// Occurs when <see fref="NetworkLogViewer.MainWindow.Style"/> property changes.
+        /// </summary>
+        public event EventHandler StyleChanged;
+
+        protected override void OnStyleChanged(Style oldStyle, Style newStyle)
+        {
+            base.OnStyleChanged(oldStyle, newStyle);
+
+            if (this.StyleChanged != null)
+                this.StyleChanged(this, EventArgs.Empty);
+        }
 
         /// <summary>
         /// Gets the collection of items currently loaded.
@@ -128,8 +251,8 @@ namespace NetworkLogViewer
                     m_currentProtocol = value;
                     m_currentProtocol.Load(this);
 
-                    if (ProtocolChanged != null)
-                        ProtocolChanged(this, new ProtocolChangedEventArgs(old, value));
+                    if (this.ProtocolChanged != null)
+                        this.ProtocolChanged(this, new ProtocolChangedEventArgs(old, value));
                 });
             }
         }
@@ -291,7 +414,22 @@ namespace NetworkLogViewer
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-            // TODO: Save Settings Here
+            ui_readingWorker.CancelAsync();
+            ui_parsingWorker.CancelAsync();
+
+            Configuration.SuspendSaving();
+            Configuration.SetValue("Number of Views", m_currentNViews);
+            this.SaveCurrentViews();
+            Configuration.SetValue("Vertical Splitter", new[] {
+                this.VerticalGrid.RowDefinitions[1].Height.Value,
+                this.VerticalGrid.RowDefinitions[2].Height.Value,
+            });
+            Configuration.SetValue("Window State", this.WindowState);
+            Configuration.SetValue("Window Height", this.Height);
+            Configuration.SetValue("Window Width", this.Width);
+            Configuration.SetValue("Window Left", this.Left);
+            Configuration.SetValue("Window Top", this.Top);
+            Configuration.ResumeSaving();
 
             App.ConsoleWindow.m_closing = true;
             App.ConsoleWindow.Close();
@@ -311,7 +449,16 @@ namespace NetworkLogViewer
         string m_currentFile;
         void OpenFile(string filename)
         {
-            var log = NetworkLogFactory.GetNetworkLog(filename);
+            NetworkLog log;
+            try
+            {
+                log = NetworkLogFactory.GetNetworkLog(filename);
+            }
+            catch
+            {
+                MessageWindow.Show(this, "FAIL!", "FAIL!");
+                return;
+            }
             if (log == null)
                 throw new NotImplementedException("Select Network Log window is not implemented");
 
@@ -325,6 +472,8 @@ namespace NetworkLogViewer
 
             if (log == null)
                 throw new ArgumentNullException("log");
+
+            this.CloseFile();
 
             m_currentFile = filename;
             this.CurrentLog = log;
@@ -347,6 +496,8 @@ namespace NetworkLogViewer
 
         private void ui_readingWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            UICulture.Initialize();
+
             var sw = Stopwatch.StartNew();
 
             this.CurrentLog.OpenForReading(m_currentFile);
@@ -360,7 +511,14 @@ namespace NetworkLogViewer
 
         private void ui_readingWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            this.CurrentLog.CloseStream();
             LoadingStatePop();
+        }
+
+        void MainWindow_NetworkLogChanged(object sender, NetworkLogChangedEventArgs e)
+        {
+            var newLog = e.NewLog;
+            ui_sbiNetworkLog.Content = newLog != null ? newLog.Name : Strings.NoNetworkLog;
         }
         #endregion
 
@@ -373,13 +531,13 @@ namespace NetworkLogViewer
 
         private void ui_loadingWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            UICulture.Initialize();
+
             TypeManager.Initialize();
             ProtocolManager.Initialize();
-            InitializeProtocols();
             NetworkLogFactory.Initialize();
-
-            int val = Configuration.GetValue("Number of Views", 2);
-            this.ThreadSafe(_ => _.SetNViews(val));
+            InitializeProtocols();
+            InitializeLanguages();
         }
 
         private void ui_loadingWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -434,6 +592,8 @@ namespace NetworkLogViewer
                 itrItem.IsChecked = itrItem.Tag == null ? newProtocol == null :
                     newProtocolType == ((ProtocolWrapper)itrItem.Tag).Type;
 
+            ui_sbiProtocol.Content = newProtocol != null ? newProtocol.Name : Strings.NoProtocol;
+
             if (newProtocol != null)
             {
                 var typename = newProtocolType.Name;
@@ -487,45 +647,41 @@ namespace NetworkLogViewer
 
         void InitializeSkins()
         {
-            this.ThreadSafe(w =>
+            m_skins = new Dictionary<string, Style>()
             {
-                m_skins = new Dictionary<string, Style>()
-                {
-                    { "KamillaStyle", (Style)this.FindResource("KamillaStyle") },
-                    { "Windows", null },
-                };
+                { "KamillaStyle", (Style)this.FindResource("KamillaStyle") },
+                { "Windows", null },
+            };
 
-                var resources = Strings.ResourceManager;
-                var culture = CultureInfo.CurrentUICulture;
+            var resources = Strings.ResourceManager;
+            var culture = CultureInfo.CurrentUICulture;
 
-                const string defaultSkin = "KamillaStyle";
+            int i = 0;
+            foreach (var skin in m_skins)
+            {
+                var item = new MenuItem();
+                item.Header = resources.GetString("Skin_" + skin.Key, culture);
+                item.Tag = skin.Key;
+                item.Click += new RoutedEventHandler(skinItem_Click);
 
-                int i = 0;
-                foreach (var skin in m_skins)
-                {
-                    var item = new MenuItem();
-                    item.Header = resources.GetString("Skin_" + skin.Key, culture);
-                    item.Tag = skin.Key;
-                    item.Click += new RoutedEventHandler(skinItem_Click);
+                if (skin.Key == "Windows")
+                    item.IsChecked = true;
 
-                    if (skin.Key == defaultSkin)
-                        item.IsChecked = true;
+                ui_miSkins.Items.Add(item);
 
-                    ui_miSkins.Items.Add(item);
+                ++i;
+            }
 
-                    ++i;
-                }
-
-                var usedSkin = Configuration.GetValue("Skin", defaultSkin);
-                try
-                {
-                    SetSkin(usedSkin);
-                }
-                catch
-                {
-                    SetSkin(defaultSkin);
-                }
-            });
+            var defaultStyle = "KamillaStyle";
+            var usedSkin = Configuration.GetValue("Skin", defaultStyle);
+            try
+            {
+                SetSkin(usedSkin);
+            }
+            catch
+            {
+                SetSkin(defaultStyle);
+            }
         }
 
         void skinItem_Click(object sender, RoutedEventArgs e)
@@ -566,7 +722,8 @@ namespace NetworkLogViewer
         static Type[] s_viewTabTypes = new[]
         {
             typeof(PacketContents),
-            typeof(ParsedText)
+            typeof(ParsedText),
+            typeof(ImageContents),
         };
 
         int m_currentNViews;
@@ -604,11 +761,10 @@ namespace NetworkLogViewer
 
             Array.Resize(ref distances, nViews);
 
-            double totalLength = this.ViewsGrid.ActualWidth;
             for (int i = 0; i < nViews; ++i)
             {
                 var column = new ColumnDefinition();
-                column.Width = new GridLength(totalLength * distances[i], GridUnitType.Star);
+                column.Width = new GridLength(distances[i], GridUnitType.Star);
                 column.MinWidth = 50.0;
                 ViewsGrid.ColumnDefinitions.Add(column);
             }
@@ -703,10 +859,9 @@ namespace NetworkLogViewer
             var nViews = m_currentNViews;
             var distances = new double[nViews];
             var selectedTabs = new int[nViews];
-            double totalLength = this.ViewsGrid.ActualWidth;
 
             for (int i = 0; i < nViews; i++)
-                distances[i] = this.ViewsGrid.ColumnDefinitions[i].Width.Value / totalLength;
+                distances[i] = this.ViewsGrid.ColumnDefinitions[i].Width.Value;
 
             for (int i = 0; i < nViews; i++)
                 selectedTabs[i] = m_currentViews[i].SelectedIndex;

@@ -58,6 +58,17 @@ namespace Kamilla
         public static extern uint GetWindowLong(IntPtr hWnd, int nIndex);
         [DllImport("user32.dll")]
         public static extern int SetWindowLong(IntPtr hWnd, int nIndex, uint dwNewLong);
+        /// <summary>
+        /// Deletes a GDI object.
+        /// </summary>
+        /// <param name="hObject">
+        /// The GDI object to delete.
+        /// </param>
+        /// <returns>
+        /// true if the deletion succeded; otherwise, false.
+        /// </returns>
+        [DllImport("gdi32.dll")]
+        public static extern bool DeleteObject(IntPtr hObject);
 
         public static void SuspendDrawing(IntPtr hWnd)
         {

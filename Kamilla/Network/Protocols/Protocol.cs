@@ -40,6 +40,21 @@ namespace Kamilla.Network.Protocols
         /// </summary>
         public abstract int[] ListViewColumnWidths { get; }
 
+        protected abstract PacketParser InternalCreateParser(ViewerItem item);
+
+        public void CreateParser(ViewerItem item)
+        {
+            if (item == null)
+                throw new ArgumentNullException("item");
+
+            var parser = this.InternalCreateParser(item);
+            if (parser == null)
+                parser = new UndefinedPacketParser();
+
+            parser.Item = item;
+            item.Parser = parser;
+        }
+
         /// <summary>
         /// When implemented in a derived class,
         /// loads the current instance of <see cref="Kamilla.Network.Protocols.Protocol"/>

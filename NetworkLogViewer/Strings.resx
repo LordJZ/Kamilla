@@ -120,6 +120,9 @@
   <data name="LoadingFile" xml:space="preserve">
     <value>Loading file:\r\n\r\n{0}</value>
   </data>
+  <data name="Menu_About" xml:space="preserve">
+    <value>About Network Log Viewer...</value>
+  </data>
   <data name="Menu_CloseFile" xml:space="preserve">
     <value>Close File</value>
   </data>
@@ -131,6 +134,12 @@
   </data>
   <data name="Menu_File" xml:space="preserve">
     <value>File</value>
+  </data>
+  <data name="Menu_Help" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="Menu_LanguageWEn" xml:space="preserve">
+    <value>Language</value>
   </data>
   <data name="Menu_NullProtocol" xml:space="preserve">
     <value>(No Protocol)</value>
@@ -147,6 +156,9 @@
   <data name="Menu_SaveAs" xml:space="preserve">
     <value>Save As</value>
   </data>
+  <data name="Menu_SaveEllipsis" xml:space="preserve">
+    <value>Save...</value>
+  </data>
   <data name="Menu_Skins" xml:space="preserve">
     <value>Skins</value>
   </data>
@@ -158,6 +170,15 @@
   </data>
   <data name="NetworkLogViewer_Title" xml:space="preserve">
     <value>Network Log Viewer</value>
+  </data>
+  <data name="NoData" xml:space="preserve">
+    <value>(No Data)</value>
+  </data>
+  <data name="NoNetworkLog" xml:space="preserve">
+    <value>No Network Log</value>
+  </data>
+  <data name="NoProtocol" xml:space="preserve">
+    <value>No Protocol</value>
   </data>
   <data name="Skin_KamillaStyle" xml:space="preserve">
     <value>Kamilla Style</value>

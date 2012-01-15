@@ -16,6 +16,11 @@ namespace Kamilla.Network.Viewing
         IntPtr WindowHandle { get; }
 
         /// <summary>
+        /// Retrieves an object that contains style information. This value can be null.
+        /// </summary>
+        object Style { get; }
+
+        /// <summary>
         /// Gets the currently viewed <see cref="Kamilla.Network.Logging.NetworkLog"/>. This value can be null.
         /// </summary>
         NetworkLog CurrentLog { get; }
@@ -31,12 +36,19 @@ namespace Kamilla.Network.Viewing
         IEnumerable<ViewerItem> Items { get; }
 
         /// <summary>
-        /// Occurs when the <see href="Kamilla.Network.Viewing.CurrentProtocol"/> property changes.
+        /// Occurs when <see href="Kamilla.Network.Viewing.INetworkLogViewer.Style"/> property changes.
+        /// </summary>
+        event EventHandler StyleChanged;
+
+        /// <summary>
+        /// Occurs when the <see href="Kamilla.Network.Viewing.INetworkLogViewer.CurrentProtocol"/>
+        /// property changes.
         /// </summary>
         event ProtocolChangedEventHandler ProtocolChanged;
 
         /// <summary>
-        /// Occurs when the <see href="Kamilla.Network.Viewing.CurrentLog"/> property changes.
+        /// Occurs when the <see href="Kamilla.Network.Viewing.INetworkLogViewer.CurrentLog"/>
+        /// property changes.
         /// </summary>
         event NetworkLogChangedEventHandler NetworkLogChanged;
 

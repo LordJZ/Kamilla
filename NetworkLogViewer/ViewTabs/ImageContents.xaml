@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="NetworkLogViewer.ViewTabs.ImageContents"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:System="clr-namespace:System;assembly=mscorlib"
+             xmlns:viewer="clr-namespace:NetworkLogViewer"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="539">
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="25" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="80"/>
+      <ColumnDefinition Width="100"/>
+    </Grid.ColumnDefinitions>
+
+    <Image Grid.Row="1" Grid.ColumnSpan="3" Name="ui_image" Stretch="Uniform" StretchDirection="DownOnly" />
+    <TextBlock Grid.Row="0" Grid.Column="0" Margin="8,0" Name="ui_tbText" VerticalAlignment="Center" />
+    <ComboBox Grid.Row="0" Grid.Column="1" Margin="2,2,1,2" IsEnabled="false" Name="ui_cbFormat">
+      <ComboBoxItem Content="PNG" IsSelected="True" />
+      <ComboBoxItem Content="JPEG" />
+      <ComboBoxItem Content="GIF" />
+      <ComboBoxItem Content="BMP" />
+    </ComboBox>
+    <Button Grid.Row="0" IsEnabled="false" Grid.Column="2" Margin="1,2,2,2" Name="ui_btnSave" Content="{x:Static viewer:Strings.Menu_SaveEllipsis}" />
+  </Grid>
+</UserControl>

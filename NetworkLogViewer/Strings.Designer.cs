@@ -70,6 +70,15 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to About Network Log Viewer....
+        /// </summary>
+        public static string Menu_About {
+            get {
+                return ResourceManager.GetString("Menu_About", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close File.
         /// </summary>
         public static string Menu_CloseFile {
@@ -102,6 +111,24 @@ namespace NetworkLogViewer {
         public static string Menu_File {
             get {
                 return ResourceManager.GetString("Menu_File", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Help.
+        /// </summary>
+        public static string Menu_Help {
+            get {
+                return ResourceManager.GetString("Menu_Help", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language.
+        /// </summary>
+        public static string Menu_LanguageWEn {
+            get {
+                return ResourceManager.GetString("Menu_LanguageWEn", resourceCulture);
             }
         }
         
@@ -151,6 +178,15 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Save....
+        /// </summary>
+        public static string Menu_SaveEllipsis {
+            get {
+                return ResourceManager.GetString("Menu_SaveEllipsis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Skins.
         /// </summary>
         public static string Menu_Skins {
@@ -183,6 +219,33 @@ namespace NetworkLogViewer {
         public static string NetworkLogViewer_Title {
             get {
                 return ResourceManager.GetString("NetworkLogViewer_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (No Data).
+        /// </summary>
+        public static string NoData {
+            get {
+                return ResourceManager.GetString("NoData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Network Log.
+        /// </summary>
+        public static string NoNetworkLog {
+            get {
+                return ResourceManager.GetString("NoNetworkLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Protocol.
+        /// </summary>
+        public static string NoProtocol {
+            get {
+                return ResourceManager.GetString("NoProtocol", resourceCulture);
             }
         }
         
