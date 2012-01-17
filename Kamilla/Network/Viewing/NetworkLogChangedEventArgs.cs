@@ -4,7 +4,7 @@ using Kamilla.Network.Logging;
 namespace Kamilla.Network.Viewing
 {
     /// <summary>
-    /// Handles <see href="Kamilla.Network.Viewing.INetworkLogViewer.NetworkLogChanged"/> event.
+    /// Handles <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase.NetworkLogChanged"/> event.
     /// </summary>
     /// <param name="sender">
     /// The current <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase"/>.
@@ -17,7 +17,7 @@ namespace Kamilla.Network.Viewing
 
     /// <summary>
     /// Contains data related to
-    /// <see href="Kamilla.Network.Viewing.INetworkLogViewer.NetworkLogChanged"/> event.
+    /// <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase.NetworkLogChanged"/> event.
     /// </summary>
     public sealed class NetworkLogChangedEventArgs : EventArgs
     {

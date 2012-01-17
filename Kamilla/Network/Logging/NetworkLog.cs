@@ -79,10 +79,10 @@ namespace Kamilla.Network.Logging
         /// </summary>
         /// <exception cref="System.InvalidOperationException">
         /// The current <see cref="Kamilla.Network.Logging.NetworkLog"/>
-        /// was opened in <see href="Kamilla.Network.Logging.NetworkLogMode.Writing"/> mode.
+        /// was opened in <see cref="Kamilla.Network.Logging.NetworkLogMode.Writing"/> mode.
         /// -or-
         /// The accessor is set and the current <see cref="Kamilla.Network.Logging.NetworkLog"/>
-        /// was opened in <see href="Kamilla.Network.Logging.NetworkLogMode.Reading"/> mode.
+        /// was opened in <see cref="Kamilla.Network.Logging.NetworkLogMode.Reading"/> mode.
         /// </exception>
         /// <exception cref="System.ArgumentOutOfRangeException">
         /// The accessor is set and the value is less than the number of packets
@@ -129,7 +129,7 @@ namespace Kamilla.Network.Logging
         /// </summary>
         /// <exception cref="System.InvalidOperationException">
         /// The current <see cref="Kamilla.Network.Logging.NetworkLog"/>
-        /// was opened in <see href="Kamilla.Network.Logging.NetworkLogMode.Writing"/> mode.
+        /// was opened in <see cref="Kamilla.Network.Logging.NetworkLogMode.Writing"/> mode.
         /// </exception>
         /// <exception cref="System.ObjectDisposedException">
         /// The current instance of <see cref="Kamilla.Network.Logging.NetworkLog"/> is disposed.
@@ -159,7 +159,7 @@ namespace Kamilla.Network.Logging
         /// </summary>
         /// <exception cref="System.InvalidOperationException">
         /// The current <see cref="Kamilla.Network.Logging.NetworkLog"/>
-        /// was opened in <see href="Kamilla.Network.Logging.NetworkLogMode.Writing"/> mode.
+        /// was opened in <see cref="Kamilla.Network.Logging.NetworkLogMode.Writing"/> mode.
         /// </exception>
         /// <exception cref="System.ObjectDisposedException">
         /// The current instance of <see cref="Kamilla.Network.Logging.NetworkLog"/> is disposed.
@@ -207,14 +207,14 @@ namespace Kamilla.Network.Logging
         /// </exception>
         /// <exception cref="System.InvalidOperationException">
         /// The current <see cref="Kamilla.Network.Logging.NetworkLog"/>
-        /// was opened in <see href="Kamilla.Network.Logging.NetworkLogMode.Reading"/> mode.
+        /// was opened in <see cref="Kamilla.Network.Logging.NetworkLogMode.Reading"/> mode.
         /// </exception>
         /// <exception cref="System.IO.IOException">
-        /// The mode is <see href="Kamilla.Network.Logging.NetworkLogMode.Writing"/>
+        /// The mode is <see cref="Kamilla.Network.Logging.NetworkLogMode.Writing"/>
         /// and an I/O exception occured while writing packet.
         /// </exception>
         /// <exception cref="System.ObjectDisposedException">
-        /// The mode is <see href="Kamilla.Network.Logging.NetworkLogMode.Writing"/> and
+        /// The mode is <see cref="Kamilla.Network.Logging.NetworkLogMode.Writing"/> and
         /// the underlying <see cref="System.IO.Stream"/> is closed.
         /// </exception>
         public void AddPacket(Packet packet)
@@ -259,7 +259,7 @@ namespace Kamilla.Network.Logging
         /// </param>
         /// <exception cref="System.InvalidOperationException">
         /// The current <see cref="Kamilla.Network.Logging.NetworkLog"/>
-        /// was opened in <see href="Kamilla.Network.Logging.NetworkLogMode.Writing"/> mode.
+        /// was opened in <see cref="Kamilla.Network.Logging.NetworkLogMode.Writing"/> mode.
         /// </exception>
         /// <exception cref="System.ArgumentNullException">
         /// packet is null.
@@ -282,7 +282,7 @@ namespace Kamilla.Network.Logging
         }
 
         /// <summary>
-        /// Fires the <see href="Kamilla.Network.Logging.NetworkLog.PacketAdded"/> event.
+        /// Fires the <see cref="Kamilla.Network.Logging.NetworkLog.PacketAdded"/> event.
         /// </summary>
         /// <param name="packet">
         /// The <see cref="Kamilla.Network.Packet"/> that was added to
@@ -320,7 +320,7 @@ namespace Kamilla.Network.Logging
         /// </exception>
         /// <exception cref="System.InvalidOperationException">
         /// The current <see cref="Kamilla.Network.Logging.NetworkLog"/>
-        /// was not opened in <see href="Kamilla.Network.Logging.NetworkLogMode.Writing"/> mode.
+        /// was not opened in <see cref="Kamilla.Network.Logging.NetworkLogMode.Writing"/> mode.
         /// -or-
         /// A stream is already opened.
         /// </exception>
@@ -362,7 +362,7 @@ namespace Kamilla.Network.Logging
         /// </exception>
         /// <exception cref="System.InvalidOperationException">
         /// The current <see cref="Kamilla.Network.Logging.NetworkLog"/>
-        /// was not opened in <see href="Kamilla.Network.Logging.NetworkLogMode.Writing"/> mode.
+        /// was not opened in <see cref="Kamilla.Network.Logging.NetworkLogMode.Writing"/> mode.
         /// -or-
         /// A stream is already opened.
         /// </exception>
@@ -395,13 +395,13 @@ namespace Kamilla.Network.Logging
         /// </summary>
         /// <exception cref="System.InvalidOperationException">
         /// The current <see cref="Kamilla.Network.Logging.NetworkLog"/>
-        /// was not opened in <see href="Kamilla.Network.Logging.NetworkLogMode.Writing"/> mode.
+        /// was not opened in <see cref="Kamilla.Network.Logging.NetworkLogMode.Writing"/> mode.
         /// </exception>
         /// <exception cref="System.IO.IOException">
         /// An I/O exception occured.
         /// </exception>
         /// <exception cref="System.ObjectDisposedException">
-        /// The mode is <see href="Kamilla.Network.Logging.NetworkLogMode.Writing"/> and
+        /// The mode is <see cref="Kamilla.Network.Logging.NetworkLogMode.Writing"/> and
         /// the underlying <see cref="System.IO.Stream"/> is closed.
         /// </exception>
         public void WriteMetaData()
@@ -453,7 +453,7 @@ namespace Kamilla.Network.Logging
         /// </exception>
         /// <exception cref="System.InvalidOperationException">
         /// The current <see cref="Kamilla.Network.Logging.NetworkLog"/>
-        /// was not opened in <see href="Kamilla.Network.Logging.NetworkLogMode.Abstract"/> mode.
+        /// was not opened in <see cref="Kamilla.Network.Logging.NetworkLogMode.Abstract"/> mode.
         /// </exception>
         public void Save(string filename)
         {
@@ -492,7 +492,7 @@ namespace Kamilla.Network.Logging
         /// </exception>
         /// <exception cref="System.InvalidOperationException">
         /// The current <see cref="Kamilla.Network.Logging.NetworkLog"/>
-        /// was not opened in <see href="Kamilla.Network.Logging.NetworkLogMode.Abstract"/> mode.
+        /// was not opened in <see cref="Kamilla.Network.Logging.NetworkLogMode.Abstract"/> mode.
         /// </exception>
         public void Save(Stream stream)
         {
@@ -538,7 +538,7 @@ namespace Kamilla.Network.Logging
         /// </exception>
         /// <exception cref="System.InvalidOperationException">
         /// The current <see cref="Kamilla.Network.Logging.NetworkLog"/>
-        /// was not opened in <see href="Kamilla.Network.Logging.NetworkLogMode.Reading"/> mode.
+        /// was not opened in <see cref="Kamilla.Network.Logging.NetworkLogMode.Reading"/> mode.
         /// -or-
         /// A stream is already opened.
         /// -or-
@@ -589,7 +589,7 @@ namespace Kamilla.Network.Logging
         /// </exception>
         /// <exception cref="System.InvalidOperationException">
         /// The current <see cref="Kamilla.Network.Logging.NetworkLog"/>
-        /// was not opened in <see href="Kamilla.Network.Logging.NetworkLogMode.Reading"/> mode.
+        /// was not opened in <see cref="Kamilla.Network.Logging.NetworkLogMode.Reading"/> mode.
         /// -or-
         /// A stream is already opened.
         /// -or-
@@ -644,7 +644,7 @@ namespace Kamilla.Network.Logging
         /// </exception>
         /// <exception cref="System.InvalidOperationException">
         /// The current <see cref="Kamilla.Network.Logging.NetworkLog"/>
-        /// was not opened in <see href="Kamilla.Network.Logging.NetworkLogMode.Reading"/> mode.
+        /// was not opened in <see cref="Kamilla.Network.Logging.NetworkLogMode.Reading"/> mode.
         /// </exception>
         /// <exception cref="System.ObjectDisposedException">
         /// The underlying <see cref="System.IO.Stream"/> is closed.
@@ -674,7 +674,7 @@ namespace Kamilla.Network.Logging
         /// </exception>
         /// <exception cref="System.InvalidOperationException">
         /// The current <see cref="Kamilla.Network.Logging.NetworkLog"/>
-        /// was not opened in <see href="Kamilla.Network.Logging.NetworkLogMode.Reading"/> mode.
+        /// was not opened in <see cref="Kamilla.Network.Logging.NetworkLogMode.Reading"/> mode.
         /// </exception>
         /// <exception cref="System.ObjectDisposedException">
         /// The underlying <see cref="System.IO.Stream"/> is closed.

@@ -9,11 +9,11 @@ namespace Kamilla.Network.Viewing
     /// Provides an interface for plugins to the
     /// <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase"/>.
     /// </summary>
-    public interface INetworkLogViewerPlugin
+    public interface NetworkLogViewerBasePlugin
     {
         /// <summary>
         /// Loads the current instance of
-        /// <see cref="Kamilla.Network.Viewing.INetworkLogViewerPlugin"/>.
+        /// <see cref="Kamilla.Network.Viewing.NetworkLogViewerBasePlugin"/>.
         /// </summary>
         /// <param name="viewer">
         /// The <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase"/>
@@ -30,7 +30,7 @@ namespace Kamilla.Network.Viewing
 
         /// <summary>
         /// Unloads and releases all resources used by the current instance of
-        /// <see cref="Kamilla.Network.Viewing.INetworkLogViewerPlugin"/>.
+        /// <see cref="Kamilla.Network.Viewing.NetworkLogViewerBasePlugin"/>.
         /// </summary>
         void Unload();
     }

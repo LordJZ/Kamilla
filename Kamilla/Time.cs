@@ -65,7 +65,7 @@ namespace Kamilla
         /// <see cref="System.DateTime"/> converted from UTC Unix Epoch.
         /// </returns>
         /// <exception cref="System.ArgumentOutOfRangeException">
-        /// The resulting <see cref="System.DateTime"/> is less than <see href="System.DateTime.MinValue"/> or greater than <see href="System.DateTime.MaxValue"/>.
+        /// The resulting <see cref="System.DateTime"/> is less than <see cref="System.DateTime.MinValue"/> or greater than <see cref="System.DateTime.MaxValue"/>.
         /// </exception>
         public static DateTime AsUnixTime(this uint unixTimeUtc)
         {
@@ -85,7 +85,7 @@ namespace Kamilla
         /// unixTimeUtc is negative.
         /// </exception>
         /// <exception cref="System.ArgumentOutOfRangeException">
-        /// The resulting <see cref="System.DateTime"/> is less than <see href="System.DateTime.MinValue"/> or greater than <see href="System.DateTime.MaxValue"/>.
+        /// The resulting <see cref="System.DateTime"/> is less than <see cref="System.DateTime.MinValue"/> or greater than <see cref="System.DateTime.MaxValue"/>.
         /// </exception>
         public static DateTime AsUnixTime(this long unixTimeUtc)
         {

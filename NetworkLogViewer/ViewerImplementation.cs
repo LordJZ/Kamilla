@@ -52,12 +52,6 @@ namespace NetworkLogViewer
             m_items.Update(item);
         }
 
-        protected override void InternalNotifyParsingDone(PacketParser parser)
-        {
-            if (this.ItemParsingDone != null)
-                this.ItemParsingDone(this, new ViewerItemEventArgs(parser.Item));
-        }
-
         internal void SetProtocol(Protocol value)
         {
             if (m_currentProtocol == value)
@@ -141,12 +135,12 @@ namespace NetworkLogViewer
         public override IntPtr WindowHandle { get { return m_interopHelper.Handle; } }
 
         /// <summary>
-        /// Occurs when <see href="NetworkLogViewer.MainWindow.CurrentProtocol"/> changes.
+        /// Occurs when <see cref="NetworkLogViewer.MainWindow.CurrentProtocol"/> changes.
         /// </summary>
         public override event ProtocolChangedEventHandler ProtocolChanged;
 
         /// <summary>
-        /// Occurs when the <see href="NetworkLogViewer.MainWindow.CurrentLog"/> property changes.
+        /// Occurs when the <see cref="NetworkLogViewer.MainWindow.CurrentLog"/> property changes.
         /// </summary>
         public override event NetworkLogChangedEventHandler NetworkLogChanged;
 
@@ -159,12 +153,6 @@ namespace NetworkLogViewer
         /// Occurs when a <see cref="Kamilla.Network.Viewing.ViewerItem"/> is added.
         /// </summary>
         public override event ViewerItemEventHandler ItemAdded;
-
-        /// <summary>
-        /// Occurs when interpreting of contents of a
-        /// <see cref="Kamilla.Network.Viewing.ViewerItem"/> is finished.
-        /// </summary>
-        public override event ViewerItemEventHandler ItemParsingDone;
         #endregion
     }
 }

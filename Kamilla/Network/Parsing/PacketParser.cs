@@ -13,23 +13,25 @@ namespace Kamilla.Network.Parsing
     /// </summary>
     public abstract class PacketParser
     {
+        internal ViewerItem m_item;
+
         /// <summary>
         /// Gets the <see cref="Kamilla.Network.Viewing.ViewerItem"/> to which
         /// the current <see cref="Kamilla.Network.Parsing.PacketParser"/> is attached.
         /// </summary>
-        public ViewerItem Item { get; internal set; }
+        public ViewerItem Item { get { return m_item; } }
 
         /// <summary>
         /// Exposes access to an underlying <see cref="Kamilla.Network.Packet"/>
         /// of the current <see cref="Kamilla.Network.Parsing.PacketParser"/>.
         /// </summary>
-        public Packet Packet { get { return this.Item.Packet; } }
+        public Packet Packet { get { return m_item.Packet; } }
 
         /// <summary>
         /// Exposes access to an underlying <see cref="Kamilla.Network.Logging.NetworkLog"/>
         /// of the current <see cref="Kamilla.Network.Parsing.PacketParser"/>.
         /// </summary>
-        public NetworkLog Log { get { return this.Item.Log; } }
+        public NetworkLog Log { get { return m_item.Log; } }
 
         /// <summary>
         /// Gets a value indicating whether the current instance
@@ -135,7 +137,7 @@ namespace Kamilla.Network.Parsing
                 this.IsParsed = true;
             }
 
-            this.Item.Viewer.InternalNotifyParsingDone(this);
+            m_item.Viewer.OnParsingDone(m_item);
         }
 
         protected string m_output;

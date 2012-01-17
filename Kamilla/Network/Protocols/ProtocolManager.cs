@@ -122,7 +122,7 @@ namespace Kamilla.Network.Protocols
 
             var basePacketParser = typeof(PacketParser);
             var baseProtocol = typeof(Protocol);
-            var baseViewerPlugin = typeof(INetworkLogViewerPlugin);
+            var baseViewerPlugin = typeof(NetworkLogViewerBasePlugin);
 
             foreach (var type in TypeManager.Types)
             {

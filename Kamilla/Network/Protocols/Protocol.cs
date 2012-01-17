@@ -51,8 +51,8 @@ namespace Kamilla.Network.Protocols
             if (parser == null)
                 parser = new UndefinedPacketParser();
 
-            parser.Item = item;
-            item.Parser = parser;
+            parser.m_item = item;
+            item.m_parser = parser;
         }
 
         /// <summary>

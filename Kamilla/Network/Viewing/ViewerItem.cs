@@ -14,7 +14,7 @@ namespace Kamilla.Network.Viewing
         NetworkLogViewerBase m_viewer;
         NetworkLog m_log;
         Packet m_packet;
-        PacketParser m_parser;
+        internal PacketParser m_parser;
         object[] m_data;
         int m_index;
 
@@ -39,7 +39,6 @@ namespace Kamilla.Network.Viewing
         public PacketParser Parser
         {
             get { return m_parser; }
-            set { m_parser = value; }
         }
 
         /// <summary>

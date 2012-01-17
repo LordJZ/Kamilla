@@ -5,7 +5,7 @@ namespace Kamilla.Network.Viewing
 {
     /// <summary>
     /// Indicates <see cref="Kamilla.Network.Protocols.Protocol"/>
-    /// that the current <see cref="Kamilla.Network.Viewing.INetworkLogViewerPlugin"/> can handle.
+    /// that the current <see cref="Kamilla.Network.Viewing.NetworkLogViewerBasePlugin"/> can handle.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
     public sealed class NetworkLogViewerPluginAttribute : Attribute
@@ -18,7 +18,7 @@ namespace Kamilla.Network.Viewing
         /// </summary>
         /// <param name="protocol">
         /// <see cref="System.Type"/> of <see cref="Kamilla.Network.Protocols.Protocol"/>
-        /// that the underlying <see cref="Kamilla.Network.Viewing.INetworkLogViewerPlugin"/> can handle.
+        /// that the underlying <see cref="Kamilla.Network.Viewing.NetworkLogViewerBasePlugin"/> can handle.
         /// </param>
         /// <exception cref="System.ArgumentNullException">
         /// protocol is null.
@@ -39,7 +39,7 @@ namespace Kamilla.Network.Viewing
 
         /// <summary>
         /// Gets the type of <see cref="Kamilla.Network.Protocols.Protocol"/>
-        /// that the current <see cref="Kamilla.Network.Viewing.INetworkLogViewerPlugin"/> can handle.
+        /// that the current <see cref="Kamilla.Network.Viewing.NetworkLogViewerBasePlugin"/> can handle.
         /// </summary>
         public Type ProtocolType { get { return m_protocol; } }
     }

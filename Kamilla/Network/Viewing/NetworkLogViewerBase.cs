@@ -12,8 +12,30 @@ namespace Kamilla.Network.Viewing
     /// </summary>
     public abstract class NetworkLogViewerBase
     {
-        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        protected internal abstract void InternalNotifyParsingDone(PacketParser parser);
+        /// <summary>
+        /// Fires the <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase.ItemParsingDone"/> event
+        /// with the specified <see cref="Kamilla.Network.Viewing.ViewerItem"/>.
+        /// </summary>
+        /// <param name="item">
+        /// The <see cref="Kamilla.Network.Viewing.ViewerItem"/> whose parsing has finished.
+        /// </param>
+        /// <exception cref="System.ArgumentNullException">
+        /// item is null.
+        /// </exception>
+        /// <exception cref="System.ArgumentException">
+        /// item is invalid.
+        /// </exception>
+        protected internal virtual void OnParsingDone(ViewerItem item)
+        {
+            if (item == null)
+                throw new ArgumentNullException();
+
+            if (item.Viewer != this)
+                throw new ArgumentException();
+
+            if (this.ItemParsingDone != null)
+                this.ItemParsingDone(this, new ViewerItemEventArgs(item));
+        }
 
         /// <summary>
         /// Repaints the specified <see cref="Kamilla.Network.Viewing.ViewerItem"/>.
@@ -31,18 +53,18 @@ namespace Kamilla.Network.Viewing
 
         #region Events
         /// <summary>
-        /// Occurs when <see href="Kamilla.Network.Viewing.INetworkLogViewer.Style"/> property changes.
+        /// Occurs when <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase.Style"/> property changes.
         /// </summary>
         public abstract event EventHandler StyleChanged;
 
         /// <summary>
-        /// Occurs when the <see href="Kamilla.Network.Viewing.INetworkLogViewer.CurrentProtocol"/>
+        /// Occurs when the <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase.CurrentProtocol"/>
         /// property changes.
         /// </summary>
         public abstract event ProtocolChangedEventHandler ProtocolChanged;
 
         /// <summary>
-        /// Occurs when the <see href="Kamilla.Network.Viewing.INetworkLogViewer.CurrentLog"/>
+        /// Occurs when the <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase.CurrentLog"/>
         /// property changes.
         /// </summary>
         public abstract event NetworkLogChangedEventHandler NetworkLogChanged;
@@ -61,7 +83,7 @@ namespace Kamilla.Network.Viewing
         /// Occurs when interpreting of contents of a
         /// <see cref="Kamilla.Network.Viewing.ViewerItem"/> is finished.
         /// </summary>
-        public abstract event ViewerItemEventHandler ItemParsingDone;
+        public event ViewerItemEventHandler ItemParsingDone;
         #endregion
 
         #region Properties
@@ -86,7 +108,7 @@ namespace Kamilla.Network.Viewing
         public abstract object Style { get; }
 
         /// <summary>
-        /// Gets the handle of the viewer window. This value can be <see href="System.IntPtr.Zero"/>.
+        /// Gets the handle of the viewer window. This value can be <see cref="System.IntPtr.Zero"/>.
         /// </summary>
         public abstract IntPtr WindowHandle { get; }
         #endregion
