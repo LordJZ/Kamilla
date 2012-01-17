@@ -92,7 +92,7 @@
     <Compile Include="Network\SpecialOpcodes.cs" />
     <Compile Include="Network\TransferDirection.cs" />
     <Compile Include="Network\TransferDirectionExtensions.cs" />
-    <Compile Include="Network\Viewing\INetworkLogViewer.cs" />
+    <Compile Include="Network\Viewing\NetworkLogViewerBase.cs" />
     <Compile Include="Network\Viewing\INetworkLogViewerPlugin.cs" />
     <Compile Include="Network\Viewing\NetworkLogChangedEventArgs.cs" />
     <Compile Include="Network\Viewing\ViewerItemEventArgs.cs" />

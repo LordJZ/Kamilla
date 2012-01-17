@@ -58,16 +58,16 @@ namespace Kamilla.Network.Protocols
         /// <summary>
         /// When implemented in a derived class,
         /// loads the current instance of <see cref="Kamilla.Network.Protocols.Protocol"/>
-        /// and attachs to the provided <see cref="Kamilla.Network.Viewing.INetworkLogViewer"/>.
+        /// and attachs to the provided <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase"/>.
         /// </summary>
         /// <param name="viewer">
-        /// The instance of <see cref="Kamilla.Network.Viewing.INetworkLogViewer"/> to attach to.
+        /// The instance of <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase"/> to attach to.
         /// </param>
         /// <exception cref="System.InvalidOperationException">
         /// The current instance of <see cref="Kamilla.Network.Protocols.Protocol"/> is already
-        /// attached to a <see cref="Kamilla.Network.Viewing.INetworkLogViewer"/>.
+        /// attached to a <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase"/>.
         /// </exception>
-        public abstract void Load(INetworkLogViewer viewer);
+        public abstract void Load(NetworkLogViewerBase viewer);
 
         /// <summary>
         /// When implemented in a derived class,
@@ -76,7 +76,7 @@ namespace Kamilla.Network.Protocols
         /// </summary>
         /// <exception cref="System.InvalidOperationException">
         /// The current instance of <see cref="Kamilla.Network.Protocols.Protocol"/> is not
-        /// attached to a <see cref="Kamilla.Network.Viewing.INetworkLogViewer"/>.
+        /// attached to a <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase"/>.
         /// </exception>
         public abstract void Unload();
     }

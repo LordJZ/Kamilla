@@ -7,11 +7,11 @@ namespace Kamilla.Network.Viewing
     /// <summary>
     /// Represents a union of objects used to store, display and interpret data
     /// of a <see cref="Kamilla.Network.Packet"/> in a
-    /// <see cref="Kamilla.Network.Viewing.INetworkLogViewer"/>.
+    /// <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase"/>.
     /// </summary>
     public class ViewerItem
     {
-        INetworkLogViewer m_viewer;
+        NetworkLogViewerBase m_viewer;
         NetworkLog m_log;
         Packet m_packet;
         PacketParser m_parser;
@@ -19,10 +19,10 @@ namespace Kamilla.Network.Viewing
         int m_index;
 
         /// <summary>
-        /// Gets the <see cref="Kamilla.Network.Viewing.INetworkLogViewer"/> to which
+        /// Gets the <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase"/> to which
         /// the current instance of <see cref="Kamilla.Network.Viewing.ViewerItem"/> belongs to.
         /// </summary>
-        public INetworkLogViewer Viewer { get { return m_viewer; } }
+        public NetworkLogViewerBase Viewer { get { return m_viewer; } }
 
         /// <summary>
         /// Gets the <see cref="Kamilla.Network.Packet"/> for which the current
@@ -70,7 +70,7 @@ namespace Kamilla.Network.Viewing
         /// Initializes a new instance of <see cref="Kamilla.Network.Viewing.ViewerItem"/> that i
         /// </summary>
         /// <param name="viewer">
-        /// The <see cref="Kamilla.Network.Viewing.INetworkLogViewer"/> to which
+        /// The <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase"/> to which
         /// the current instance of <see cref="Kamilla.Network.Viewing.ViewerItem"/> belongs to.
         /// </param>
         /// <param name="log">
@@ -95,7 +95,7 @@ namespace Kamilla.Network.Viewing
         /// <exception cref="System.ArgumentOutOfRangeException">
         /// index is negative.
         /// </exception>
-        public ViewerItem(INetworkLogViewer viewer, NetworkLog log, Packet packet, int index)
+        public ViewerItem(NetworkLogViewerBase viewer, NetworkLog log, Packet packet, int index)
         {
             if (viewer == null)
                 throw new ArgumentNullException("viewer");

@@ -57,7 +57,7 @@ namespace Kamilla.Network.Protocols
         }
         #endregion
 
-        INetworkLogViewer m_viewer;
+        NetworkLogViewerBase m_viewer;
 
         void viewer_ItemQueried(object sender, ViewerItemEventArgs e)
         {
@@ -92,7 +92,7 @@ namespace Kamilla.Network.Protocols
             item.Data = arr;
         }
 
-        public override void Load(INetworkLogViewer viewer)
+        public override void Load(NetworkLogViewerBase viewer)
         {
             if (m_viewer != null)
                 throw new InvalidOperationException();

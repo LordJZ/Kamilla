@@ -115,6 +115,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
+    <Compile Include="ViewerImplementation.cs" />
     <Compile Include="ViewerItemCollection.cs" />
     <Compile Include="ViewTabs\ImageContents.xaml.cs">
       <DependentUpon>ImageContents.xaml</DependentUpon>

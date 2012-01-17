@@ -7,7 +7,7 @@ namespace Kamilla.Network.Viewing
     /// Handles <see href="Kamilla.Network.Viewing.INetworkLogViewer.NetworkLogChanged"/> event.
     /// </summary>
     /// <param name="sender">
-    /// The current <see cref="Kamilla.Network.Viewing.INetworkLogViewer"/>.
+    /// The current <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase"/>.
     /// </param>
     /// <param name="e">
     /// An instance of <see cref="Kamilla.Network.Viewing.NetworkLogChangedEventArgs"/> class

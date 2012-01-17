@@ -28,15 +28,14 @@ using NetworkLogViewer.ViewTabs;
 
 namespace NetworkLogViewer
 {
-    partial class MainWindow : Window, INetworkLogViewer
+    partial class MainWindow : Window
     {
-        WindowInteropHelper m_interopHelper;
-
         BackgroundWorker ui_parsingWorker;
         BackgroundWorker ui_loadingWorker;
         BackgroundWorker ui_readingWorker;
 
-        PacketAddedEventHandler m_packetAddedHandler;
+        ViewerImplementation m_implementation;
+        internal ViewerImplementation Implementation { get { return m_implementation; } }
 
         #region .ctor
         public MainWindow()
@@ -47,6 +46,8 @@ namespace NetworkLogViewer
             InitializeComponent();
 
             App.InitializeConsole(this);
+
+            m_implementation = new ViewerImplementation(this);
 
             // Perform operations that alter UI here
             {
@@ -138,19 +139,33 @@ namespace NetworkLogViewer
             this.ui_readingWorker.DoWork += new DoWorkEventHandler(this.ui_readingWorker_DoWork);
             this.ui_readingWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.ui_readingWorker_RunWorkerCompleted);
 
-            this.ProtocolChanged += new ProtocolChangedEventHandler(MainWindow_ProtocolChanged);
-            this.NetworkLogChanged += new NetworkLogChangedEventHandler(MainWindow_NetworkLogChanged);
+            m_implementation.ProtocolChanged += new ProtocolChangedEventHandler(MainWindow_ProtocolChanged);
+            m_implementation.NetworkLogChanged += new NetworkLogChangedEventHandler(MainWindow_NetworkLogChanged);
 
-            m_items = new ViewerItemCollection();
-            m_items.ItemQueried += new ViewerItemEventHandler(m_items_ItemQueried);
-
-            m_interopHelper = new WindowInteropHelper(this);
-
-            ui_lvPackets.ItemsSource = m_items;
-
-            m_packetAddedHandler = new PacketAddedEventHandler(m_currentLog_PacketAdded);
+            ui_lvPackets.ItemsSource = m_implementation.m_items;
 
             Console.WriteLine("MainWindow initialized.");
+        }
+        #endregion
+
+        #region Implementation Interop
+        protected override void OnStyleChanged(Style oldStyle, Style newStyle)
+        {
+            base.OnStyleChanged(oldStyle, newStyle);
+
+            m_implementation.OnStyleChanged(oldStyle, newStyle);
+        }
+
+        internal Protocol CurrentProtocol
+        {
+            get { return m_implementation.CurrentProtocol; }
+            set { m_implementation.SetProtocol(value); }
+        }
+
+        internal NetworkLog CurrentLog
+        {
+            get { return m_implementation.CurrentLog; }
+            set { m_implementation.SetLog(value); }
         }
         #endregion
 
@@ -202,117 +217,6 @@ namespace NetworkLogViewer
         }
         #endregion
 
-        #region INetworkLogViewer Implementation
-        Protocol m_currentProtocol;
-        NetworkLog m_currentLog;
-        int m_packetItr;
-        readonly ViewerItemCollection m_items;
-
-        /// <summary>
-        /// Retrieves an object that contains style information. This value can be null.
-        /// </summary>
-        object INetworkLogViewer.Style { get { return this.Style; } }
-
-        /// <summary>
-        /// Occurs when <see cref="NetworkLogViewer.MainWindow.Style"/> property changes.
-        /// </summary>
-        public event EventHandler StyleChanged;
-
-        protected override void OnStyleChanged(Style oldStyle, Style newStyle)
-        {
-            base.OnStyleChanged(oldStyle, newStyle);
-
-            if (this.StyleChanged != null)
-                this.StyleChanged(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// Gets the collection of items currently loaded.
-        /// </summary>
-        public IEnumerable<ViewerItem> Items { get { return m_items; } }
-
-        /// <summary>
-        /// Gets or sets the current <see cref="Kamilla.Network.Protocols.Protocol"/>.
-        /// </summary>
-        public Protocol CurrentProtocol
-        {
-            get { return m_currentProtocol; }
-            set
-            {
-                if (m_currentProtocol == value)
-                    return;
-
-                this.ThreadSafe(_ =>
-                {
-                    var old = m_currentProtocol;
-                    if (old != null)
-                        old.Unload();
-
-                    m_currentProtocol = value;
-                    m_currentProtocol.Load(this);
-
-                    if (this.ProtocolChanged != null)
-                        this.ProtocolChanged(this, new ProtocolChangedEventArgs(old, value));
-                });
-            }
-        }
-
-        /// <summary>
-        /// Gets the currently loaded <see cref="Kamilla.Network.Logging.NetworkLog"/>.
-        /// </summary>
-        public NetworkLog CurrentLog
-        {
-            get { return m_currentLog; }
-            set
-            {
-                if (m_currentLog == value)
-                    return;
-
-                this.ThreadSafe(_ =>
-                {
-                    var old = m_currentLog;
-                    if (old != null)
-                        old.PacketAdded -= m_packetAddedHandler;
-
-                    m_currentLog = value;
-                    if (value != null)
-                        value.PacketAdded += m_packetAddedHandler;
-
-                    if (this.NetworkLogChanged != null)
-                        this.NetworkLogChanged(this, new NetworkLogChangedEventArgs(old, value));
-                });
-            }
-        }
-
-        /// <summary>
-        /// Gets the handle of the window.
-        /// </summary>
-        public IntPtr WindowHandle
-        {
-            get { return m_interopHelper.Handle; }
-        }
-
-        /// <summary>
-        /// Occurs when <see href="NetworkLogViewer.MainWindow.CurrentProtocol"/> changes.
-        /// </summary>
-        public event ProtocolChangedEventHandler ProtocolChanged;
-
-        /// <summary>
-        /// Occurs when the <see href="NetworkLogViewer.MainWindow.CurrentLog"/> property changes.
-        /// </summary>
-        public event NetworkLogChangedEventHandler NetworkLogChanged;
-
-        /// <summary>
-        /// Occurs when data of a <see cref="Kamilla.Network.Viewing.ViewerItem"/> is queried.
-        /// </summary>
-        public event ViewerItemEventHandler ItemQueried;
-
-        /// <summary>
-        /// Occurs when a <see cref="Kamilla.Network.Viewing.ViewerItem"/> is added.
-        /// </summary>
-        public event ViewerItemEventHandler ItemAdded;
-        #endregion
-
         #region Loading Window
         Stack<LoadingState> m_loadingStateStack = new Stack<LoadingState>();
         LoadingWindow m_loadingWindow;
@@ -327,7 +231,8 @@ namespace NetworkLogViewer
                 {
                     m_loadingWindow = new LoadingWindow();
                     m_loadingWindow.Style = this.Style;
-                    this.StyleChanged += (o, e) => this.ThreadSafe(_ => _.m_loadingWindow.Style = _.Style);
+                    m_implementation.StyleChanged +=
+                        (o, e) => this.ThreadSafe(_ => _.m_loadingWindow.Style = _.Style);
                 }
 
                 m_loadingWindow.SetLoadingState(state);
@@ -441,9 +346,7 @@ namespace NetworkLogViewer
 
         void CloseFile()
         {
-            m_items.Clear();
-            this.CurrentLog = null;
-            m_packetItr = 0;
+            m_implementation.CloseFile();
         }
         #endregion
 
@@ -486,15 +389,6 @@ namespace NetworkLogViewer
             this.LoadingStatePush(new LoadingState(string.Format(Strings.LoadingFile, filename)));
         }
 
-        void m_currentLog_PacketAdded(object sender, PacketAddedEventArgs e)
-        {
-            var item = new ViewerItem(this, (NetworkLog)sender, e.Packet, m_packetItr++);
-            m_items.Add(item);
-
-            if (this.ItemAdded != null)
-                this.ItemAdded(this, new ViewerItemEventArgs(item));
-        }
-
         private void ui_readingWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             UICulture.Initialize();
@@ -503,10 +397,10 @@ namespace NetworkLogViewer
 
             this.CurrentLog.OpenForReading(m_currentFile);
 
-            if (this.CurrentLog.Capacity > m_items.Capacity)
-                m_items.Capacity = this.CurrentLog.Capacity;
+            if (this.CurrentLog.Capacity > m_implementation.m_items.Capacity)
+                m_implementation.m_items.Capacity = this.CurrentLog.Capacity;
 
-            m_items.SuspendUpdating();
+            m_implementation.m_items.SuspendUpdating();
             this.CurrentLog.Read(progress =>
             {
                 LoadingStateSetProgress(progress);
@@ -529,8 +423,8 @@ namespace NetworkLogViewer
             }
 
             var sw = Stopwatch.StartNew();
-            m_items.ResumeUpdating();
-            m_items.Update();
+            m_implementation.m_items.ResumeUpdating();
+            m_implementation.m_items.Update();
             sw.Stop();
             Console.WriteLine("Updated items in {0}", sw.Elapsed);
             LoadingStatePop();
@@ -736,15 +630,6 @@ namespace NetworkLogViewer
         #endregion
 
         #region Viewing
-        void m_items_ItemQueried(object sender, ViewerItemEventArgs e)
-        {
-            this.ThreadSafe(_ =>
-            {
-                if (this.ItemQueried != null)
-                    this.ItemQueried(this, e);
-            });
-        }
-
         static Type[] s_viewTabTypes = new[]
         {
             typeof(PacketContents),
@@ -861,7 +746,7 @@ namespace NetworkLogViewer
             {
                 var tab = (IViewTab)((TabItem)((TabControl)sender).SelectedItem).Content;
                 if (!tab.IsFilled)
-                    tab.Fill(this.CurrentProtocol, m_items[index]);
+                    tab.Fill(this.CurrentProtocol, m_implementation.m_items[index]);
             }
         }
 
@@ -876,7 +761,7 @@ namespace NetworkLogViewer
                     ((IViewTab)tab.Content).Reset();
 
                 if (index >= 0)
-                    ((IViewTab)((TabItem)tc.SelectedItem).Content).Fill(protocol, m_items[index]);
+                    ((IViewTab)((TabItem)tc.SelectedItem).Content).Fill(protocol, m_implementation.m_items[index]);
             }
         }
 

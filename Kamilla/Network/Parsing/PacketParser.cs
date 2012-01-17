@@ -134,6 +134,8 @@ namespace Kamilla.Network.Parsing
 
                 this.IsParsed = true;
             }
+
+            this.Item.Viewer.InternalNotifyParsingDone(this);
         }
 
         protected string m_output;
