@@ -13,13 +13,13 @@ namespace Kamilla.Network.Logging.Wow
 {
     [NetworkLog(
         FileExtension = "pkt",
-        HeaderBytes = new byte[] { (byte)'P', (byte)'K', (byte)'T', 0x01, 0x03 }
+        HeaderBytes = new byte[] { (byte)'P', (byte)'K', (byte)'T', 0x00, 0x03 }
         )]
-    public class Pkt31NetworkLog : WowNetworkLog,
+    public class Pkt30NetworkLog : WowNetworkLog,
         IHasClientVersion, IHasCultureInfo, IHasSessionKey,
         IHasStartTicks, IHasStartTime, IHasPktSnifferId
     {
-        public override string Name { get { return "PKT 3.1"; } }
+        public override string Name { get { return "PKT 3.0"; } }
         const int SessionKeyLength = 40;
 
         #region Nesteds
@@ -37,13 +37,11 @@ namespace Kamilla.Network.Logging.Wow
             public uint ClientBuild;
             public fixed byte Lang[4];
             public fixed byte SessionKey[SessionKeyLength];
-            public uint StartedOnUnix;
-            public uint StartedOnTicks;
             public int OptionalHeaderLength;
         }
 
         [Flags]
-        enum OptHeaderFlags : uint
+        enum PktFileOptHeaderFlags : uint
         {
             None = 0,
             HasOCAD = 1 << 0,
@@ -83,7 +81,7 @@ namespace Kamilla.Network.Logging.Wow
             }
 
             public uint RawDirection;
-            public int ConnectionId;
+            public uint UnixTime;
             public uint TickCount;
             public int OptionalDataLength;
             public int DataLength;
@@ -105,6 +103,7 @@ namespace Kamilla.Network.Logging.Wow
 
             public ChunkHeader m_header;
             public byte m_flags;
+            public byte m_connId;
             public uint m_opcode;
         }
         #endregion
@@ -128,8 +127,7 @@ namespace Kamilla.Network.Logging.Wow
         // backing
         string m_snifferDesc;
         PktSnifferId m_snifferId;
-        byte[] m_FCAD;
-        byte[] m_SCAD;
+        byte[] m_TCAD;
         byte[] m_sessionKey = new byte[40];
 
         public DateTime StartTime { get; set; }
@@ -180,43 +178,26 @@ namespace Kamilla.Network.Logging.Wow
                 m_snifferDesc = value;
             }
         }
-        public byte[] FCAD
+        public byte[] TCAD
         {
-            get { return m_FCAD; }
+            get { return m_TCAD; }
             set
             {
-                if (value != null && value.Length != 16)
+                if (value != null && value.Length != 32)
                     throw new ArgumentException();
 
                 if (m_mode == NetworkLogMode.Writing &&
-                    m_stream != null && !((m_FCAD != null) ^ (value != null)))
+                    m_stream != null && !((m_TCAD != null) ^ (value != null)))
                     throw new InvalidOperationException(
-                        "Cannot modify FCAD while a file is opened."
+                        "Cannot modify TCAD while a file is opened."
                         );
 
-                m_FCAD = value;
-            }
-        }
-        public byte[] SCAD
-        {
-            get { return m_SCAD; }
-            set
-            {
-                if (value != null && value.Length != 16)
-                    throw new ArgumentException();
-
-                if (m_mode == NetworkLogMode.Writing &&
-                    m_stream != null && !((m_SCAD != null) ^ (value != null)))
-                    throw new InvalidOperationException(
-                        "Cannot modify SCAD while a file is opened."
-                        );
-
-                m_SCAD = value;
+                m_TCAD = value;
             }
         }
 
         #region .ctor
-        public Pkt31NetworkLog(NetworkLogMode mode)
+        public Pkt30NetworkLog(NetworkLogMode mode)
             : base(mode)
         {
         }
@@ -252,27 +233,25 @@ namespace Kamilla.Network.Logging.Wow
                 optLen = header->OptionalHeaderLength;
                 Marshal.Copy(new IntPtr(header->SessionKey), m_sessionKey, 0, 40);
                 this.SnifferId = (PktSnifferId)header->SnifferId;
-                this.StartTicks = header->StartedOnTicks;
-                this.StartTime = header->StartedOnUnix.AsUnixTime();
             }
 
             if (this.SnifferId == PktSnifferId.Kamilla)
             {
-                using (var reader = new StreamHandler(m_stream.ReadBytes(optLen)))
+                if (optLen > 0)
                 {
-                    var flags = (OptHeaderFlags)reader.ReadUInt32();
+                    using (var reader = new StreamHandler(m_stream.ReadBytes(optLen)))
+                    {
+                        this.StartTime = reader.ReadUInt32().AsUnixTime();
+                        this.StartTicks = reader.ReadUInt32();
 
-                    if ((flags & OptHeaderFlags.HasOCAD) != 0)
-                        reader.Skip(4);
+                        // ACAD, cannot maintain integrity so just skip
+                        reader.Skip(16);
 
-                    if ((flags & OptHeaderFlags.HasSnifferDescString) != 0)
                         this.SnifferDesc = reader.ReadCString();
 
-                    if ((flags & OptHeaderFlags.HasFCAD) != 0)
-                        this.FCAD = reader.ReadBytes(16);
-
-                    if ((flags & OptHeaderFlags.HasSCAD) != 0)
-                        this.SCAD = reader.ReadBytes(16);
+                        if (!reader.IsRead)
+                            this.TCAD = reader.ReadBytes(32);
+                    }
                 }
             }
             else
@@ -286,23 +265,36 @@ namespace Kamilla.Network.Logging.Wow
             int headerSize = ChunkHeader.Size;
             var headerBytes = new byte[headerSize];
             var startTicks = this.StartTicks;
+            bool firstPacket = true;
 
             fixed (byte* ptr = headerBytes)
             {
                 int progress = 0;
                 var header = (ChunkHeader*)ptr;
 
-                while (!m_stream.IsRead)
+                while (m_stream.CanRead(1))
                 {
                     if (m_stream.Read(headerBytes, 0, headerSize) != headerSize)
                         throw new EndOfStreamException();
 
                     var flags = PacketFlags.None;
+                    int connId = 0;
 
-                    if (m_snifferId == PktSnifferId.Kamilla && header->OptionalDataLength > 0)
+                    if (m_snifferId == PktSnifferId.Kamilla)
                     {
-                        flags = (PacketFlags)m_stream.ReadByte();
-                        m_stream.Skip(header->OptionalDataLength - 1);
+                        int nOptBytes = header->OptionalDataLength;
+                        if (--nOptBytes >= 0)
+                        {
+                            flags = (PacketFlags)m_stream.ReadByte();
+
+                            if (--nOptBytes >= 0)
+                            {
+                                connId = m_stream.ReadByte();
+
+                                if (nOptBytes > 0)
+                                    m_stream.Skip(nOptBytes);
+                            }
+                        }
                     }
                     else
                         m_stream.Skip(header->OptionalDataLength);
@@ -311,10 +303,20 @@ namespace Kamilla.Network.Logging.Wow
                     var data = m_stream.ReadBytes(header->DataLength - 4);
 
                     var packet = new WowPacket(data, header->Direction,
-                        flags, this.StartTime.AddMilliseconds(header->TickCount - startTicks),
-                        header->TickCount, opcode, header->ConnectionId);
+                        flags, header->UnixTime.AsUnixTime(),
+                        header->TickCount, opcode, connId);
                     this.InternalAddPacket(packet);
                     this.OnPacketAdded(packet);
+
+                    if (firstPacket)
+                    {
+                        if (this.StartTicks == 0)
+                        {
+                            this.StartTime = packet.ArrivalTime;
+                            this.StartTicks = packet.ArrivalTicks;
+                        }
+                    }
+                    firstPacket = false;
 
                     if (reportProgressDelegate != null)
                     {
@@ -341,32 +343,24 @@ namespace Kamilla.Network.Logging.Wow
         {
             m_stream.DoAt(m_streamOriginalPosition, () =>
             {
-                var flags = OptHeaderFlags.None;
                 int optLen = 0;
                 byte[] descStr = null;
 
                 if (this.SnifferId == PktSnifferId.Kamilla)
                 {
-                    optLen += 4;
+                    optLen += 8;
+
+                    // ACAD
+                    optLen += 16;
 
                     if (!string.IsNullOrEmpty(this.SnifferDesc))
                     {
-                        flags |= OptHeaderFlags.HasSnifferDescString;
                         descStr = Encoding.ASCII.GetBytes(this.SnifferDesc);
                         optLen += descStr.Length + 1;
                     }
 
-                    if (this.FCAD != null)
-                    {
-                        flags |= OptHeaderFlags.HasFCAD;
-                        optLen += 16;
-                    }
-
-                    if (this.SCAD != null)
-                    {
-                        flags |= OptHeaderFlags.HasSCAD;
-                        optLen += 16;
-                    }
+                    if (this.TCAD != null)
+                        optLen += 32;
                 }
 
                 var bytes = new byte[MainHeader.Size + optLen];
@@ -379,7 +373,7 @@ namespace Kamilla.Network.Logging.Wow
                     header->Signature[0] = (byte)'P';
                     header->Signature[1] = (byte)'K';
                     header->Signature[2] = (byte)'T';
-                    header->MinorVersion = 1;
+                    header->MinorVersion = 0;
                     header->MajorVersion = 3;
                     header->SnifferId = (byte)this.SnifferId;
                     header->ClientBuild = (uint)this.ClientVersion.Revision;
@@ -388,17 +382,19 @@ namespace Kamilla.Network.Logging.Wow
                     header->Lang[2] = langBytes[2];
                     header->Lang[3] = langBytes[3];
                     Marshal.Copy(this.SessionKey, 0, new IntPtr(header->SessionKey), 40);
-                    header->StartedOnUnix = this.StartTime.ToUnixTime();
-                    header->StartedOnTicks = this.StartTicks;
                     header->OptionalHeaderLength = optLen;
 
                     if (this.SnifferId == PktSnifferId.Kamilla)
                     {
                         int index = MainHeader.Size;
-                        *(uint*)(bytesPtr + index) = (uint)flags;
+                        *(uint*)(bytesPtr + index) = this.StartTime.ToUnixTime();
                         index += 4;
+                        *(uint*)(bytesPtr + index) = this.StartTicks;
+                        index += 4;
+                        // ACAD
+                        index += 16;
 
-                        if ((flags & OptHeaderFlags.HasSnifferDescString) != 0)
+                        if (!string.IsNullOrEmpty(this.SnifferDesc))
                         {
                             Buffer.BlockCopy(descStr, 0, bytes, index, descStr.Length);
                             index += descStr.Length;
@@ -406,16 +402,10 @@ namespace Kamilla.Network.Logging.Wow
                             ++index;
                         }
 
-                        if ((flags & OptHeaderFlags.HasFCAD) != 0)
+                        if (this.TCAD != null)
                         {
-                            Buffer.BlockCopy(this.FCAD, 0, bytes, index, 16);
-                            index += 16;
-                        }
-
-                        if ((flags & OptHeaderFlags.HasSCAD) != 0)
-                        {
-                            Buffer.BlockCopy(this.SCAD, 0, bytes, index, 16);
-                            index += 16;
+                            Buffer.BlockCopy(this.TCAD, 0, bytes, index, 32);
+                            index += 32;
                         }
                     }
                 }
@@ -435,12 +425,13 @@ namespace Kamilla.Network.Logging.Wow
                 fixed (byte* bytesPtr = bytes)
                 {
                     var header = (OutChunkHeaderKamilla*)bytesPtr;
-                    header->m_header.ConnectionId = packet.ConnectionId;
+                    header->m_header.UnixTime = packet.ArrivalTime.ToUnixTime();
                     header->m_header.DataLength = data.Length + 4;
                     header->m_header.Direction = packet.Direction;
-                    header->m_header.OptionalDataLength = 1;
+                    header->m_header.OptionalDataLength = 2;
                     header->m_header.TickCount = packet.ArrivalTicks;
                     header->m_flags = (byte)packet.Flags;
+                    header->m_connId = (byte)packet.ConnectionId;
                     header->m_opcode = packet.Opcode;
                 }
             }
@@ -450,7 +441,7 @@ namespace Kamilla.Network.Logging.Wow
                 fixed (byte* bytesPtr = bytes)
                 {
                     var header = (OutChunkHeader*)bytesPtr;
-                    header->m_header.ConnectionId = packet.ConnectionId;
+                    header->m_header.UnixTime = packet.ArrivalTime.ToUnixTime();
                     header->m_header.DataLength = data.Length + 4;
                     header->m_header.Direction = packet.Direction;
                     header->m_header.OptionalDataLength = 0;

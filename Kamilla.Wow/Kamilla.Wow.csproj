@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Network\Logging\Wow\IHasPktSnifferId.cs" />
+    <Compile Include="Network\Logging\Wow\Pkt30NetworkLog.cs" />
     <Compile Include="Network\Logging\Wow\Pkt31NetworkLog.cs" />
     <Compile Include="Network\Logging\Wow\PktSnifferId.cs" />
     <Compile Include="Network\Logging\Wow\WowNetworkLog.cs" />

@@ -513,6 +513,9 @@ namespace NetworkLogViewer
             });
 
             e.Result = this.CurrentLog.SuggestedProtocol ?? ProtocolManager.FindWrapper(typeof(DefaultProtocol));
+
+            sw.Stop();
+            Console.WriteLine("Reading Worker finished in {0}", sw.Elapsed);
         }
 
         private void ui_readingWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
