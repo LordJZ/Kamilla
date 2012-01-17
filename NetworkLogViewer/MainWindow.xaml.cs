@@ -45,9 +45,9 @@ namespace NetworkLogViewer
 
             InitializeComponent();
 
-            App.InitializeConsole(this);
-
             m_implementation = new ViewerImplementation(this);
+
+            App.InitializeConsole(this);
 
             // Perform operations that alter UI here
             {
