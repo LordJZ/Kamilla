@@ -12,7 +12,7 @@ namespace Kamilla.IO
     /// </summary>
     public class StreamHandler : IDisposable
     {
-        private static byte[] m_newLineBytes = Environment.NewLine.ToCharArray().Select(c => (byte)c).ToArray();
+        private static byte[] m_newLineBytes = Environment.NewLine.Select(c => (byte)c).ToArray();
 
         #region Properties
         private Encoding m_encoding;
