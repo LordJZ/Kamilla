@@ -17,7 +17,6 @@ namespace NetworkLogViewer
         Protocol m_currentProtocol;
         NetworkLog m_currentLog;
         internal readonly ViewerItemCollection m_items;
-        int m_packetItr;
         WindowInteropHelper m_interopHelper;
 
         internal ViewerImplementation(MainWindow window)
@@ -34,12 +33,23 @@ namespace NetworkLogViewer
 
             m_packetAddedHandler = (o, e) =>
             {
-                var item = new ViewerItem(this, (NetworkLog)o, e.Packet, m_packetItr++);
+                var item = new ViewerItem(this, (NetworkLog)o, e.Packet, m_items.Count);
                 m_items.Add(item);
 
                 if (this.ItemAdded != null)
                     this.ItemAdded(this, new ViewerItemEventArgs(item));
             };
+        }
+
+        public override void UpdateItem(ViewerItem item)
+        {
+            if (item == null)
+                throw new ArgumentNullException();
+
+            if (item.Viewer != this)
+                throw new ArgumentException();
+
+            m_items.Update(item);
         }
 
         protected override void InternalNotifyParsingDone(PacketParser parser)
@@ -97,7 +107,6 @@ namespace NetworkLogViewer
         {
             m_items.Clear();
             this.SetLog(null);
-            m_packetItr = 0;
         }
 
         #region Overrides

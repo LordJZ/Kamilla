@@ -49,7 +49,7 @@ namespace NetworkLogViewer
         }
 
         /// <summary>
-        /// Updated the collection via events if it is in suspended state.
+        /// Updates the collection via events if it is in suspended state.
         /// </summary>
         public void Update()
         {
@@ -58,20 +58,32 @@ namespace NetworkLogViewer
             this.OnCollectionReset();
         }
 
-        public void SetData(IList<ViewerItem> items)
+        /// <summary>
+        /// Updates the specified <see cref="Kamilla.Network.Viewing.ViewerItem"/>
+        /// even if the collection is in suspended state.
+        /// </summary>
+        /// <param name="item">
+        /// The <see cref="Kamilla.Network.Viewing.ViewerItem"/> that should be updated.
+        /// </param>
+        public void Update(ViewerItem item)
         {
-            if (m_list.Capacity < items.Count)
-                m_list.Capacity = items.Count;
-
-            m_list.AddRange(items);
-
-            if (!m_suspended)
-            {
-                this.OnPropertyChanged("Count");
-                this.OnPropertyChanged("Item[]");
-                this.OnCollectionReset();
-            }
+            this[item.Index] = item;
         }
+
+        //public void SetData(IList<ViewerItem> items)
+        //{
+        //    if (m_list.Capacity < items.Count)
+        //        m_list.Capacity = items.Count;
+
+        //    m_list.AddRange(items);
+
+        //    if (!m_suspended)
+        //    {
+        //        this.OnPropertyChanged("Count");
+        //        this.OnPropertyChanged("Item[]");
+        //        this.OnCollectionReset();
+        //    }
+        //}
 
         public void Clear()
         {
@@ -90,18 +102,19 @@ namespace NetworkLogViewer
 
         public void RemoveAt(int index)
         {
-            if (index < 0 || index >= m_list.Count)
-                throw new ArgumentOutOfRangeException();
+            throw new NotSupportedException();
+            //if (index < 0 || index >= m_list.Count)
+            //    throw new ArgumentOutOfRangeException();
 
-            var item = m_list[index];
-            m_list.RemoveAt(index);
+            //var item = m_list[index];
+            //m_list.RemoveAt(index);
 
-            if (!m_suspended)
-            {
-                this.OnPropertyChanged("Count");
-                this.OnPropertyChanged("Item[]");
-                this.OnCollectionChanged(NotifyCollectionChangedAction.Remove, item, index);
-            }
+            //if (!m_suspended)
+            //{
+            //    this.OnPropertyChanged("Count");
+            //    this.OnPropertyChanged("Item[]");
+            //    this.OnCollectionChanged(NotifyCollectionChangedAction.Remove, item, index);
+            //}
         }
 
         public void Add(ViewerItem value)
@@ -123,15 +136,16 @@ namespace NetworkLogViewer
 
         public bool Remove(ViewerItem value)
         {
-            int idx = this.IndexOf(value);
+            throw new NotSupportedException();
+            //int idx = this.IndexOf(value);
 
-            if (idx >= 0)
-            {
-                this.RemoveAt(idx);
-                return true;
-            }
+            //if (idx >= 0)
+            //{
+            //    this.RemoveAt(idx);
+            //    return true;
+            //}
 
-            return false;
+            //return false;
         }
 
         public int IndexOf(ViewerItem value)
@@ -141,14 +155,15 @@ namespace NetworkLogViewer
 
         public void Insert(int index, ViewerItem value)
         {
-            m_list.Insert(index, value);
+            throw new NotSupportedException();
+            //m_list.Insert(index, value);
 
-            if (!m_suspended)
-            {
-                this.OnPropertyChanged("Count");
-                this.OnPropertyChanged("Item[]");
-                this.OnCollectionChanged(NotifyCollectionChangedAction.Add, value, index);
-            }
+            //if (!m_suspended)
+            //{
+            //    this.OnPropertyChanged("Count");
+            //    this.OnPropertyChanged("Item[]");
+            //    this.OnCollectionChanged(NotifyCollectionChangedAction.Add, value, index);
+            //}
         }
 
         public ViewerItem this[int index]
