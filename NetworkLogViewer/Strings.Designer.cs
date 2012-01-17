@@ -61,11 +61,60 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Loading file:\r\n\r\n{0}.
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        public static string Error {
+            get {
+                return ResourceManager.GetString("Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occured while reading file:
+        ///
+        ///{0}.
+        /// </summary>
+        public static string ErrorReading {
+            get {
+                return ResourceManager.GetString("ErrorReading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading file:
+        ///
+        ///{0}.
         /// </summary>
         public static string LoadingFile {
             get {
                 return ResourceManager.GetString("LoadingFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string LW_Cancel {
+            get {
+                return ResourceManager.GetString("LW_Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading, please wait....
+        /// </summary>
+        public static string LW_LoadingPleaseWait {
+            get {
+                return ResourceManager.GetString("LW_LoadingPleaseWait", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading....
+        /// </summary>
+        public static string LW_Title {
+            get {
+                return ResourceManager.GetString("LW_Title", resourceCulture);
             }
         }
         

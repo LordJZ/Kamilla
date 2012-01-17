@@ -1,7 +1,7 @@
 ﻿<Window x:Class="NetworkLogViewer.ConsoleWindow" x:ClassModifier="internal"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Style="{StaticResource KamillaStyle}" Title="Console" Height="340" Width="650" WindowStartupLocation="CenterOwner" WindowStyle="ToolWindow" MinWidth="425" MinHeight="199" Visibility="Hidden" ShowInTaskbar="False" Closed="Window_Closed" Closing="Window_Closing" Topmost="True" Deactivated="Window_Deactivated" Activated="Window_Activated">
+        Title="Console" Height="340" Width="650" WindowStartupLocation="CenterOwner" WindowStyle="ToolWindow" MinWidth="425" MinHeight="199" Visibility="Hidden" ShowInTaskbar="False" Closed="Window_Closed" Closing="Window_Closing" Topmost="True" Deactivated="Window_Deactivated" Activated="Window_Activated">
     <Grid>
         <RichTextBox Name="tbMain" IsReadOnly="True" VerticalScrollBarVisibility="Visible" FontFamily="Lucida Console" VerticalContentAlignment="Bottom" BorderThickness="0" AcceptsReturn="True">
         </RichTextBox>

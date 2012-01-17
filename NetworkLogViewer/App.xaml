@@ -68,15 +68,76 @@
         <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#FF17AD1A"/>
         <SolidColorBrush x:Key="{x:Static SystemColors.ActiveCaptionTextBrushKey}" Color="#FF17AD1A"/>
 
-        <Style x:Key="DarkDarkBackground" TargetType="{x:Type Control}">
-          <Setter Property="Background" Value="#FF222222"/>
+        <Style x:Key="KamillaStyleBase">
+          <Style.Resources>
+            <LinearGradientBrush x:Key="BorderBrush" StartPoint="0,0" EndPoint="0,1">
+              <LinearGradientBrush.GradientStops>
+                <GradientStopCollection>
+                  <GradientStop Color="#FF555555" Offset="0"/>
+                  <GradientStop Color="#FF444444" Offset="1"/>
+                </GradientStopCollection>
+              </LinearGradientBrush.GradientStops>
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="PressedBorderBrush" StartPoint="0,0" EndPoint="0,1">
+              <LinearGradientBrush.GradientStops>
+                <GradientStopCollection>
+                  <GradientStop Color="#FF585858" Offset="0.0" />
+                  <GradientStop Color="#FF505050" Offset="0.5" />
+                  <GradientStop Color="#FF484848" Offset="1.0" />
+                </GradientStopCollection>
+              </LinearGradientBrush.GradientStops>
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="BackgroundBrush" StartPoint="0,0" EndPoint="0,1">
+              <LinearGradientBrush.GradientStops>
+                <GradientStopCollection>
+                  <GradientStop Color="#FF404040" Offset="0.0" />
+                  <GradientStop Color="#FF383838" Offset="0.5" />
+                  <GradientStop Color="#FF303030" Offset="1.0" />
+                </GradientStopCollection>
+              </LinearGradientBrush.GradientStops>
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="GreenBackgroundBrush" StartPoint="0,0" EndPoint="0,1">
+              <LinearGradientBrush.GradientStops>
+                <GradientStop Color="#FF17AD1A" Offset="0.0" />
+                <GradientStop Color="#FF14A017" Offset="0.5" />
+                <GradientStop Color="#FF118214" Offset="1.0" />
+              </LinearGradientBrush.GradientStops>
+            </LinearGradientBrush>
+          </Style.Resources>
+
+          <Setter Property="Control.Background" Value="{StaticResource {x:Static SystemColors.WindowBrushKey}}"/>
+          <Setter Property="Control.Foreground" Value="{StaticResource {x:Static SystemColors.WindowTextBrushKey}}"/>
         </Style>
 
-        <Style TargetType="{x:Type Window}" BasedOn="{StaticResource DarkDarkBackground}"/>
+        <Style TargetType="{x:Type Window}" BasedOn="{StaticResource KamillaStyleBase}"/>
+        <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource KamillaStyleBase}"/>
+        <Style TargetType="{x:Type Grid}" BasedOn="{StaticResource KamillaStyleBase}"/>
 
-        <!-- Somehow Grid's style can't base on style for Control -->
-        <Style TargetType="{x:Type Grid}">
-          <Setter Property="Background" Value="#FF222222"/>
+        <Style TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource KamillaStyleBase}">
+          <Setter Property="Template">
+            <Setter.Value>
+              <ControlTemplate TargetType="{x:Type ProgressBar}">
+                <Grid MinHeight="14" MinWidth="200">
+                  <Border 
+                    Name="PART_Track" 
+                    CornerRadius="2" 
+                    Background="{StaticResource BackgroundBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1" />
+                  <Border 
+                    Name="PART_Indicator" 
+                    CornerRadius="2" 
+                    Background="{StaticResource GreenBackgroundBrush}"
+                    BorderBrush="{StaticResource BorderBrush}" 
+                    BorderThickness="1"
+                    HorizontalAlignment="Left" />
+                </Grid>
+              </ControlTemplate>
+            </Setter.Value>
+          </Setter>
         </Style>
 
         <Style x:Key="MenuBaseStyle" TargetType="MenuBase">

@@ -10,8 +10,7 @@ using Stub = Kamilla.ConfigurationStub;
 
 namespace Kamilla
 {
-    [Browsable(false)]
-    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
     public class ConfigurationStub
     {
         public class Option

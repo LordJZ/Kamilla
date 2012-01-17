@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Globalization;
 
 namespace Kamilla.Network.Logging
 {
-    public interface INetworkLogWithClientVersion
+    public interface IHasCultureInfo
     {
-        Version ClientVersion { get; set; }
+        CultureInfo Culture { get; set; }
     }
 }

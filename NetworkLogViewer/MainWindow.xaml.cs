@@ -44,9 +44,9 @@ namespace NetworkLogViewer
             UICulture.Initialize();
             UICulture.UICultureChanged += new EventHandler(UICulture_UICultureChanged);
 
-            App.InitializeConsole();
-
             InitializeComponent();
+
+            App.InitializeConsole(this);
 
             // Perform operations that alter UI here
             {
@@ -214,7 +214,7 @@ namespace NetworkLogViewer
         object INetworkLogViewer.Style { get { return this.Style; } }
 
         /// <summary>
-        /// Occurs when <see fref="NetworkLogViewer.MainWindow.Style"/> property changes.
+        /// Occurs when <see cref="NetworkLogViewer.MainWindow.Style"/> property changes.
         /// </summary>
         public event EventHandler StyleChanged;
 
@@ -319,12 +319,16 @@ namespace NetworkLogViewer
 
         void LoadingStatePush(LoadingState state)
         {
-            this.ThreadSafe(safeThis =>
+            this.ThreadSafeBegin(safeThis =>
             {
                 m_loadingStateStack.Push(state);
 
                 if (m_loadingWindow == null)
+                {
                     m_loadingWindow = new LoadingWindow();
+                    m_loadingWindow.Style = this.Style;
+                    this.StyleChanged += (o, e) => this.ThreadSafe(_ => _.m_loadingWindow.Style = _.Style);
+                }
 
                 m_loadingWindow.SetLoadingState(state);
 
@@ -336,7 +340,7 @@ namespace NetworkLogViewer
 
         void LoadingStateSetProgress(int percent)
         {
-            this.ThreadSafe(safeThis =>
+            this.ThreadSafeBegin(safeThis =>
             {
                 m_loadingWindow.SetProgress(percent);
             });
@@ -484,14 +488,11 @@ namespace NetworkLogViewer
 
         void m_currentLog_PacketAdded(object sender, PacketAddedEventArgs e)
         {
-            this.ThreadSafe(_ =>
-            {
-                var item = new ViewerItem(this, (NetworkLog)sender, e.Packet, m_packetItr++);
-                m_items.Add(item);
+            var item = new ViewerItem(this, (NetworkLog)sender, e.Packet, m_packetItr++);
+            m_items.Add(item);
 
-                if (this.ItemAdded != null)
-                    this.ItemAdded(this, new ViewerItemEventArgs(item));
-            });
+            if (this.ItemAdded != null)
+                this.ItemAdded(this, new ViewerItemEventArgs(item));
         }
 
         private void ui_readingWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -502,17 +503,39 @@ namespace NetworkLogViewer
 
             this.CurrentLog.OpenForReading(m_currentFile);
 
-            var suggestedProtocol = this.CurrentLog.SuggestedProtocol;
-            if (suggestedProtocol != null)
-                this.CurrentProtocol = suggestedProtocol.Activate();
+            if (this.CurrentLog.Capacity > m_items.Capacity)
+                m_items.Capacity = this.CurrentLog.Capacity;
 
-            this.CurrentLog.Read(progress => LoadingStateSetProgress(progress));
+            m_items.SuspendUpdating();
+            this.CurrentLog.Read(progress =>
+            {
+                LoadingStateSetProgress(progress);
+            });
+
+            e.Result = this.CurrentLog.SuggestedProtocol ?? ProtocolManager.FindWrapper(typeof(DefaultProtocol));
         }
 
         private void ui_readingWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             this.CurrentLog.CloseStream();
+
+            var wrapper = e.Result as ProtocolWrapper;
+            if (wrapper != null)
+            {
+                this.CurrentProtocol = wrapper.Activate();
+            }
+
+            var sw = Stopwatch.StartNew();
+            m_items.ResumeUpdating();
+            m_items.Update();
+            sw.Stop();
+            Console.WriteLine("Updated items in {0}", sw.Elapsed);
             LoadingStatePop();
+
+            if (e.Error != null)
+            {
+                MessageWindow.Show(this, Strings.Error, Strings.ErrorReading.LocalizedFormat(e.Error.ToString()));
+            }
         }
 
         void MainWindow_NetworkLogChanged(object sender, NetworkLogChangedEventArgs e)
@@ -723,7 +746,7 @@ namespace NetworkLogViewer
         {
             typeof(PacketContents),
             typeof(ParsedText),
-            typeof(ImageContents),
+            //typeof(ImageContents),
         };
 
         int m_currentNViews;

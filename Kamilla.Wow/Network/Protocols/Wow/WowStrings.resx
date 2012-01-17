@@ -117,107 +117,151 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Error" xml:space="preserve">
-    <value>Error</value>
+  <data name="AllClasses" xml:space="preserve">
+    <value>All Classes</value>
   </data>
-  <data name="ErrorReading" xml:space="preserve">
-    <value>An error occured while reading file:
-
-{0}</value>
+  <data name="AllianceRaces" xml:space="preserve">
+    <value>Alliance Races</value>
   </data>
-  <data name="LoadingFile" xml:space="preserve">
-    <value>Loading file:
-
-{0}</value>
+  <data name="AllRaces" xml:space="preserve">
+    <value>All Races</value>
   </data>
-  <data name="LW_Cancel" xml:space="preserve">
-    <value>Cancel</value>
+  <data name="Class1" xml:space="preserve">
+    <value>Warrior</value>
   </data>
-  <data name="LW_LoadingPleaseWait" xml:space="preserve">
-    <value>Loading, please wait...</value>
+  <data name="Class11" xml:space="preserve">
+    <value>Druid</value>
   </data>
-  <data name="LW_Title" xml:space="preserve">
-    <value>Loading...</value>
+  <data name="Class2" xml:space="preserve">
+    <value>Paladin</value>
   </data>
-  <data name="Menu_About" xml:space="preserve">
-    <value>About Network Log Viewer...</value>
+  <data name="Class3" xml:space="preserve">
+    <value>Hunter</value>
   </data>
-  <data name="Menu_CloseFile" xml:space="preserve">
-    <value>Close File</value>
+  <data name="Class4" xml:space="preserve">
+    <value>Rogue</value>
   </data>
-  <data name="Menu_Edit" xml:space="preserve">
-    <value>Edit</value>
+  <data name="Class5" xml:space="preserve">
+    <value>Priest</value>
   </data>
-  <data name="Menu_Exit" xml:space="preserve">
-    <value>Exit</value>
+  <data name="Class6" xml:space="preserve">
+    <value>Death Knight</value>
   </data>
-  <data name="Menu_File" xml:space="preserve">
-    <value>File</value>
+  <data name="Class7" xml:space="preserve">
+    <value>Shaman</value>
   </data>
-  <data name="Menu_Help" xml:space="preserve">
-    <value>Help</value>
+  <data name="Class8" xml:space="preserve">
+    <value>Mage</value>
   </data>
-  <data name="Menu_LanguageWEn" xml:space="preserve">
-    <value>Language</value>
+  <data name="Class9" xml:space="preserve">
+    <value>Warlock</value>
   </data>
-  <data name="Menu_NullProtocol" xml:space="preserve">
-    <value>(No Protocol)</value>
+  <data name="Expac0" xml:space="preserve">
+    <value>World of Warcraft (Classic)</value>
   </data>
-  <data name="Menu_OpenConsole" xml:space="preserve">
-    <value>Open Console</value>
+  <data name="Expac1" xml:space="preserve">
+    <value>World of Warcraft: The Burning Crusade</value>
   </data>
-  <data name="Menu_OpenEllipsis" xml:space="preserve">
-    <value>Open...</value>
+  <data name="Expac2" xml:space="preserve">
+    <value>World of Warcraft: Wrath of the Lich King</value>
   </data>
-  <data name="Menu_Protocols" xml:space="preserve">
-    <value>Protocols</value>
+  <data name="Expac3" xml:space="preserve">
+    <value>World of Warcraft: Cataclysm</value>
   </data>
-  <data name="Menu_SaveAs" xml:space="preserve">
-    <value>Save As</value>
+  <data name="Expac4" xml:space="preserve">
+    <value>World of Warcraft: Mists of Pandaria</value>
   </data>
-  <data name="Menu_SaveEllipsis" xml:space="preserve">
-    <value>Save...</value>
+  <data name="Gender0" xml:space="preserve">
+    <value>Male</value>
   </data>
-  <data name="Menu_Skins" xml:space="preserve">
-    <value>Skins</value>
+  <data name="Gender1" xml:space="preserve">
+    <value>Female</value>
   </data>
-  <data name="Menu_View" xml:space="preserve">
-    <value>View</value>
+  <data name="Gender2" xml:space="preserve">
+    <value>None</value>
   </data>
-  <data name="Menu_ViewPanels" xml:space="preserve">
-    <value>View Panels</value>
+  <data name="HordeRaces" xml:space="preserve">
+    <value>Horde Races</value>
   </data>
-  <data name="NetworkLogViewer_Title" xml:space="preserve">
-    <value>Network Log Viewer</value>
+  <data name="NoClasses" xml:space="preserve">
+    <value>No Classes</value>
   </data>
-  <data name="NoData" xml:space="preserve">
-    <value>(No Data)</value>
+  <data name="NoRaces" xml:space="preserve">
+    <value>No Races</value>
   </data>
-  <data name="NoNetworkLog" xml:space="preserve">
-    <value>No Network Log</value>
+  <data name="NotPlayableRaces" xml:space="preserve">
+    <value>All Not Playable Races</value>
   </data>
-  <data name="NoProtocol" xml:space="preserve">
-    <value>No Protocol</value>
+  <data name="PlayableRaces" xml:space="preserve">
+    <value>All Playable Races</value>
   </data>
-  <data name="Skin_KamillaStyle" xml:space="preserve">
-    <value>Kamilla Style</value>
+  <data name="Race1" xml:space="preserve">
+    <value>Human</value>
   </data>
-  <data name="Skin_Windows" xml:space="preserve">
-    <value>Windows Style</value>
+  <data name="Race10" xml:space="preserve">
+    <value>Blood Elf</value>
   </data>
-  <data name="View_BinaryContents" xml:space="preserve">
-    <value>Binary Data</value>
+  <data name="Race11" xml:space="preserve">
+    <value>Draenei</value>
   </data>
-  <data name="View_Image" xml:space="preserve">
-    <value>Image</value>
+  <data name="Race12" xml:space="preserve">
+    <value>Fel Orc</value>
   </data>
-  <data name="View_PacketContents" xml:space="preserve">
-    <value>Contents</value>
+  <data name="Race13" xml:space="preserve">
+    <value>Naga</value>
   </data>
-  <data name="View_ParsedText" xml:space="preserve">
-    <value>Parsed</value>
+  <data name="Race14" xml:space="preserve">
+    <value>Broken</value>
   </data>
-  <data name="View_TextContents" xml:space="preserve">
-    <value>Text Data</value>
+  <data name="Race15" xml:space="preserve">
+    <value>Skeleton</value>
+  </data>
+  <data name="Race16" xml:space="preserve">
+    <value>Vrykul</value>
+  </data>
+  <data name="Race17" xml:space="preserve">
+    <value>Tuskarr</value>
+  </data>
+  <data name="Race18" xml:space="preserve">
+    <value>Forest Troll</value>
+  </data>
+  <data name="Race19" xml:space="preserve">
+    <value>Taunka</value>
+  </data>
+  <data name="Race2" xml:space="preserve">
+    <value>Orc</value>
+  </data>
+  <data name="Race20" xml:space="preserve">
+    <value>Northrend Skeleton</value>
+  </data>
+  <data name="Race21" xml:space="preserve">
+    <value>Ice Troll</value>
+  </data>
+  <data name="Race22" xml:space="preserve">
+    <value>Worgen</value>
+  </data>
+  <data name="Race23" xml:space="preserve">
+    <value>Gilneas Human</value>
+  </data>
+  <data name="Race3" xml:space="preserve">
+    <value>Dwarf</value>
+  </data>
+  <data name="Race4" xml:space="preserve">
+    <value>Night Elf</value>
+  </data>
+  <data name="Race5" xml:space="preserve">
+    <value>Undead</value>
+  </data>
+  <data name="Race6" xml:space="preserve">
+    <value>Tauren</value>
+  </data>
+  <data name="Race7" xml:space="preserve">
+    <value>Gnome</value>
+  </data>
+  <data name="Race8" xml:space="preserve">
+    <value>Troll</value>
+  </data>
+  <data name="Race9" xml:space="preserve">
+    <value>Goblin</value>
   </data>
 </root>

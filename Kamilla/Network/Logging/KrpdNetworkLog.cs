@@ -16,7 +16,7 @@ namespace Kamilla.Network.Logging
         HeaderString = SignatureString,
         Flags = NetworkLogFlags.None
         )]
-    public sealed class KrpdNetworkLog : NetworkLog, INetworkLogWithStartTime, INetworkLogWithStartTicks
+    public sealed class KrpdNetworkLog : NetworkLog, IHasStartTime, IHasStartTicks
     {
         public const string SignatureString = "KRPD  v1";
         public static readonly byte[] SignatureBytes = Encoding.ASCII.GetBytes(SignatureString);
@@ -100,6 +100,12 @@ namespace Kamilla.Network.Logging
             }
 
             m_stream = new StreamHandler(stream, closeStream);
+        }
+
+        protected override void InternalOpenForWriting(Stream stream)
+        {
+            base.InternalOpenForWriting(stream);
+            this.InternalWriteMetaData();
         }
 
         protected override unsafe void InternalRead(Action<int> reportProgressDelegate)

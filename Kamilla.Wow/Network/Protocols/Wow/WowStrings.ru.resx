@@ -117,107 +117,151 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Error" xml:space="preserve">
-    <value>Error</value>
+  <data name="AllClasses" xml:space="preserve">
+    <value>Все классы</value>
   </data>
-  <data name="ErrorReading" xml:space="preserve">
-    <value>An error occured while reading file:
-
-{0}</value>
+  <data name="AllianceRaces" xml:space="preserve">
+    <value>Расы Альянса</value>
   </data>
-  <data name="LoadingFile" xml:space="preserve">
-    <value>Loading file:
-
-{0}</value>
+  <data name="AllRaces" xml:space="preserve">
+    <value>Все расы</value>
   </data>
-  <data name="LW_Cancel" xml:space="preserve">
-    <value>Cancel</value>
+  <data name="Class1" xml:space="preserve">
+    <value>Воин</value>
   </data>
-  <data name="LW_LoadingPleaseWait" xml:space="preserve">
-    <value>Loading, please wait...</value>
+  <data name="Class11" xml:space="preserve">
+    <value>Друид</value>
   </data>
-  <data name="LW_Title" xml:space="preserve">
-    <value>Loading...</value>
+  <data name="Class2" xml:space="preserve">
+    <value>Паладин</value>
   </data>
-  <data name="Menu_About" xml:space="preserve">
-    <value>About Network Log Viewer...</value>
+  <data name="Class3" xml:space="preserve">
+    <value>{0?bool:Охотница:Охотник}</value>
   </data>
-  <data name="Menu_CloseFile" xml:space="preserve">
-    <value>Close File</value>
+  <data name="Class4" xml:space="preserve">
+    <value>{0?bool:Разбойница:Разбойник}</value>
   </data>
-  <data name="Menu_Edit" xml:space="preserve">
-    <value>Edit</value>
+  <data name="Class5" xml:space="preserve">
+    <value>{0?bool:Жрица:Жрец}</value>
   </data>
-  <data name="Menu_Exit" xml:space="preserve">
-    <value>Exit</value>
+  <data name="Class6" xml:space="preserve">
+    <value>Рыцарь Смерти</value>
   </data>
-  <data name="Menu_File" xml:space="preserve">
-    <value>File</value>
+  <data name="Class7" xml:space="preserve">
+    <value>Шаман</value>
   </data>
-  <data name="Menu_Help" xml:space="preserve">
-    <value>Help</value>
+  <data name="Class8" xml:space="preserve">
+    <value>Маг</value>
   </data>
-  <data name="Menu_LanguageWEn" xml:space="preserve">
-    <value>Language</value>
+  <data name="Class9" xml:space="preserve">
+    <value>{0?bool:Чернокнижница:Чернокнижник}</value>
   </data>
-  <data name="Menu_NullProtocol" xml:space="preserve">
-    <value>(No Protocol)</value>
+  <data name="Expac0" xml:space="preserve">
+    <value>World of Warcraft (Оригинал)</value>
   </data>
-  <data name="Menu_OpenConsole" xml:space="preserve">
-    <value>Open Console</value>
+  <data name="Expac1" xml:space="preserve">
+    <value>World of Warcraft: The Burning Crusade</value>
   </data>
-  <data name="Menu_OpenEllipsis" xml:space="preserve">
-    <value>Open...</value>
+  <data name="Expac2" xml:space="preserve">
+    <value>World of Warcraft: Гнев Короля-лича</value>
   </data>
-  <data name="Menu_Protocols" xml:space="preserve">
-    <value>Protocols</value>
+  <data name="Expac3" xml:space="preserve">
+    <value>World of Warcraft: Катаклизм</value>
   </data>
-  <data name="Menu_SaveAs" xml:space="preserve">
-    <value>Save As</value>
+  <data name="Expac4" xml:space="preserve">
+    <value>World of Warcraft: Туманы Пандарии</value>
   </data>
-  <data name="Menu_SaveEllipsis" xml:space="preserve">
-    <value>Save...</value>
+  <data name="Gender0" xml:space="preserve">
+    <value>Мужской</value>
   </data>
-  <data name="Menu_Skins" xml:space="preserve">
-    <value>Skins</value>
+  <data name="Gender1" xml:space="preserve">
+    <value>Женский</value>
   </data>
-  <data name="Menu_View" xml:space="preserve">
-    <value>View</value>
+  <data name="Gender2" xml:space="preserve">
+    <value>Нет</value>
   </data>
-  <data name="Menu_ViewPanels" xml:space="preserve">
-    <value>View Panels</value>
+  <data name="HordeRace" xml:space="preserve">
+    <value>Расы Орды</value>
   </data>
-  <data name="NetworkLogViewer_Title" xml:space="preserve">
-    <value>Network Log Viewer</value>
+  <data name="NoClasses" xml:space="preserve">
+    <value>Нет классов</value>
   </data>
-  <data name="NoData" xml:space="preserve">
-    <value>(No Data)</value>
+  <data name="NoRaces" xml:space="preserve">
+    <value>Нет рас</value>
   </data>
-  <data name="NoNetworkLog" xml:space="preserve">
-    <value>No Network Log</value>
+  <data name="NotPlayableRaces" xml:space="preserve">
+    <value>Все неигровые расы</value>
   </data>
-  <data name="NoProtocol" xml:space="preserve">
-    <value>No Protocol</value>
+  <data name="PlayableRaces" xml:space="preserve">
+    <value>Все игровые расы</value>
   </data>
-  <data name="Skin_KamillaStyle" xml:space="preserve">
-    <value>Kamilla Style</value>
+  <data name="Race1" xml:space="preserve">
+    <value>Человек</value>
   </data>
-  <data name="Skin_Windows" xml:space="preserve">
-    <value>Windows Style</value>
+  <data name="Race10" xml:space="preserve">
+    <value>{0?bool:Эльфийка крови:Эльф крови}</value>
   </data>
-  <data name="View_BinaryContents" xml:space="preserve">
-    <value>Binary Data</value>
+  <data name="Race11" xml:space="preserve">
+    <value>Дреней</value>
   </data>
-  <data name="View_Image" xml:space="preserve">
-    <value>Image</value>
+  <data name="Race12" xml:space="preserve">
+    <value>Орк Скверны</value>
   </data>
-  <data name="View_PacketContents" xml:space="preserve">
-    <value>Contents</value>
+  <data name="Race13" xml:space="preserve">
+    <value>Нага</value>
   </data>
-  <data name="View_ParsedText" xml:space="preserve">
-    <value>Parsed</value>
+  <data name="Race14" xml:space="preserve">
+    <value>{0?bool:Падшая:Падший}</value>
   </data>
-  <data name="View_TextContents" xml:space="preserve">
-    <value>Text Data</value>
+  <data name="Race15" xml:space="preserve">
+    <value>Скелет</value>
+  </data>
+  <data name="Race16" xml:space="preserve">
+    <value>Врайкул</value>
+  </data>
+  <data name="Race17" xml:space="preserve">
+    <value>Клыкарр</value>
+  </data>
+  <data name="Race18" xml:space="preserve">
+    <value>Лесной тролль</value>
+  </data>
+  <data name="Race19" xml:space="preserve">
+    <value>Таунка</value>
+  </data>
+  <data name="Race2" xml:space="preserve">
+    <value>Орк</value>
+  </data>
+  <data name="Race20" xml:space="preserve">
+    <value>Нордскольский скелет</value>
+  </data>
+  <data name="Race21" xml:space="preserve">
+    <value>Ледяной тролль</value>
+  </data>
+  <data name="Race22" xml:space="preserve">
+    <value>Ворген</value>
+  </data>
+  <data name="Race23" xml:space="preserve">
+    <value>Житель Гилнеаса</value>
+  </data>
+  <data name="Race3" xml:space="preserve">
+    <value>Дворф</value>
+  </data>
+  <data name="Race4" xml:space="preserve">
+    <value>{0?bool:Ночная эльфийка:Ночной эльф}</value>
+  </data>
+  <data name="Race5" xml:space="preserve">
+    <value>Нежить</value>
+  </data>
+  <data name="Race6" xml:space="preserve">
+    <value>Таурен</value>
+  </data>
+  <data name="Race7" xml:space="preserve">
+    <value>Гном</value>
+  </data>
+  <data name="Race8" xml:space="preserve">
+    <value>Тролль</value>
+  </data>
+  <data name="Race9" xml:space="preserve">
+    <value>Гоблин</value>
   </data>
 </root>

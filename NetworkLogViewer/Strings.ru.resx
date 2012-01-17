@@ -117,8 +117,27 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Error" xml:space="preserve">
+    <value>Ошибка</value>
+  </data>
+  <data name="ErrorReading" xml:space="preserve">
+    <value>Произошла ошибка во время чтения файла:
+
+{0}</value>
+  </data>
   <data name="LoadingFile" xml:space="preserve">
-    <value>Загрузка файла:\r\n\r\n{0}</value>
+    <value>Загрузка файла:
+
+{0}</value>
+  </data>
+  <data name="LW_Cancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="LW_LoadingPleaseWait" xml:space="preserve">
+    <value>Идет загрузка, пожалуйста, подождите...</value>
+  </data>
+  <data name="LW_Title" xml:space="preserve">
+    <value>Загрузка...</value>
   </data>
   <data name="Menu_About" xml:space="preserve">
     <value>О приложении...</value>

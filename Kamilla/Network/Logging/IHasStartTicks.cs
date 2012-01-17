@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Kamilla.Network.Logging
 {
-    public interface INetworkLogWithStartTicks
+    public interface IHasStartTicks
     {
         uint StartTicks { get; set; }
     }

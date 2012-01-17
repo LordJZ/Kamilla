@@ -65,7 +65,7 @@ namespace Kamilla
                 }
             }
 
-            var files = Directory.GetFiles(currentDirectory, "Kamilla.*.dll");
+            var files = Directory.GetFiles(currentDirectory, ProjectInformation.Title + ".*.dll");
             foreach (var file in files)
             {
                 try

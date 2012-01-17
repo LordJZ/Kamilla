@@ -56,10 +56,10 @@ namespace Kamilla.Network.Logging
                     m_packets = new List<Packet>();
                     break;
                 case NetworkLogMode.Writing:
-                    if (this is INetworkLogWithStartTicks)
-                        ((INetworkLogWithStartTicks)this).StartTicks = (uint)Environment.TickCount;
-                    if (this is INetworkLogWithStartTime)
-                        ((INetworkLogWithStartTime)this).StartTime = DateTime.Now;
+                    if (this is IHasStartTicks)
+                        ((IHasStartTicks)this).StartTicks = (uint)Environment.TickCount;
+                    if (this is IHasStartTime)
+                        ((IHasStartTime)this).StartTime = DateTime.Now;
                     break;
                 default:
                     throw new ArgumentException("mode");
@@ -267,7 +267,7 @@ namespace Kamilla.Network.Logging
         /// <exception cref="System.ObjectDisposedException">
         /// The current instance of <see cref="Kamilla.Network.Logging.NetworkLog"/> is disposed.
         /// </exception>
-        protected void InternalAddPacket(Packet packet)
+        protected virtual void InternalAddPacket(Packet packet)
         {
             if (m_mode == NetworkLogMode.Writing)
                 throw new InvalidOperationException(s_cannotAddToWriting);

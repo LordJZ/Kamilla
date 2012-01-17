@@ -33,6 +33,27 @@ namespace Kamilla.Network.Protocols
 
         #region Finders
         /// <summary>
+        /// Finds a <see cref="Kamilla.Network.Protocols.Protocol"/> with the specified typename.
+        /// </summary>
+        /// <param name="typename">
+        /// Typename of the <see cref="Kamilla.Network.Protocols.ProtocolWrapper"/>.
+        /// </param>
+        /// <returns>
+        /// <see cref="Kamilla.Network.Protocols.ProtocolWrapper"/> of the
+        /// specified <see cref="System.Type"/> if found; otherwise, null.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// typename is null.
+        /// </exception>
+        public static ProtocolWrapper FindWrapper(string typename)
+        {
+            if (typename == null)
+                throw new ArgumentNullException();
+
+            return FindWrapper(wrapper => wrapper.TypeName == typename);
+        }
+
+        /// <summary>
         /// Finds a <see cref="Kamilla.Network.Protocols.Protocol"/> of the specified type.
         /// </summary>
         /// <param name="type">

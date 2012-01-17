@@ -600,9 +600,6 @@ namespace Kamilla
                             ++j;
                         }
 
-                        if (index >= args.Length)
-                            throw new FormatException();
-
                         if (format[j] != '?')
                             goto writeChar;
 
@@ -622,7 +619,12 @@ namespace Kamilla
                             return builder2.ToString();
                         };
 
-                        switch (readString())
+                        var type = readString();
+
+                        if (index >= args.Length && type != "bool")
+                            throw new FormatException();
+
+                        switch (type)
                         {
                             // left, if value is true or non-zero or non-null
                             // otherwise, right
@@ -631,7 +633,7 @@ namespace Kamilla
                                 var ifTrue = readString();
                                 var ifFalse = readString();
                                 bool cond;
-                                var obj = args[index];
+                                var obj = index < args.Length ? args[index] : null;
                                 if (obj == null)
                                 {
                                     cond = false;

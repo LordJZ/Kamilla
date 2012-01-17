@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 using System.Windows;
 
 [assembly: AssemblyTitle("Network Log Viewer")]
-[assembly: AssemblyDescription("Kamilla Network Log Viewer Application")]
+[assembly: AssemblyDescription(Kamilla.ProjectInformation.Title + " Network Log Viewer Application")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("LordJZ")]
+[assembly: AssemblyCompany(Kamilla.ProjectInformation.Company)]
 [assembly: AssemblyProduct("Network Log Viewer")]
-[assembly: AssemblyCopyright("Copyright © LordJZ 2012")]
+[assembly: AssemblyCopyright(Kamilla.ProjectInformation.Copyright)]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -35,5 +35,5 @@ using System.Windows;
 )]
 
 
-[assembly: AssemblyVersion("4.0.0.0")]
-[assembly: AssemblyFileVersion("4.0.0.0")]
+[assembly: AssemblyVersion(Kamilla.ProjectInformation.Version)]
+[assembly: AssemblyFileVersion(Kamilla.ProjectInformation.Version)]

@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kamilla", "Kamilla\Kamilla.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkLogViewer", "NetworkLogViewer\NetworkLogViewer.csproj", "{535A874C-725C-410A-AB80-673366EBE05A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kamilla.Wow", "Kamilla.Wow\Kamilla.Wow.csproj", "{5FC1AFC8-0EF6-47CA-8426-8730D4894261}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -29,6 +31,14 @@ Global
 		{535A874C-725C-410A-AB80-673366EBE05A}.Release|x64.Build.0 = Release|x64
 		{535A874C-725C-410A-AB80-673366EBE05A}.Release|x86.ActiveCfg = Release|x86
 		{535A874C-725C-410A-AB80-673366EBE05A}.Release|x86.Build.0 = Release|x86
+		{5FC1AFC8-0EF6-47CA-8426-8730D4894261}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5FC1AFC8-0EF6-47CA-8426-8730D4894261}.Debug|x64.Build.0 = Debug|Any CPU
+		{5FC1AFC8-0EF6-47CA-8426-8730D4894261}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5FC1AFC8-0EF6-47CA-8426-8730D4894261}.Debug|x86.Build.0 = Debug|Any CPU
+		{5FC1AFC8-0EF6-47CA-8426-8730D4894261}.Release|x64.ActiveCfg = Release|Any CPU
+		{5FC1AFC8-0EF6-47CA-8426-8730D4894261}.Release|x64.Build.0 = Release|Any CPU
+		{5FC1AFC8-0EF6-47CA-8426-8730D4894261}.Release|x86.ActiveCfg = Release|Any CPU
+		{5FC1AFC8-0EF6-47CA-8426-8730D4894261}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

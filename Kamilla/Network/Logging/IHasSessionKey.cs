@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Kamilla.Network.Logging
 {
-    public interface INetworkLogWithServerVersion
+    public interface IHasSessionKey
     {
-        Version ServerVersion { get; set; }
+        byte[] SessionKey { get; set; }
     }
 }

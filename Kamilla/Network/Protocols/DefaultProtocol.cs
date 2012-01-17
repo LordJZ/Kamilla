@@ -71,8 +71,8 @@ namespace Kamilla.Network.Protocols
             arr[1] = packet.ArrivalTime.ToString("HH:mm:ss");
 
             uint startTicks = 0;
-            if (item.Log is INetworkLogWithStartTicks)
-                startTicks = ((INetworkLogWithStartTicks)item.Log).StartTicks;
+            if (item.Log is IHasStartTicks)
+                startTicks = ((IHasStartTicks)item.Log).StartTicks;
 
             arr[2] = ((int)(packet.ArrivalTicks - startTicks)).ToString();
 

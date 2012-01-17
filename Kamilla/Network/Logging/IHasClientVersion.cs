@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Kamilla.Network.Logging
 {
-    public interface INetworkLogWithStartTime
+    public interface IHasClientVersion
     {
-        DateTime StartTime { get; set; }
+        Version ClientVersion { get; set; }
     }
 }

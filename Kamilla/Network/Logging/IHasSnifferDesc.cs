@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Globalization;
 
 namespace Kamilla.Network.Logging
 {
-    public interface INetworkLogWithCultureInfo
+    public interface IHasSnifferDesc
     {
-        CultureInfo Culture { get; set; }
+        string SnifferDesc { get; set; }
     }
 }

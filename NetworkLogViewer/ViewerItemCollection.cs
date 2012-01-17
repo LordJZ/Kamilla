@@ -26,21 +26,65 @@ namespace NetworkLogViewer
         public bool IsFixedSize { get { return false; } }
         public bool IsReadOnly { get { return false; } }
         public int Count { get { return m_list.Count; } }
+        public int Capacity
+        {
+            get { return m_list.Capacity; }
+            set { m_list.Capacity = value; }
+        }
         public bool IsSynchronized { get { return false; } }
         public object SyncRoot { get { return null; } }
+        bool m_suspended;
 
         #endregion
 
         #region Methods
+        public void SuspendUpdating()
+        {
+            m_suspended = true;
+        }
+
+        public void ResumeUpdating()
+        {
+            m_suspended = false;
+        }
+
+        /// <summary>
+        /// Updated the collection via events if it is in suspended state.
+        /// </summary>
+        public void Update()
+        {
+            this.OnPropertyChanged("Count");
+            this.OnPropertyChanged("Item[]");
+            this.OnCollectionReset();
+        }
+
+        public void SetData(IList<ViewerItem> items)
+        {
+            if (m_list.Capacity < items.Count)
+                m_list.Capacity = items.Count;
+
+            m_list.AddRange(items);
+
+            if (!m_suspended)
+            {
+                this.OnPropertyChanged("Count");
+                this.OnPropertyChanged("Item[]");
+                this.OnCollectionReset();
+            }
+        }
+
         public void Clear()
         {
             if (m_list.Count != 0)
             {
                 m_list.Clear();
 
-                this.OnPropertyChanged("Count");
-                this.OnPropertyChanged("Item[]");
-                this.OnCollectionReset();
+                if (!m_suspended)
+                {
+                    this.OnPropertyChanged("Count");
+                    this.OnPropertyChanged("Item[]");
+                    this.OnCollectionReset();
+                }
             }
         }
 
@@ -52,18 +96,24 @@ namespace NetworkLogViewer
             var item = m_list[index];
             m_list.RemoveAt(index);
 
-            this.OnPropertyChanged("Count");
-            this.OnPropertyChanged("Item[]");
-            this.OnCollectionChanged(NotifyCollectionChangedAction.Remove, item, index);
+            if (!m_suspended)
+            {
+                this.OnPropertyChanged("Count");
+                this.OnPropertyChanged("Item[]");
+                this.OnCollectionChanged(NotifyCollectionChangedAction.Remove, item, index);
+            }
         }
 
         public void Add(ViewerItem value)
         {
             m_list.Add(value);
 
-            this.OnPropertyChanged("Count");
-            this.OnPropertyChanged("Item[]");
-            this.OnCollectionChanged(NotifyCollectionChangedAction.Add, value, m_list.Count - 1);
+            if (!m_suspended)
+            {
+                this.OnPropertyChanged("Count");
+                this.OnPropertyChanged("Item[]");
+                this.OnCollectionChanged(NotifyCollectionChangedAction.Add, value, m_list.Count - 1);
+            }
         }
 
         public bool Contains(ViewerItem value)
@@ -93,9 +143,12 @@ namespace NetworkLogViewer
         {
             m_list.Insert(index, value);
 
-            this.OnPropertyChanged("Count");
-            this.OnPropertyChanged("Item[]");
-            this.OnCollectionChanged(NotifyCollectionChangedAction.Add, value, index);
+            if (!m_suspended)
+            {
+                this.OnPropertyChanged("Count");
+                this.OnPropertyChanged("Item[]");
+                this.OnCollectionChanged(NotifyCollectionChangedAction.Add, value, index);
+            }
         }
 
         public ViewerItem this[int index]
@@ -115,9 +168,12 @@ namespace NetworkLogViewer
                 var item = m_list[index];
                 m_list[index] = value;
 
-                this.OnPropertyChanged("Count");
-                this.OnPropertyChanged("Item[]");
-                this.OnCollectionChanged(NotifyCollectionChangedAction.Replace, item, value, index);
+                if (!m_suspended)
+                {
+                    this.OnPropertyChanged("Count");
+                    this.OnPropertyChanged("Item[]");
+                    this.OnCollectionChanged(NotifyCollectionChangedAction.Replace, item, value, index);
+                }
             }
         }
 
