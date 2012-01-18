@@ -1,6 +1,9 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Collections.Generic;
 using System.Windows;
+using System.Collections.Concurrent;
+using System.Threading;
 using System.Windows.Interop;
 using Kamilla.Network.Logging;
 using Kamilla.Network.Parsing;
@@ -18,6 +21,7 @@ namespace NetworkLogViewer
         NetworkLog m_currentLog;
         internal readonly ViewerItemCollection m_items;
         WindowInteropHelper m_interopHelper;
+        BackgroundWorker m_parsingWorker;
 
         internal ViewerImplementation(MainWindow window)
         {
@@ -39,6 +43,12 @@ namespace NetworkLogViewer
                 if (this.ItemAdded != null)
                     this.ItemAdded(this, new ViewerItemEventArgs(item));
             };
+
+            m_parsingWorker = new BackgroundWorker()
+            {
+                WorkerSupportsCancellation = true
+            };
+            m_parsingWorker.DoWork += new DoWorkEventHandler(m_parsingWorker_DoWork);
         }
 
         public override void UpdateItem(ViewerItem item)
@@ -57,15 +67,17 @@ namespace NetworkLogViewer
             if (m_currentProtocol == value)
                 return;
 
+            var old = m_currentProtocol;
+            if (old != null)
+                old.Unload();
+
+            m_currentProtocol = value;
+            m_currentProtocol.Load(this);
+
+            m_parsingWorker.CancelAsync();
+
             m_window.ThreadSafe(_ =>
             {
-                var old = m_currentProtocol;
-                if (old != null)
-                    old.Unload();
-
-                m_currentProtocol = value;
-                m_currentProtocol.Load(this);
-
                 if (this.ProtocolChanged != null)
                     this.ProtocolChanged(this, new ProtocolChangedEventArgs(old, value));
             });
@@ -76,16 +88,18 @@ namespace NetworkLogViewer
             if (m_currentLog == value)
                 return;
 
+            var old = m_currentLog;
+            if (old != null)
+                old.PacketAdded -= m_packetAddedHandler;
+
+            m_currentLog = value;
+            if (value != null)
+                value.PacketAdded += m_packetAddedHandler;
+
+            m_parsingWorker.CancelAsync();
+
             m_window.ThreadSafe(_ =>
             {
-                var old = m_currentLog;
-                if (old != null)
-                    old.PacketAdded -= m_packetAddedHandler;
-
-                m_currentLog = value;
-                if (value != null)
-                    value.PacketAdded += m_packetAddedHandler;
-
                 if (this.NetworkLogChanged != null)
                     this.NetworkLogChanged(this, new NetworkLogChangedEventArgs(old, value));
             });
@@ -101,6 +115,7 @@ namespace NetworkLogViewer
         {
             m_items.Clear();
             this.SetLog(null);
+            m_parsingWorker.CancelAsync();
         }
 
         #region Overrides
@@ -153,6 +168,63 @@ namespace NetworkLogViewer
         /// Occurs when a <see cref="Kamilla.Network.Viewing.ViewerItem"/> is added.
         /// </summary>
         public override event ViewerItemEventHandler ItemAdded;
+        #endregion
+
+        #region Parsing
+        ConcurrentQueue<ViewerItem> m_parsingQueue = new ConcurrentQueue<ViewerItem>();
+
+        void m_parsingWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            // THREADING DANGER ZONE!
+
+            var worker = (BackgroundWorker)sender;
+            int turnOffTimes = 0;
+
+            do
+            {
+                while (!worker.CancellationPending && !m_parsingQueue.IsEmpty && m_currentProtocol != null)
+                {
+                    // Cache protocol
+                    var protocol = m_currentProtocol;
+
+                    ViewerItem item;
+                    if (!m_parsingQueue.TryDequeue(out item))
+                        break;
+
+                    if (item.Viewer != this || item.Log != m_currentLog)
+                        continue;
+
+                    var parser = item.Parser;
+                    if (parser == null)
+                    {
+                        turnOffTimes = 0;
+                        protocol.CreateParser(item);
+                    }
+
+                    if (!parser.IsParsed)
+                    {
+                        turnOffTimes = 0;
+                        // TODO: push to dealloc queue
+                        parser.Parse();
+                    }
+                }
+
+                while (!worker.CancellationPending && (m_parsingQueue.IsEmpty || m_currentProtocol == null))
+                {
+                    Thread.Sleep(100);
+                    if (++turnOffTimes == 50)
+                        return;
+                }
+            }
+            while (!worker.CancellationPending);
+        }
+
+        public override void EnqueueParsing(ViewerItem item)
+        {
+            m_parsingQueue.Enqueue(item);
+            if (!m_parsingWorker.IsBusy)
+                m_parsingWorker.RunWorkerAsync();
+        }
         #endregion
     }
 }

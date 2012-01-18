@@ -1,25 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using Kamilla;
-using Kamilla.Network;
 using Kamilla.Network.Logging;
-using Kamilla.Network.Parsing;
 using Kamilla.Network.Protocols;
 using Kamilla.Network.Viewing;
 using Kamilla.WPF;
@@ -30,7 +22,6 @@ namespace NetworkLogViewer
 {
     partial class MainWindow : Window
     {
-        BackgroundWorker ui_parsingWorker;
         BackgroundWorker ui_loadingWorker;
         BackgroundWorker ui_readingWorker;
 
@@ -119,12 +110,6 @@ namespace NetworkLogViewer
             });
 
             // Background Workers
-            this.ui_parsingWorker = new BackgroundWorker()
-            {
-                WorkerSupportsCancellation = true
-            };
-            //this.ui_parsingWorker.DoWork += new DoWorkEventHandler(this.ui_parsingWorker_DoWork);
-
             this.ui_loadingWorker = new BackgroundWorker()
             {
                 WorkerSupportsCancellation = true
@@ -324,7 +309,7 @@ namespace NetworkLogViewer
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             ui_readingWorker.CancelAsync();
-            ui_parsingWorker.CancelAsync();
+            m_implementation.CloseFile();
 
             Configuration.SuspendSaving();
             Configuration.SetValue("Number of Views", m_currentNViews);

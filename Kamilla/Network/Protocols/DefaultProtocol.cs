@@ -7,6 +7,7 @@ namespace Kamilla.Network.Protocols
 {
     public sealed class DefaultProtocol : Protocol
     {
+        NetworkLogViewerBase m_viewer;
         ViewerItemEventHandler m_itemQueriedHandler;
 
         public DefaultProtocol()
@@ -56,8 +57,6 @@ namespace Kamilla.Network.Protocols
             get { return s_columnWidths; }
         }
         #endregion
-
-        NetworkLogViewerBase m_viewer;
 
         void viewer_ItemQueried(object sender, ViewerItemEventArgs e)
         {

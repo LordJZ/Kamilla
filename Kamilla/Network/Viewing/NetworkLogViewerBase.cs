@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using Kamilla.Network.Logging;
 using Kamilla.Network.Protocols;
-using Kamilla.Network.Parsing;
 
 namespace Kamilla.Network.Viewing
 {
@@ -20,10 +18,10 @@ namespace Kamilla.Network.Viewing
         /// The <see cref="Kamilla.Network.Viewing.ViewerItem"/> whose parsing has finished.
         /// </param>
         /// <exception cref="System.ArgumentNullException">
-        /// item is null.
+        /// <c>item</c> is null.
         /// </exception>
         /// <exception cref="System.ArgumentException">
-        /// item is invalid.
+        /// <c>item</c> is invalid.
         /// </exception>
         protected internal virtual void OnParsingDone(ViewerItem item)
         {
@@ -44,12 +42,20 @@ namespace Kamilla.Network.Viewing
         /// The <see cref="Kamilla.Network.Viewing.ViewerItem"/> that should be repainted.
         /// </param>
         /// <exception cref="System.ArgumentNullException">
-        /// item is null.
+        /// <c>item</c> is null.
         /// </exception>
         /// <exception cref="System.ArgumentException">
         /// The specified <see cref="Kamilla.Network.Viewing.ViewerItem"/> is invalid.
         /// </exception>
         public abstract void UpdateItem(ViewerItem item);
+
+        /// <summary>
+        /// Flags the specified <see cref="Kamilla.Network.Viewing.ViewerItem"/> for parsing.
+        /// </summary>
+        /// <param name="item">
+        /// The <see cref="Kamilla.Network.Viewing.ViewerItem"/> that should be flagged for parsing.
+        /// </param>
+        public abstract void EnqueueParsing(ViewerItem item);
 
         #region Events
         /// <summary>
