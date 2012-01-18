@@ -46,7 +46,7 @@ namespace Kamilla.Network.Protocols
         /// Gets widths of columns when packets of the current
         /// <see cref="Kamilla.Network.Protocols.Protocol"/> are displayed in a ListView.
         /// </summary>
-        public abstract int[] ListViewColumnWidths { get; }
+        public abstract double[] ListViewColumnWidths { get; }
 
         protected virtual PacketParser InternalCreateParser(ViewerItem item)
         {

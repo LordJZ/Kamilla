@@ -58,7 +58,7 @@ namespace NetworkLogViewer
             if (item.Viewer != this)
                 throw new ArgumentException();
 
-            m_items.Update(item);
+            m_window.ThreadSafe(_ => m_items.Update(item));
         }
 
         internal void SetProtocol(Protocol value)
@@ -198,6 +198,7 @@ namespace NetworkLogViewer
                     {
                         turnOffTimes = 0;
                         protocol.CreateParser(item);
+                        parser = item.Parser;
                     }
 
                     if (!parser.IsParsed)

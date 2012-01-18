@@ -311,7 +311,11 @@ namespace NetworkLogViewer
             ui_readingWorker.CancelAsync();
             m_implementation.CloseFile();
 
+            var protocol = this.CurrentProtocol;
+
             Configuration.SuspendSaving();
+            if (protocol != null)
+                this.SaveProtocolColumnSettings(protocol);
             Configuration.SetValue("Number of Views", m_currentNViews);
             this.SaveCurrentViews();
             Configuration.SetValue("Vertical Splitter", new[] {
@@ -486,12 +490,42 @@ namespace NetworkLogViewer
             this.CurrentProtocol = protocol;
         }
 
+        class MyGridViewColumn : GridViewColumn
+        {
+            public int ColumnId;
+        }
+
+        void SaveProtocolColumnSettings(Protocol protocol)
+        {
+            var view = (GridView)ui_lvPackets.View;
+            var columns = view.Columns;
+            var nColumns = columns.Count;
+            var typename = protocol.GetType().Name;
+
+            var widths = new double[nColumns];
+            var order = new int[nColumns];
+
+            for (int i = 0; i < nColumns; i++)
+            {
+                var column = (MyGridViewColumn)columns[i];
+
+                order[i] = column.ColumnId;
+                widths[column.ColumnId] = column.Width;
+            }
+
+            Configuration.SetValue(typename + " Column Widths", widths);
+            Configuration.SetValue(typename + " Column Order", order);
+        }
+
         void MainWindow_ProtocolChanged(object sender, ProtocolChangedEventArgs e)
         {
             var newProtocol = e.NewProtocol;
             Type newProtocolType = null;
             if (newProtocol != null)
                 newProtocolType = newProtocol.GetType();
+
+            if (e.OldProtocol != null)
+                SaveProtocolColumnSettings(e.OldProtocol);
 
             foreach (MenuItem itrItem in ui_miProtocol.Items)
                 itrItem.IsChecked = itrItem.Tag == null ? newProtocol == null :
@@ -510,7 +544,7 @@ namespace NetworkLogViewer
                 if (headers == null || headers.Length != nColumns || headers.Any(val => val == null))
                     throw new InvalidOperationException("Protocol.ListViewColumnHeaders is invalid.");
 
-                int[] widths = Configuration.GetValue("Column Widths - " + typename, (int[])null);
+                double[] widths = Configuration.GetValue(typename + " Column Widths", (double[])null);
                 if (widths == null || widths.Length != nColumns)
                 {
                     widths = newProtocol.ListViewColumnWidths;
@@ -519,7 +553,7 @@ namespace NetworkLogViewer
                         throw new InvalidOperationException("Protocol.ListViewColumnWidths is invalid.");
                 }
 
-                int[] columnOrder = Configuration.GetValue("Column Order - " + typename, (int[])null);
+                int[] columnOrder = Configuration.GetValue(typename + " Column Order", (int[])null);
                 if (columnOrder == null || columnOrder.Length != nColumns
                     || columnOrder.Any(val => val >= nColumns || val < 0))
                     columnOrder = Enumerable.Range(0, nColumns).ToArray();
@@ -531,10 +565,11 @@ namespace NetworkLogViewer
                 {
                     int col = columnOrder[i];
 
-                    var item = new GridViewColumn();
+                    var item = new MyGridViewColumn();
+                    item.ColumnId = col;
                     item.Header = headers[col];
                     item.Width = widths[col];
-                    item.DisplayMemberBinding = new Binding(".Data[" + i + "]");
+                    item.DisplayMemberBinding = new Binding(".Data[" + col + "]");
                     view.Columns.Add(item);
                 }
 
@@ -739,6 +774,9 @@ namespace NetworkLogViewer
         {
             var protocol = this.CurrentProtocol;
             int index = ui_lvPackets.SelectedIndex;
+            ViewerItem item = null;
+            if (index >= 0)
+                item = m_implementation.m_items[index];
 
             foreach (var tc in m_currentViews)
             {
@@ -746,7 +784,7 @@ namespace NetworkLogViewer
                     ((IViewTab)tab.Content).Reset();
 
                 if (index >= 0)
-                    ((IViewTab)((TabItem)tc.SelectedItem).Content).Fill(protocol, m_implementation.m_items[index]);
+                    ((IViewTab)((TabItem)tc.SelectedItem).Content).Fill(protocol, item);
             }
         }
 

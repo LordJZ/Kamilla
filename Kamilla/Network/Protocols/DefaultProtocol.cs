@@ -26,7 +26,7 @@ namespace Kamilla.Network.Protocols
             get { return s_columnWidths.Length; }
         }
 
-        static readonly int[] s_columnWidths = new int[]
+        static readonly double[] s_columnWidths = new double[]
         {
             64,
             85,
@@ -52,7 +52,7 @@ namespace Kamilla.Network.Protocols
             }
         }
 
-        public override int[] ListViewColumnWidths
+        public override double[] ListViewColumnWidths
         {
             get { return s_columnWidths; }
         }

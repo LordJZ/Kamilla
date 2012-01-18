@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define IMPLEMENT_INPC
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -7,7 +9,10 @@ using Kamilla.Network.Viewing;
 
 namespace NetworkLogViewer
 {
-    public class ViewerItemCollection : IList, IList<ViewerItem>, INotifyPropertyChanged, INotifyCollectionChanged
+    public class ViewerItemCollection : IList, IList<ViewerItem>, INotifyCollectionChanged
+#if IMPLEMENT_INPC
+        , INotifyPropertyChanged
+#endif
     {
         List<ViewerItem> m_list;
 
@@ -53,8 +58,9 @@ namespace NetworkLogViewer
         /// </summary>
         public void Update()
         {
-            this.OnPropertyChanged("Count");
-            this.OnPropertyChanged("Item[]");
+#if IMPLEMENT_INPC
+            this.OnPropertyChanged(Binding.IndexerName);
+#endif
             this.OnCollectionReset();
         }
 
@@ -67,23 +73,35 @@ namespace NetworkLogViewer
         /// </param>
         public void Update(ViewerItem item)
         {
-            this[item.Index] = item;
+            int index = item.Index;
+
+            if (m_list[index] != item)
+                throw new InvalidOperationException();
+
+            // Any better solution?
+            this.OnCollectionChanged(NotifyCollectionChangedAction.Remove, item, index);
+            this.OnCollectionChanged(NotifyCollectionChangedAction.Add, item, index);
+#if IMPLEMENT_INPC
+            this.OnPropertyChanged(Binding.IndexerName);
+#endif
         }
 
-        //public void SetData(IList<ViewerItem> items)
-        //{
-        //    if (m_list.Capacity < items.Count)
-        //        m_list.Capacity = items.Count;
+//        public void SetData(IList<ViewerItem> items)
+//        {
+//            if (m_list.Capacity < items.Count)
+//                m_list.Capacity = items.Count;
 
-        //    m_list.AddRange(items);
+//            m_list.AddRange(items);
 
-        //    if (!m_suspended)
-        //    {
-        //        this.OnPropertyChanged("Count");
-        //        this.OnPropertyChanged("Item[]");
-        //        this.OnCollectionReset();
-        //    }
-        //}
+//            if (!m_suspended)
+//            {
+//#if IMPLEMENT_INPC
+//                this.OnPropertyChanged("Count");
+//                this.OnPropertyChanged(Binding.IndexerName);
+//#endif
+//                this.OnCollectionReset();
+//            }
+//        }
 
         public void Clear()
         {
@@ -93,8 +111,10 @@ namespace NetworkLogViewer
 
                 if (!m_suspended)
                 {
+#if IMPLEMENT_INPC
                     this.OnPropertyChanged("Count");
-                    this.OnPropertyChanged("Item[]");
+                    this.OnPropertyChanged(Binding.IndexerName);
+#endif
                     this.OnCollectionReset();
                 }
             }
@@ -103,28 +123,38 @@ namespace NetworkLogViewer
         public void RemoveAt(int index)
         {
             throw new NotSupportedException();
-            //if (index < 0 || index >= m_list.Count)
-            //    throw new ArgumentOutOfRangeException();
+//            if (index < 0 || index >= m_list.Count)
+//                throw new ArgumentOutOfRangeException();
 
-            //var item = m_list[index];
-            //m_list.RemoveAt(index);
+//            var item = m_list[index];
+//            m_list.RemoveAt(index);
 
-            //if (!m_suspended)
-            //{
-            //    this.OnPropertyChanged("Count");
-            //    this.OnPropertyChanged("Item[]");
-            //    this.OnCollectionChanged(NotifyCollectionChangedAction.Remove, item, index);
-            //}
+//            if (!m_suspended)
+//            {
+//#if IMPLEMENT_INPC
+//                this.OnPropertyChanged("Count");
+//                this.OnPropertyChanged(Binding.IndexerName);
+//#endif
+//                this.OnCollectionChanged(NotifyCollectionChangedAction.Remove, item, index);
+//            }
         }
 
         public void Add(ViewerItem value)
         {
+            if (value == null)
+                throw new ArgumentNullException("value");
+
+            if (value.Index != m_list.Count)
+                throw new ArgumentException("value.Index");
+
             m_list.Add(value);
 
             if (!m_suspended)
             {
+#if IMPLEMENT_INPC
                 this.OnPropertyChanged("Count");
-                this.OnPropertyChanged("Item[]");
+                this.OnPropertyChanged(Binding.IndexerName);
+#endif
                 this.OnCollectionChanged(NotifyCollectionChangedAction.Add, value, m_list.Count - 1);
             }
         }
@@ -137,15 +167,20 @@ namespace NetworkLogViewer
         public bool Remove(ViewerItem value)
         {
             throw new NotSupportedException();
-            //int idx = this.IndexOf(value);
+//            int idx = this.IndexOf(value);
 
-            //if (idx >= 0)
-            //{
-            //    this.RemoveAt(idx);
-            //    return true;
-            //}
+//            if (idx >= 0)
+//            {
+//                this.RemoveAt(idx);
+//#if IMPLEMENT_INPC
+//                this.OnPropertyChanged("Count");
+//                this.OnPropertyChanged(Binding.IndexerName);
+//#endif
+//                this.OnCollectionChanged(NotifyCollectionChangedAction.Remove, value, idx);
+//                return true;
+//            }
 
-            //return false;
+//            return false;
         }
 
         public int IndexOf(ViewerItem value)
@@ -161,7 +196,7 @@ namespace NetworkLogViewer
             //if (!m_suspended)
             //{
             //    this.OnPropertyChanged("Count");
-            //    this.OnPropertyChanged("Item[]");
+            //    this.OnPropertyChanged(Binding.IndexerName);
             //    this.OnCollectionChanged(NotifyCollectionChangedAction.Add, value, index);
             //}
         }
@@ -170,10 +205,12 @@ namespace NetworkLogViewer
         {
             get
             {
-                if (this.ItemQueried != null)
-                    this.ItemQueried(this, new ViewerItemEventArgs(m_list[index]));
+                var result = m_list[index];
 
-                return m_list[index];
+                if (result != null && this.ItemQueried != null)
+                    this.ItemQueried(this, new ViewerItemEventArgs(result));
+
+                return result;
             }
             set
             {
@@ -185,8 +222,9 @@ namespace NetworkLogViewer
 
                 if (!m_suspended)
                 {
-                    this.OnPropertyChanged("Count");
-                    this.OnPropertyChanged("Item[]");
+#if IMPLEMENT_INPC
+                    this.OnPropertyChanged(Binding.IndexerName);
+#endif
                     this.OnCollectionChanged(NotifyCollectionChangedAction.Replace, item, value, index);
                 }
             }
