@@ -20,6 +20,16 @@ namespace Kamilla.Network.Protocols
         }
 
         /// <summary>
+        /// Represents opcode/parserType storage.
+        /// </summary>
+        internal readonly SortedDictionary<uint, Type> m_parsers = new SortedDictionary<uint, Type>();
+
+        /// <summary>
+        /// Gets the opcode/parserType storage.
+        /// </summary>
+        public SortedDictionary<uint, Type> Parsers { get { return m_parsers; } }
+
+        /// <summary>
         /// Gets the zero-based index of the underlying
         /// <see cref="Kamilla.Network.Protocols.Protocol"/>.
         /// </summary>
@@ -51,7 +61,9 @@ namespace Kamilla.Network.Protocols
         /// </returns>
         public Protocol Activate()
         {
-            return (Protocol)Activator.CreateInstance(this.Type);
+            var protocol = (Protocol)Activator.CreateInstance(this.Type);
+            protocol.m_wrapper = this;
+            return protocol;
         }
     }
 }

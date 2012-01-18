@@ -12,10 +12,18 @@ namespace Kamilla.Network.Protocols
     /// </summary>
     public abstract class Protocol
     {
+        internal ProtocolWrapper m_wrapper;
+
         /// <summary>
         /// Gets the <see cref="System.Type"/> of the <see cref="Kamilla.Network.Protocols.Protocol"/>.
         /// </summary>
         public static readonly Type Type = typeof(Protocol);
+
+        /// <summary>
+        /// Gets the <see cref="Kamilla.Network.Protocols.ProtocolWrapper"/> of
+        /// the current <see cref="Kamilla.Network.Protocols.Protocol"/>.
+        /// </summary>
+        public ProtocolWrapper Wrapper { get { return m_wrapper; } }
 
         /// <summary>
         /// Gets the localized name of the current <see cref="Kamilla.Network.Protocols.Protocol"/>.
@@ -40,7 +48,18 @@ namespace Kamilla.Network.Protocols
         /// </summary>
         public abstract int[] ListViewColumnWidths { get; }
 
-        protected abstract PacketParser InternalCreateParser(ViewerItem item);
+        protected virtual PacketParser InternalCreateParser(ViewerItem item)
+        {
+            var packet = item.Packet as IPacketWithOpcode;
+            if (packet == null)
+                return null;
+
+            Type parserType;
+            if (m_wrapper.m_parsers.TryGetValue(packet.Opcode, out parserType))
+                return (PacketParser)Activator.CreateInstance(parserType);
+
+            return null;
+        }
 
         public void CreateParser(ViewerItem item)
         {

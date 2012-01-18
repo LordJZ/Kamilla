@@ -168,7 +168,7 @@ namespace Kamilla.Network.Protocols
                         continue;
                     }
 
-                    // TODO: add to protocol
+                    protocol.m_parsers.Add(attr.Opcode, type);
                 }
             }
 
@@ -191,8 +191,6 @@ namespace Kamilla.Network.Protocols
                     // TODO: add to protocol
                 }
             }
-
-            // TODO: shrink protocol storages
         }
     }
 }
