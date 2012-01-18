@@ -13,6 +13,6 @@ namespace Kamilla.Network
         /// <summary>
         /// Gets the opcode of the underlying packet.
         /// </summary>
-        long Opcode { get; }
+        uint Opcode { get; }
     }
 }

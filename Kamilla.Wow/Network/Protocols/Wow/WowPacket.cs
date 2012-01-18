@@ -24,11 +24,6 @@ namespace Kamilla.Network.Protocols.Wow
         public uint Opcode { get { return m_opcode; } }
 
         /// <summary>
-        /// Gets the opcode of the underlying packet.
-        /// </summary>
-        long IPacketWithOpcode.Opcode { get { return m_opcode; } }
-
-        /// <summary>
         /// Initializes a new instance of <see cref="Kamilla.Network.Protocols.Wow.WowPacket"/> class.
         /// </summary>
         /// <param name="data">

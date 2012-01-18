@@ -1,12 +1,11 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Collections.Generic;
-using System.Windows;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading;
+using System.Windows;
 using System.Windows.Interop;
 using Kamilla.Network.Logging;
-using Kamilla.Network.Parsing;
 using Kamilla.Network.Protocols;
 using Kamilla.Network.Viewing;
 using Kamilla.WPF;
