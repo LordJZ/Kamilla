@@ -141,8 +141,7 @@ namespace Kamilla.Network.Parsing
         }
 
         protected string m_output;
-        protected byte[] m_containedData;
-        protected object m_containedImage;
+        protected object m_containedData;
 
         /// <summary>
         /// Gets the text result of the underlying <see cref="Kamilla.Network.Packet"/> interpretation.
