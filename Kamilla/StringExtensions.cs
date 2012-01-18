@@ -534,14 +534,29 @@ namespace Kamilla
             return TrimWhiteSpace(str, str.Length);
         }
 
+        public static string TrimWhiteSpace(this string str, char replaceWith)
+        {
+            return TrimWhiteSpace(str, str.Length, replaceWith);
+        }
+
         public static string TrimWhiteSpace(this string str, int maxChars)
         {
             return TrimCharacters(str, maxChars, c => char.IsWhiteSpace(c));
         }
 
+        public static string TrimWhiteSpace(this string str, int maxChars, char replaceWith)
+        {
+            return TrimCharacters(str, maxChars, c => char.IsWhiteSpace(c), replaceWith);
+        }
+
         public static string TrimCharacters(this string str, Predicate<char> charsToTrimSelector)
         {
             return TrimCharacters(str, str.Length, charsToTrimSelector);
+        }
+
+        public static string TrimCharacters(this string str, Predicate<char> charsToTrimSelector, char replaceWith)
+        {
+            return TrimCharacters(str, str.Length, charsToTrimSelector, replaceWith);
         }
 
         public static string TrimCharacters(this string str, int maxChars, Predicate<char> charsToTrimSelector)
@@ -561,6 +576,34 @@ namespace Kamilla
                     continue;
 
                 result.Append(c);
+                lastCharFits = fits;
+            }
+
+            return result.ToString();
+        }
+
+        public static string TrimCharacters(this string str, int maxChars, Predicate<char> charsToTrimSelector, char replaceWith)
+        {
+            int len = Math.Min(str.Length, maxChars);
+            var result = new StringBuilder(len);
+
+            bool lastCharFits = true;
+
+            foreach (var c in str)
+            {
+                if (!(result.Length < len))
+                    break;
+
+                bool fits = charsToTrimSelector(c);
+                if (lastCharFits && fits)
+                    continue;
+
+                if (fits)
+                    result.Append(replaceWith);
+                else
+                    result.Append(c);
+
+                lastCharFits = fits;
             }
 
             return result.ToString();
