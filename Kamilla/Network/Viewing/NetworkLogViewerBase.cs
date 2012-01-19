@@ -60,34 +60,46 @@ namespace Kamilla.Network.Viewing
         #region Events
         /// <summary>
         /// Occurs when <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase.Style"/> property changes.
+        /// 
+        /// Handlers of this event MUST be called from the UI thread if one exists.
         /// </summary>
         public abstract event EventHandler StyleChanged;
 
         /// <summary>
         /// Occurs when the <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase.CurrentProtocol"/>
         /// property changes.
+        /// 
+        /// Handlers of this event should be called from any suiting thread.
         /// </summary>
         public abstract event ProtocolChangedEventHandler ProtocolChanged;
 
         /// <summary>
         /// Occurs when the <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase.CurrentLog"/>
         /// property changes.
+        /// 
+        /// Handlers of this event should be called from any suiting thread.
         /// </summary>
         public abstract event NetworkLogChangedEventHandler NetworkLogChanged;
 
         /// <summary>
         /// Occurs when data of a <see cref="Kamilla.Network.Viewing.ViewerItem"/> is queried.
+        /// 
+        /// Handlers of this event MUST be called from the UI thread if one exists.
         /// </summary>
         public abstract event ViewerItemEventHandler ItemQueried;
 
         /// <summary>
         /// Occurs when a <see cref="Kamilla.Network.Viewing.ViewerItem"/> is added.
+        /// 
+        /// Handlers of this event should be called from any suiting thread.
         /// </summary>
         public abstract event ViewerItemEventHandler ItemAdded;
 
         /// <summary>
         /// Occurs when interpreting of contents of a
         /// <see cref="Kamilla.Network.Viewing.ViewerItem"/> is finished.
+        /// 
+        /// Handlers of this event should be called from any suiting thread.
         /// </summary>
         public event ViewerItemEventHandler ItemParsingDone;
         #endregion

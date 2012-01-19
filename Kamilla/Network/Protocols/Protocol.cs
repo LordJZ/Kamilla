@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Kamilla.Network.Parsing;
 using Kamilla.Network.Viewing;
+using System.Windows.Controls;
 
 namespace Kamilla.Network.Protocols
 {
@@ -30,23 +31,7 @@ namespace Kamilla.Network.Protocols
         /// </summary>
         public abstract string Name { get; }
 
-        /// <summary>
-        /// Gets the number of columns when packets of the current
-        /// <see cref="Kamilla.Network.Protocols.Protocol"/> are displayed in a ListView.
-        /// </summary>
-        public abstract int ListViewColumns { get; }
-
-        /// <summary>
-        /// Gets headers of columns when packets of the current
-        /// <see cref="Kamilla.Network.Protocols.Protocol"/> are displayed in a ListView.
-        /// </summary>
-        public abstract string[] ListViewColumnHeaders { get; }
-
-        /// <summary>
-        /// Gets widths of columns when packets of the current
-        /// <see cref="Kamilla.Network.Protocols.Protocol"/> are displayed in a ListView.
-        /// </summary>
-        public abstract double[] ListViewColumnWidths { get; }
+        public abstract ViewBase View { get; }
 
         protected virtual PacketParser InternalCreateParser(ViewerItem item)
         {
@@ -78,10 +63,15 @@ namespace Kamilla.Network.Protocols
         /// When implemented in a derived class,
         /// loads the current instance of <see cref="Kamilla.Network.Protocols.Protocol"/>
         /// and attachs to the provided <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase"/>.
+        /// 
+        /// This method MUST be called from the UI thread if one exists.
         /// </summary>
         /// <param name="viewer">
         /// The instance of <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase"/> to attach to.
         /// </param>
+        /// <returns>
+        /// The <see cref="System.Windows.Controls.ViewBase"/> that defines the appearance of packet list.
+        /// </returns>
         /// <exception cref="System.InvalidOperationException">
         /// The current instance of <see cref="Kamilla.Network.Protocols.Protocol"/> is already
         /// attached to a <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase"/>.
@@ -92,6 +82,8 @@ namespace Kamilla.Network.Protocols
         /// When implemented in a derived class,
         /// unloads and releases all resources used by
         /// the current instance of <see cref="Kamilla.Network.Protocols.Protocol"/>.
+        /// 
+        /// This method MUST be called from the UI thread if one exists.
         /// </summary>
         /// <exception cref="System.InvalidOperationException">
         /// The current instance of <see cref="Kamilla.Network.Protocols.Protocol"/> is not

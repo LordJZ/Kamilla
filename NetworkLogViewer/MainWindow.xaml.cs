@@ -311,11 +311,7 @@ namespace NetworkLogViewer
             ui_readingWorker.CancelAsync();
             m_implementation.CloseFile();
 
-            var protocol = this.CurrentProtocol;
-
             Configuration.SuspendSaving();
-            if (protocol != null)
-                this.SaveProtocolColumnSettings(protocol);
             Configuration.SetValue("Number of Views", m_currentNViews);
             this.SaveCurrentViews();
             Configuration.SetValue("Vertical Splitter", new[] {
@@ -327,6 +323,8 @@ namespace NetworkLogViewer
             Configuration.SetValue("Window Width", this.Width);
             Configuration.SetValue("Window Left", this.Left);
             Configuration.SetValue("Window Top", this.Top);
+            this.CurrentLog = null;
+            this.CurrentProtocol = null;
             Configuration.ResumeSaving();
 
             App.ConsoleWindow.m_closing = true;
@@ -490,95 +488,29 @@ namespace NetworkLogViewer
             this.CurrentProtocol = protocol;
         }
 
-        class MyGridViewColumn : GridViewColumn
-        {
-            public int ColumnId;
-        }
-
-        void SaveProtocolColumnSettings(Protocol protocol)
-        {
-            var view = (GridView)ui_lvPackets.View;
-            var columns = view.Columns;
-            var nColumns = columns.Count;
-            var typename = protocol.GetType().Name;
-
-            var widths = new double[nColumns];
-            var order = new int[nColumns];
-
-            for (int i = 0; i < nColumns; i++)
-            {
-                var column = (MyGridViewColumn)columns[i];
-
-                order[i] = column.ColumnId;
-                widths[column.ColumnId] = column.Width;
-            }
-
-            Configuration.SetValue(typename + " Column Widths", widths);
-            Configuration.SetValue(typename + " Column Order", order);
-        }
-
         void MainWindow_ProtocolChanged(object sender, ProtocolChangedEventArgs e)
         {
             var newProtocol = e.NewProtocol;
-            Type newProtocolType = null;
+            var newProtocolWrapper = (ProtocolWrapper)null;
             if (newProtocol != null)
-                newProtocolType = newProtocol.GetType();
+                newProtocolWrapper = newProtocol.Wrapper;
 
-            if (e.OldProtocol != null)
-                SaveProtocolColumnSettings(e.OldProtocol);
-
-            foreach (MenuItem itrItem in ui_miProtocol.Items)
-                itrItem.IsChecked = itrItem.Tag == null ? newProtocol == null :
-                    newProtocolType == ((ProtocolWrapper)itrItem.Tag).Type;
-
-            ui_sbiProtocol.Content = newProtocol != null ? newProtocol.Name : Strings.NoProtocol;
-
-            if (newProtocol != null)
+            this.ThreadSafeBegin(_ =>
             {
-                var typename = newProtocolType.Name;
-                int nColumns = newProtocol.ListViewColumns;
-                if (nColumns < 0)
-                    throw new InvalidOperationException("Protocol.ListViewColumns is invalid.");
-
-                var headers = newProtocol.ListViewColumnHeaders;
-                if (headers == null || headers.Length != nColumns || headers.Any(val => val == null))
-                    throw new InvalidOperationException("Protocol.ListViewColumnHeaders is invalid.");
-
-                double[] widths = Configuration.GetValue(typename + " Column Widths", (double[])null);
-                if (widths == null || widths.Length != nColumns)
+                if (newProtocol != null)
                 {
-                    widths = newProtocol.ListViewColumnWidths;
-
-                    if (widths == null || widths.Length != nColumns)
-                        throw new InvalidOperationException("Protocol.ListViewColumnWidths is invalid.");
+                    ui_sbiProtocol.Content = newProtocol.Name;
+                    ui_lvPackets.View = newProtocol.View;
+                }
+                else
+                {
+                    ui_sbiProtocol.Content = Strings.NoProtocol;
+                    ui_lvPackets.View = null;
                 }
 
-                int[] columnOrder = Configuration.GetValue(typename + " Column Order", (int[])null);
-                if (columnOrder == null || columnOrder.Length != nColumns
-                    || columnOrder.Any(val => val >= nColumns || val < 0))
-                    columnOrder = Enumerable.Range(0, nColumns).ToArray();
-
-                // Everything is valid
-                var view = new GridView();
-
-                for (int i = 0; i < nColumns; i++)
-                {
-                    int col = columnOrder[i];
-
-                    var item = new MyGridViewColumn();
-                    item.ColumnId = col;
-                    item.Header = headers[col];
-                    item.Width = widths[col];
-                    item.DisplayMemberBinding = new Binding(".Data[" + col + "]");
-                    view.Columns.Add(item);
-                }
-
-                ui_lvPackets.View = view;
-            }
-            else
-            {
-                ui_lvPackets.View = null;
-            }
+                foreach (MenuItem itrItem in ui_miProtocol.Items)
+                    itrItem.IsChecked = newProtocolWrapper == (ProtocolWrapper)itrItem.Tag;
+            });
         }
         #endregion
 

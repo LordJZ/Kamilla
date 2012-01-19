@@ -30,8 +30,11 @@ namespace NetworkLogViewer
             m_items = new ViewerItemCollection();
             m_items.ItemQueried += (o, e) =>
             {
-                if (this.ItemQueried != null)
-                    this.ItemQueried(o, e);
+                m_window.ThreadSafeBegin(_ =>
+                {
+                    if (this.ItemQueried != null)
+                        this.ItemQueried(o, e);
+                });
             };
 
             m_packetAddedHandler = (o, e) =>
@@ -66,26 +69,32 @@ namespace NetworkLogViewer
             if (m_currentProtocol == value)
                 return;
 
-            var old = m_currentProtocol;
-            if (old != null)
-                old.Unload();
-
-            m_currentProtocol = value;
-            m_currentProtocol.Load(this);
-
             m_parsingWorker.CancelAsync();
 
+            var old = m_currentProtocol;
+
+            // We should allow the protocol to integrate with viewer in viewer's thread.
             m_window.ThreadSafe(_ =>
             {
-                if (this.ProtocolChanged != null)
-                    this.ProtocolChanged(this, new ProtocolChangedEventArgs(old, value));
+                if (old != null)
+                    old.Unload();
+
+                m_currentProtocol = value;
+
+                if (value != null)
+                    value.Load(this);
             });
+
+            if (this.ProtocolChanged != null)
+                this.ProtocolChanged(this, new ProtocolChangedEventArgs(old, value));
         }
 
         internal void SetLog(NetworkLog value)
         {
             if (m_currentLog == value)
                 return;
+
+            m_parsingWorker.CancelAsync();
 
             var old = m_currentLog;
             if (old != null)
@@ -95,19 +104,17 @@ namespace NetworkLogViewer
             if (value != null)
                 value.PacketAdded += m_packetAddedHandler;
 
-            m_parsingWorker.CancelAsync();
-
-            m_window.ThreadSafe(_ =>
-            {
-                if (this.NetworkLogChanged != null)
-                    this.NetworkLogChanged(this, new NetworkLogChangedEventArgs(old, value));
-            });
+            if (this.NetworkLogChanged != null)
+                this.NetworkLogChanged(this, new NetworkLogChangedEventArgs(old, value));
         }
 
         internal void OnStyleChanged(Style oldStyle, Style newStyle)
         {
-            if (this.StyleChanged != null)
-                this.StyleChanged(this, EventArgs.Empty);
+            m_window.ThreadSafe(_ =>
+            {
+                if (this.StyleChanged != null)
+                    this.StyleChanged(this, EventArgs.Empty);
+            });
         }
 
         internal void CloseFile()
@@ -125,6 +132,8 @@ namespace NetworkLogViewer
 
         /// <summary>
         /// Occurs when <see cref="NetworkLogViewer.MainWindow.Style"/> property changes.
+        /// 
+        /// Handlers of this event are called from the UI thread.
         /// </summary>
         public override event EventHandler StyleChanged;
 
@@ -150,21 +159,29 @@ namespace NetworkLogViewer
 
         /// <summary>
         /// Occurs when <see cref="NetworkLogViewer.MainWindow.CurrentProtocol"/> changes.
+        /// 
+        /// Handlers of this event are called from any suiting thread.
         /// </summary>
         public override event ProtocolChangedEventHandler ProtocolChanged;
 
         /// <summary>
         /// Occurs when the <see cref="NetworkLogViewer.MainWindow.CurrentLog"/> property changes.
+        /// 
+        /// Handlers of this event are called from any suiting thread.
         /// </summary>
         public override event NetworkLogChangedEventHandler NetworkLogChanged;
 
         /// <summary>
         /// Occurs when data of a <see cref="Kamilla.Network.Viewing.ViewerItem"/> is queried.
+        /// 
+        /// Handlers of this event are called from the UI thread.
         /// </summary>
         public override event ViewerItemEventHandler ItemQueried;
 
         /// <summary>
         /// Occurs when a <see cref="Kamilla.Network.Viewing.ViewerItem"/> is added.
+        /// 
+        /// Handlers of this event are called from any suiting thread.
         /// </summary>
         public override event ViewerItemEventHandler ItemAdded;
         #endregion
