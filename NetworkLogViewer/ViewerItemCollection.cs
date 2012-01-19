@@ -9,20 +9,22 @@ using Kamilla.Network.Viewing;
 
 namespace NetworkLogViewer
 {
-    public class ViewerItemCollection : IList, IList<ViewerItem>, INotifyCollectionChanged
+    class ViewerItemCollection : IList, IList<ViewerItem>, INotifyCollectionChanged
 #if IMPLEMENT_INPC
         , INotifyPropertyChanged
 #endif
     {
         List<ViewerItem> m_list;
+        ViewerImplementation m_viewer;
 
         #region .ctor
         /// <summary>
         /// Initializes a new instance of <see cref="NetworkLogViewer.ViewerItemCollection"/> class.
         /// </summary>
-        public ViewerItemCollection()
+        public ViewerItemCollection(ViewerImplementation viewer)
         {
             m_list = new List<ViewerItem>();
+            m_viewer = viewer;
         }
         #endregion
 
@@ -71,8 +73,23 @@ namespace NetworkLogViewer
         /// <param name="item">
         /// The <see cref="Kamilla.Network.Viewing.ViewerItem"/> that should be updated.
         /// </param>
+        /// <exception cref="System.ArgumentNullException">
+        /// <c>item</c> is null.
+        /// </exception>
+        /// <exception cref="System.ArgumentException">
+        /// <c>item</c> is invalid.
+        /// </exception>
+        /// <exception cref="System.InvalidOperationException">
+        /// Internal item storage is corrupted.
+        /// </exception>
         public void Update(ViewerItem item)
         {
+            if (item == null)
+                throw new ArgumentNullException("item");
+
+            if (item.Viewer != m_viewer)
+                throw new ArgumentException("item");
+
             int index = item.Index;
 
             if (m_list[index] != item)
@@ -144,6 +161,9 @@ namespace NetworkLogViewer
             if (value == null)
                 throw new ArgumentNullException("value");
 
+            if (value.Viewer != m_viewer)
+                throw new ArgumentException("value");
+
             if (value.Index != m_list.Count)
                 throw new ArgumentException("value.Index");
 
@@ -161,7 +181,20 @@ namespace NetworkLogViewer
 
         public bool Contains(ViewerItem value)
         {
-            return m_list.Contains(value);
+            if (value == null)
+                return false;
+
+            if (value.Viewer != m_viewer)
+                return false;
+
+            int index = value.Index;
+            if (index < 0 || index >= m_list.Count)
+                return false;
+
+            if (m_list[index] != value)
+                throw new InvalidOperationException();
+
+            return true;
         }
 
         public bool Remove(ViewerItem value)
@@ -186,6 +219,9 @@ namespace NetworkLogViewer
         public int IndexOf(ViewerItem value)
         {
             if (value == null)
+                return -1;
+
+            if (value.Viewer != m_viewer)
                 return -1;
 
             int index = value.Index;
@@ -215,6 +251,9 @@ namespace NetworkLogViewer
         {
             get
             {
+                if (index < 0 || index >= m_list.Count)
+                    throw new ArgumentOutOfRangeException("index");
+
                 var result = m_list[index];
 
                 if (result != null && this.ItemQueried != null)
@@ -224,8 +263,17 @@ namespace NetworkLogViewer
             }
             set
             {
+                if (value == null)
+                    throw new ArgumentNullException("value");
+
+                if (value.Viewer != m_viewer)
+                    throw new ArgumentException("value");
+
+                if (index != value.Index)
+                    throw new ArgumentException("index");
+
                 if (index < 0 || index >= m_list.Count)
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException("index");
 
                 var item = m_list[index];
                 m_list[index] = value;

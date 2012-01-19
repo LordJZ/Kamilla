@@ -27,7 +27,7 @@ namespace NetworkLogViewer
             m_window = window;
             m_interopHelper = new WindowInteropHelper(window);
 
-            m_items = new ViewerItemCollection();
+            m_items = new ViewerItemCollection(this);
             m_items.ItemQueried += (o, e) =>
             {
                 m_window.ThreadSafeBegin(_ =>
