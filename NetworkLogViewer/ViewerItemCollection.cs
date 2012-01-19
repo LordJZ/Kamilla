@@ -185,7 +185,17 @@ namespace NetworkLogViewer
 
         public int IndexOf(ViewerItem value)
         {
-            return m_list.IndexOf(value);
+            if (value == null)
+                return -1;
+
+            int index = value.Index;
+            if (index < 0 || index >= m_list.Count)
+                return -1;
+
+            if (m_list[index] == value)
+                return index;
+
+            return -1;
         }
 
         public void Insert(int index, ViewerItem value)
@@ -348,14 +358,7 @@ namespace NetworkLogViewer
 
         int IList.IndexOf(object value)
         {
-            if (value == null)
-                throw new ArgumentNullException();
-
-            var val = value as ViewerItem;
-            if (val == null)
-                throw new ArgumentException();
-
-            return ((IList<ViewerItem>)this).IndexOf(val);
+            return ((IList<ViewerItem>)this).IndexOf(value as ViewerItem);
         }
 
         void IList.Insert(int index, object value)
