@@ -61,7 +61,7 @@ namespace NetworkLogViewer
             if (item.Viewer != this)
                 throw new ArgumentException();
 
-            m_window.ThreadSafe(_ => m_items.Update(item));
+            m_window.ThreadSafeBegin(_ => m_items.Update(item));
         }
 
         internal void SetProtocol(Protocol value)
