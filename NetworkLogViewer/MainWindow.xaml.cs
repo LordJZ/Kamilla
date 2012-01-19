@@ -216,8 +216,7 @@ namespace NetworkLogViewer
                 {
                     m_loadingWindow = new LoadingWindow();
                     m_loadingWindow.Style = this.Style;
-                    m_implementation.StyleChanged +=
-                        (o, e) => this.ThreadSafe(_ => _.m_loadingWindow.Style = _.Style);
+                    m_implementation.StyleChanged += (o, e) => this.m_loadingWindow.Style = this.Style;
                 }
 
                 m_loadingWindow.SetLoadingState(state);

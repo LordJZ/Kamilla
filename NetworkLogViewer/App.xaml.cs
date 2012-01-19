@@ -21,7 +21,7 @@ namespace NetworkLogViewer
             {
                 s_console = new ConsoleWindow();
                 s_console.Style = wnd.Style;
-                wnd.Implementation.StyleChanged += (o, e) => wnd.ThreadSafe(_ => s_console.Style = _.Style);
+                wnd.Implementation.StyleChanged += (o, e) => s_console.Style = wnd.Style;
             }
             else
                 throw new InvalidOperationException("Console is already initialized.");
