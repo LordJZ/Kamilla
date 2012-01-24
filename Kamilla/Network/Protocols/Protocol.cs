@@ -56,7 +56,7 @@ namespace Kamilla.Network.Protocols
                 parser = new UndefinedPacketParser();
 
             parser.m_item = item;
-            item.m_parser = parser;
+            item.Parser = parser;
         }
 
         /// <summary>

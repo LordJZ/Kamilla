@@ -15,7 +15,7 @@ namespace Kamilla.Network.Viewing
         NetworkLogViewerBase m_viewer;
         NetworkLog m_log;
         Packet m_packet;
-        internal PacketParser m_parser;
+        PacketParser m_parser;
         INotifyPropertyChanged m_data;
         int m_index;
 
@@ -32,7 +32,7 @@ namespace Kamilla.Network.Viewing
         public Packet Packet { get { return m_packet; } }
 
         /// <summary>
-        /// Gets an instance of <see cref="Kamilla.Network.Parsing.PacketParser"/> class that is
+        /// Gets or sets an instance of <see cref="Kamilla.Network.Parsing.PacketParser"/> class that is
         /// assigned to interpret data of the current <see cref="Kamilla.Network.Viewing.ViewerItem"/>.
         /// 
         /// This value can be null.
@@ -40,6 +40,7 @@ namespace Kamilla.Network.Viewing
         public PacketParser Parser
         {
             get { return m_parser; }
+            set { m_parser = value; }
         }
 
         /// <summary>
