@@ -98,7 +98,7 @@ namespace NetworkLogViewer
 
             if (m_output != null /*&& !OutputBox.IsDisposed*/)
             {
-                m_output.ThreadSafe(rtb =>
+                m_output.ThreadSafeBegin(rtb =>
                 {
                     Brush brush = null;
                     if (text.StartsWith("error", StringComparison.InvariantCultureIgnoreCase))
