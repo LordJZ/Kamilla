@@ -19,13 +19,13 @@ namespace Kamilla.Network.Protocols
             /// </summary>
             public event PropertyChangedEventHandler PropertyChanged;
 
-            ViewerItem m_item;
-            string m_index;
-            string m_arrivalTime;
-            string m_arrivalTicks;
-            string m_c2sStr;
-            string m_s2cStr;
-            string m_dataLength;
+            protected readonly ViewerItem m_item;
+            protected string m_index;
+            protected string m_arrivalTime;
+            protected string m_arrivalTicks;
+            protected string m_c2sStr;
+            protected string m_s2cStr;
+            protected string m_dataLength;
 
             /// <summary>
             /// Initializes a new instance of
