@@ -515,6 +515,8 @@ namespace NetworkLogViewer
 
                 foreach (MenuItem itrItem in ui_miProtocol.Items)
                     itrItem.IsChecked = newProtocolWrapper == (ProtocolWrapper)itrItem.Tag;
+
+                this.UpdateViews();
             });
         }
         #endregion
