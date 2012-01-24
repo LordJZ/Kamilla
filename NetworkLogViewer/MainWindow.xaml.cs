@@ -31,6 +31,12 @@ namespace NetworkLogViewer
         #region .ctor
         public MainWindow()
         {
+            AppDomain.CurrentDomain.UnhandledException += (o, e) =>
+            {
+                Console.WriteLine("Error: " + e.ExceptionObject.ToString());
+                MessageWindow.Show(this, Strings.Error, e.ExceptionObject.ToString());
+            };
+
             UICulture.Initialize();
             UICulture.UICultureChanged += new EventHandler(UICulture_UICultureChanged);
 
