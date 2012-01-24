@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.IO.Compression;
 using System.Text;
 using Kamilla.IO;
 
@@ -6,6 +8,26 @@ namespace Kamilla.Network.Protocols.Wow
 {
     public static class StreamHandlerExtensions
     {
+        public static StreamHandler DecompressBlock(this StreamHandler reader)
+        {
+            if (reader == null)
+                throw new ArgumentNullException("reader");
+
+            int uncompressedLength = reader.ReadInt32();
+            if (uncompressedLength == 0)
+                return new StreamHandler(new byte[0]);
+
+            reader.Skip(2);
+            byte[] compressedBytes = reader.ReadBytes((int)reader.RemainingLength);
+
+            byte[] uncompressedBytes = new byte[uncompressedLength];
+            using (var stream = new MemoryStream(compressedBytes))
+            using (var dStream = new DeflateStream(stream, CompressionMode.Decompress, true))
+                dStream.Read(uncompressedBytes, 0, uncompressedLength);
+
+            return new StreamHandler(uncompressedBytes);
+        }
+
         public static StreamHandler ReadXorByte(this StreamHandler reader, ref byte value)
         {
             if (value != 0)
