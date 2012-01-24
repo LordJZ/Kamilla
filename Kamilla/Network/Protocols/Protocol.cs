@@ -46,6 +46,8 @@ namespace Kamilla.Network.Protocols
             return null;
         }
 
+        public abstract string PacketContentsViewHeader(ViewerItem item);
+
         public void CreateParser(ViewerItem item)
         {
             if (item == null)

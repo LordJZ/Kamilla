@@ -262,5 +262,10 @@ namespace Kamilla.Network.Protocols
         {
             return null;
         }
+
+        public override string PacketContentsViewHeader(ViewerItem item)
+        {
+            return string.Empty;
+        }
     }
 }

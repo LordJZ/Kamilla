@@ -35,7 +35,13 @@ namespace NetworkLogViewer.ViewTabs
 
         void IViewTab.Fill(Protocol protocol, ViewerItem item)
         {
-            ui_tbMain.Text = item.Packet.Data.ToHexDump();
+            var header = protocol.PacketContentsViewHeader(item);
+
+            if (header != null && header != string.Empty)
+                ui_tbMain.Text = header + Environment.NewLine + item.Packet.Data.ToHexDump();
+            else
+                ui_tbMain.Text = item.Packet.Data.ToHexDump();
+
             this.IsFilled = true;
         }
     }
