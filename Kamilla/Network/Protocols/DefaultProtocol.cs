@@ -17,7 +17,7 @@ namespace Kamilla.Network.Protocols
             /// <summary>
             /// Occurs when a property is changed.
             /// </summary>
-            public event PropertyChangedEventHandler PropertyChanged;
+            public virtual event PropertyChangedEventHandler PropertyChanged;
 
             protected readonly ViewerItem m_item;
             protected string m_index;
