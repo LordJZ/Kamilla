@@ -36,20 +36,6 @@ namespace Kamilla.Network.Viewing
         }
 
         /// <summary>
-        /// Repaints the specified <see cref="Kamilla.Network.Viewing.ViewerItem"/>.
-        /// </summary>
-        /// <param name="item">
-        /// The <see cref="Kamilla.Network.Viewing.ViewerItem"/> that should be repainted.
-        /// </param>
-        /// <exception cref="System.ArgumentNullException">
-        /// <c>item</c> is null.
-        /// </exception>
-        /// <exception cref="System.ArgumentException">
-        /// The specified <see cref="Kamilla.Network.Viewing.ViewerItem"/> is invalid.
-        /// </exception>
-        public abstract void UpdateItem(ViewerItem item);
-
-        /// <summary>
         /// Flags the specified <see cref="Kamilla.Network.Viewing.ViewerItem"/> for parsing.
         /// </summary>
         /// <param name="item">

@@ -66,60 +66,6 @@ namespace NetworkLogViewer
             this.OnCollectionReset();
         }
 
-        /// <summary>
-        /// Updates the specified <see cref="Kamilla.Network.Viewing.ViewerItem"/>
-        /// even if the collection is in suspended state.
-        /// </summary>
-        /// <param name="item">
-        /// The <see cref="Kamilla.Network.Viewing.ViewerItem"/> that should be updated.
-        /// </param>
-        /// <exception cref="System.ArgumentNullException">
-        /// <c>item</c> is null.
-        /// </exception>
-        /// <exception cref="System.ArgumentException">
-        /// <c>item</c> is invalid.
-        /// </exception>
-        /// <exception cref="System.InvalidOperationException">
-        /// Internal item storage is corrupted.
-        /// </exception>
-        public void Update(ViewerItem item)
-        {
-            if (item == null)
-                throw new ArgumentNullException("item");
-
-            if (item.Viewer != m_viewer)
-                throw new ArgumentException("item");
-
-            int index = item.Index;
-
-            if (m_list[index] != item)
-                throw new InvalidOperationException();
-
-            // Any better solution?
-            this.OnCollectionChanged(NotifyCollectionChangedAction.Remove, item, index);
-            this.OnCollectionChanged(NotifyCollectionChangedAction.Add, item, index);
-#if IMPLEMENT_INPC
-            this.OnPropertyChanged(Binding.IndexerName);
-#endif
-        }
-
-//        public void SetData(IList<ViewerItem> items)
-//        {
-//            if (m_list.Capacity < items.Count)
-//                m_list.Capacity = items.Count;
-
-//            m_list.AddRange(items);
-
-//            if (!m_suspended)
-//            {
-//#if IMPLEMENT_INPC
-//                this.OnPropertyChanged("Count");
-//                this.OnPropertyChanged(Binding.IndexerName);
-//#endif
-//                this.OnCollectionReset();
-//            }
-//        }
-
         public void Clear()
         {
             if (m_list.Count != 0)
@@ -140,20 +86,6 @@ namespace NetworkLogViewer
         public void RemoveAt(int index)
         {
             throw new NotSupportedException();
-//            if (index < 0 || index >= m_list.Count)
-//                throw new ArgumentOutOfRangeException();
-
-//            var item = m_list[index];
-//            m_list.RemoveAt(index);
-
-//            if (!m_suspended)
-//            {
-//#if IMPLEMENT_INPC
-//                this.OnPropertyChanged("Count");
-//                this.OnPropertyChanged(Binding.IndexerName);
-//#endif
-//                this.OnCollectionChanged(NotifyCollectionChangedAction.Remove, item, index);
-//            }
         }
 
         public void Add(ViewerItem value)
@@ -200,20 +132,6 @@ namespace NetworkLogViewer
         public bool Remove(ViewerItem value)
         {
             throw new NotSupportedException();
-//            int idx = this.IndexOf(value);
-
-//            if (idx >= 0)
-//            {
-//                this.RemoveAt(idx);
-//#if IMPLEMENT_INPC
-//                this.OnPropertyChanged("Count");
-//                this.OnPropertyChanged(Binding.IndexerName);
-//#endif
-//                this.OnCollectionChanged(NotifyCollectionChangedAction.Remove, value, idx);
-//                return true;
-//            }
-
-//            return false;
         }
 
         public int IndexOf(ViewerItem value)
@@ -237,14 +155,6 @@ namespace NetworkLogViewer
         public void Insert(int index, ViewerItem value)
         {
             throw new NotSupportedException();
-            //m_list.Insert(index, value);
-
-            //if (!m_suspended)
-            //{
-            //    this.OnPropertyChanged("Count");
-            //    this.OnPropertyChanged(Binding.IndexerName);
-            //    this.OnCollectionChanged(NotifyCollectionChangedAction.Add, value, index);
-            //}
         }
 
         public ViewerItem this[int index]

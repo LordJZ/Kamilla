@@ -53,17 +53,6 @@ namespace NetworkLogViewer
             m_parsingWorker.DoWork += new DoWorkEventHandler(m_parsingWorker_DoWork);
         }
 
-        public override void UpdateItem(ViewerItem item)
-        {
-            if (item == null)
-                throw new ArgumentNullException();
-
-            if (item.Viewer != this)
-                throw new ArgumentException();
-
-            m_window.ThreadSafeBegin(_ => m_items.Update(item));
-        }
-
         internal void SetProtocol(Protocol value)
         {
             if (m_currentProtocol == value)
