@@ -26,7 +26,7 @@ namespace Kamilla
             }
         }
 
-        class Cache : SortedDictionary<Type, CacheEntry>
+        class Cache : Dictionary<Type, CacheEntry>
         {
         }
 
