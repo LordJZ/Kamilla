@@ -42,7 +42,7 @@
       </MenuItem>
     </Menu>
     <!-- Border Thickness here is to prevent stupid mouseover highlighting -->
-    <ListView Grid.Row="1" x:FieldModifier="internal" Name="ui_lvPackets" SelectionMode="Single" IsTextSearchEnabled="False" SelectionChanged="ui_lvPackets_SelectionChanged" BorderThickness="1.00001"/>
+    <ListView Grid.Row="1" x:FieldModifier="internal" Name="ui_lvPackets" SelectionMode="Single" IsTextSearchEnabled="False" SelectionChanged="ui_lvPackets_SelectionChanged" BorderThickness="1.00001" />
     <Grid Grid.Row="2" Name="ViewsGrid" Margin="0,3,0,0" Background="{x:Static SystemColors.ControlBrush}">
     </Grid>
     <GridSplitter Grid.Row="2" Height="6" Name="VerticalGridSplitter" VerticalAlignment="Top" ResizeDirection="Rows" Margin="0,0,0,0" HorizontalAlignment="Stretch" Panel.ZIndex="101" Background="Transparent" />
