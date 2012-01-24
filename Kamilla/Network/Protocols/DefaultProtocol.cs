@@ -17,15 +17,13 @@ namespace Kamilla.Network.Protocols
             /// <summary>
             /// Occurs when a property is changed.
             /// </summary>
-            public virtual event PropertyChangedEventHandler PropertyChanged;
+            public event PropertyChangedEventHandler PropertyChanged;
 
             protected readonly ViewerItem m_item;
-            protected string m_index;
             protected string m_arrivalTime;
             protected string m_arrivalTicks;
             protected string m_c2sStr;
             protected string m_s2cStr;
-            protected string m_dataLength;
 
             /// <summary>
             /// Initializes a new instance of
@@ -65,10 +63,6 @@ namespace Kamilla.Network.Protocols
                     this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
 
-            public virtual string Index
-            {
-                get { return m_index ?? (m_index = m_item.Index.ToString()); }
-            }
             public virtual string ArrivalTime
             {
                 get { return m_arrivalTime ?? (m_arrivalTime = m_item.Packet.ArrivalTime.ToString("HH:mm:ss")); }
@@ -121,10 +115,6 @@ namespace Kamilla.Network.Protocols
                     return m_s2cStr;
                 }
             }
-            public virtual string DataLength
-            {
-                get { return m_dataLength ?? (m_dataLength = m_item.Packet.Data.Length.ToString()); }
-            }
         }
 
         sealed class ItemData : BaseItemData
@@ -151,7 +141,9 @@ namespace Kamilla.Network.Protocols
 
         void viewer_ItemQueried(object sender, ViewerItemEventArgs e)
         {
-            e.Item.Data = new ItemData(e.Item);
+            var item = e.Item;
+            if (item.Data == null)
+                item.Data = new ItemData(item);
         }
 
         class GridViewColumnWithId : GridViewColumn
@@ -171,12 +163,12 @@ namespace Kamilla.Network.Protocols
 
         static readonly string[] s_columnBindings = new string[]
         {
-            ".Data.Index",
+            ".Index",
             ".Data.ArrivalTime",
             ".Data.ArrivalTicks",
             ".Data.C2sStr",
             ".Data.S2cStr",
-            ".Data.DataLength",
+            ".Packet.Data.Length",
         };
 
         public override ViewBase View
