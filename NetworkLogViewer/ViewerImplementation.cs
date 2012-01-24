@@ -62,6 +62,12 @@ namespace NetworkLogViewer
 
             var old = m_currentProtocol;
 
+            foreach (var item in m_items)
+            {
+                item.Parser = null;
+                item.Data = null;
+            }
+
             // We should allow the protocol to integrate with viewer in viewer's thread.
             m_window.ThreadSafe(_ =>
             {
@@ -76,6 +82,8 @@ namespace NetworkLogViewer
 
             if (this.ProtocolChanged != null)
                 this.ProtocolChanged(this, new ProtocolChangedEventArgs(old, value));
+
+            m_items.Update();
         }
 
         internal void SetLog(NetworkLog value)
