@@ -74,7 +74,7 @@ namespace Kamilla.Network.Parsing
         /// <summary>
         /// Interprets the underlying <see cref="Kamilla.Network.Packet"/>.
         /// </summary>
-        public void Parse()
+        public virtual void Parse()
         {
             if (this.IsParsed)
                 return;
