@@ -1,6 +1,7 @@
 ﻿using System;
-using Kamilla.Network.Parsing;
+using System.ComponentModel;
 using Kamilla.Network.Logging;
+using Kamilla.Network.Parsing;
 
 namespace Kamilla.Network.Viewing
 {
@@ -15,7 +16,7 @@ namespace Kamilla.Network.Viewing
         NetworkLog m_log;
         Packet m_packet;
         internal PacketParser m_parser;
-        object[] m_data;
+        INotifyPropertyChanged m_data;
         int m_index;
 
         /// <summary>
@@ -53,7 +54,7 @@ namespace Kamilla.Network.Viewing
         /// 
         /// This value can be null.
         /// </summary>
-        public object[] Data
+        public INotifyPropertyChanged Data
         {
             get { return m_data; }
             set { m_data = value; }

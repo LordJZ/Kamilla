@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Kamilla.Network.Logging;
@@ -10,6 +12,129 @@ namespace Kamilla.Network.Protocols
 {
     public sealed class DefaultProtocol : Protocol
     {
+        public abstract class BaseItemData : INotifyPropertyChanged
+        {
+            /// <summary>
+            /// Occurs when a property is changed.
+            /// </summary>
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            ViewerItem m_item;
+            string m_index;
+            string m_arrivalTime;
+            string m_arrivalTicks;
+            string m_c2sStr;
+            string m_s2cStr;
+            string m_dataLength;
+
+            /// <summary>
+            /// Initializes a new instance of
+            /// <see cref="Kamilla.Network.Protocols.DefaultProtocol.BaseItemData"/> class.
+            /// </summary>
+            /// <param name="item">
+            /// The underlying instance of <see cref="Kamilla.Network.Viewing.ViewerItem"/> class.
+            /// </param>
+            /// <exception cref="System.ArgumentNullException">
+            /// <c>item</c> is null.
+            /// </exception>
+            public BaseItemData(ViewerItem item)
+            {
+                if (item == null)
+                    throw new ArgumentNullException("item");
+
+                m_item = item;
+            }
+
+            /// <summary>
+            /// Fires the
+            /// <see cref="Kamilla.Network.Protocols.DefaultProtocol.BaseItemData.PropertyChanged"/>
+            /// event.
+            /// </summary>
+            /// <param name="propertyName">
+            /// Name of the property that was changed.
+            /// </param>
+            /// <exception cref="System.ArgumentNullException">
+            /// <c>propertyName</c> is null.
+            /// </exception>
+            protected void Changed(string propertyName)
+            {
+                if (propertyName == null)
+                    throw new ArgumentNullException("propertyName");
+
+                if (this.PropertyChanged != null)
+                    this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+
+            public virtual string Index
+            {
+                get { return m_index ?? (m_index = m_item.Index.ToString()); }
+            }
+            public virtual string ArrivalTime
+            {
+                get { return m_arrivalTime ?? (m_arrivalTime = m_item.Packet.ArrivalTime.ToString("HH:mm:ss")); }
+            }
+            public virtual string ArrivalTicks
+            {
+                get
+                {
+                    if (m_arrivalTicks == null)
+                    {
+                        var log = m_item.Log as IHasStartTicks;
+                        if (log != null)
+                            m_arrivalTicks = ((int)(m_item.Packet.ArrivalTicks - log.StartTicks)).ToString();
+                        else
+                            m_arrivalTicks = m_item.Packet.ArrivalTicks.ToString();
+                    }
+
+                    return m_arrivalTicks;
+                }
+            }
+            public virtual string C2sStr
+            {
+                get
+                {
+                    if (m_c2sStr == null)
+                    {
+                        var packet = m_item.Packet;
+                        if (packet.Direction == TransferDirection.ToServer)
+                            m_c2sStr = NetworkStrings.bytes.LocalizedFormat(packet.Data.Length);
+                        else
+                            m_c2sStr = string.Empty;
+                    }
+
+                    return m_c2sStr;
+                }
+            }
+            public virtual string S2cStr
+            {
+                get
+                {
+                    if (m_s2cStr == null)
+                    {
+                        var packet = m_item.Packet;
+                        if (packet.Direction == TransferDirection.ToClient)
+                            m_s2cStr = NetworkStrings.bytes.LocalizedFormat(packet.Data.Length);
+                        else
+                            m_s2cStr = string.Empty;
+                    }
+
+                    return m_s2cStr;
+                }
+            }
+            public virtual string DataLength
+            {
+                get { return m_dataLength ?? (m_dataLength = m_item.Packet.Data.Length.ToString()); }
+            }
+        }
+
+        sealed class ItemData : BaseItemData
+        {
+            internal ItemData(ViewerItem item)
+                : base(item)
+            {
+            }
+        }
+
         NetworkLogViewerBase m_viewer;
         GridView m_view;
         ViewerItemEventHandler m_itemQueriedHandler;
@@ -26,35 +151,7 @@ namespace Kamilla.Network.Protocols
 
         void viewer_ItemQueried(object sender, ViewerItemEventArgs e)
         {
-            var item = e.Item;
-
-            var arr = new string[s_columnWidths.Length];
-
-            var packet = item.Packet;
-
-            arr[0] = item.Index.ToString();
-            arr[1] = packet.ArrivalTime.ToString("HH:mm:ss");
-
-            uint startTicks = 0;
-            if (item.Log is IHasStartTicks)
-                startTicks = ((IHasStartTicks)item.Log).StartTicks;
-
-            arr[2] = ((int)(packet.ArrivalTicks - startTicks)).ToString();
-
-            if (packet.Direction == TransferDirection.ToServer)
-            {
-                arr[3] = NetworkStrings.bytes.LocalizedFormat(packet.Data.Length);
-                arr[4] = string.Empty;
-            }
-            else
-            {
-                arr[3] = string.Empty;
-                arr[4] = NetworkStrings.bytes.LocalizedFormat(packet.Data.Length);
-            }
-
-            arr[5] = packet.Data.Length.ToString();
-
-            item.Data = arr;
+            e.Item.Data = new ItemData(e.Item);
         }
 
         class GridViewColumnWithId : GridViewColumn
@@ -70,6 +167,16 @@ namespace Kamilla.Network.Protocols
             180,
             180,
             59
+        };
+
+        static readonly string[] s_columnBindings = new string[]
+        {
+            ".Data.Index",
+            ".Data.ArrivalTime",
+            ".Data.ArrivalTicks",
+            ".Data.C2sStr",
+            ".Data.S2cStr",
+            ".Data.DataLength",
         };
 
         public override ViewBase View
@@ -117,7 +224,16 @@ namespace Kamilla.Network.Protocols
                 item.ColumnId = col;
                 item.Header = headers[col];
                 item.Width = widths[col];
-                item.DisplayMemberBinding = new Binding(".Data[" + col + "]");
+
+                var dataTemplate = new DataTemplate();
+                dataTemplate.DataType = typeof(ItemData);
+
+                var block = new FrameworkElementFactory(typeof(TextBlock));
+                block.SetValue(TextBlock.TextProperty, new Binding(s_columnBindings[col]));
+
+                dataTemplate.VisualTree = block;
+                item.CellTemplate = dataTemplate;
+
                 view.Columns.Add(item);
             }
         }
