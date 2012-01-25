@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
@@ -15,8 +16,47 @@ namespace NetworkLogViewer
 {
     internal sealed class ViewerImplementation : NetworkLogViewerBase
     {
+        #region Dealloc Queue
+        class DeallocQueue
+        {
+            ViewerItem[] m_items;
+            int m_index;
+            int m_capacity;
+
+            internal DeallocQueue(int capacity)
+            {
+                if (capacity <= 0)
+                    throw new ArgumentOutOfRangeException("capacity");
+
+                m_items = new ViewerItem[capacity];
+                m_capacity = capacity;
+            }
+
+            internal void Push(ViewerItem item)
+            {
+                ++m_index;
+                m_index %= m_capacity;
+
+                var old = m_items[m_index];
+                if (old != null)
+                {
+                    old.Parser = null;
+                    old.Data = null;
+                }
+
+                m_items[m_index] = item;
+            }
+
+            internal void Clear()
+            {
+                Array.Clear(m_items, 0, m_capacity);
+                m_index = 0;
+            }
+        }
+        #endregion
+
         bool m_autoParse;
-        bool m_enabledDeallocQueue;
+        bool m_deallocQueueEnabled;
 
         internal bool AutoParse
         {
@@ -32,8 +72,16 @@ namespace NetworkLogViewer
 
         internal bool EnableDeallocQueue
         {
-            get { return m_enabledDeallocQueue; }
-            set { m_enabledDeallocQueue = value; }
+            get { return m_deallocQueueEnabled; }
+            set
+            {
+                m_deallocQueueEnabled = value;
+
+                if (value)
+                    this.DropCache();
+                else
+                    m_deallocQueue.Clear();
+            }
         }
 
         MainWindow m_window;
@@ -43,6 +91,7 @@ namespace NetworkLogViewer
         internal readonly ViewerItemCollection m_items;
         WindowInteropHelper m_interopHelper;
         BackgroundWorker m_parsingWorker;
+        DeallocQueue m_deallocQueue;
 
         internal ViewerImplementation(MainWindow window)
         {
@@ -52,6 +101,8 @@ namespace NetworkLogViewer
             m_items = new ViewerItemCollection(this);
             m_items.ItemQueried += new ViewerItemEventHandler(m_items_ItemQueried);
             m_packetAddedHandler = new PacketAddedEventHandler(m_currentLog_PacketAdded);
+
+            m_deallocQueue = new DeallocQueue(100);
 
             m_parsingWorker = new BackgroundWorker()
             {
@@ -63,13 +114,13 @@ namespace NetworkLogViewer
         internal void LoadSettings()
         {
             m_autoParse = Configuration.GetValue("AutoParse", true);
-            m_enabledDeallocQueue = Configuration.GetValue("DeallocQueue", true);
+            m_deallocQueueEnabled = Configuration.GetValue("DeallocQueue", true);
         }
 
         internal void SaveSettings()
         {
             Configuration.SetValue("AutoParse", m_autoParse);
-            Configuration.SetValue("DeallocQueue", m_enabledDeallocQueue);
+            Configuration.SetValue("DeallocQueue", m_deallocQueueEnabled);
         }
 
         void m_currentLog_PacketAdded(object sender, PacketAddedEventArgs e)
@@ -156,6 +207,14 @@ namespace NetworkLogViewer
 
             if (this.NetworkLogChanged != null)
                 this.NetworkLogChanged(this, new NetworkLogChangedEventArgs(old, value));
+        }
+
+        protected override void OnParsingDone(ViewerItem item)
+        {
+            base.OnParsingDone(item);
+
+            if (m_deallocQueueEnabled)
+                m_deallocQueue.Push(item);
         }
 
         internal void OnStyleChanged(Style oldStyle, Style newStyle)
@@ -271,7 +330,6 @@ namespace NetworkLogViewer
                     if (!parser.IsParsed)
                     {
                         turnOffTimes = 0;
-                        // TODO: push to dealloc queue
                         parser.Parse();
                     }
                 }
