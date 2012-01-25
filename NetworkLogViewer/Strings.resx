@@ -220,4 +220,16 @@
   <data name="View_TextContents" xml:space="preserve">
     <value>Text Data</value>
   </data>
+  <data name="Menu_AlignPanels" xml:space="preserve">
+    <value>Align Panels</value>
+  </data>
+  <data name="Menu_AutoDropCache" xml:space="preserve">
+    <value>Auto Flush Cache</value>
+  </data>
+  <data name="Menu_AutoParse" xml:space="preserve">
+    <value>Auto Parse Packets</value>
+  </data>
+  <data name="Menu_DropCache" xml:space="preserve">
+    <value>Flush List Cache</value>
+  </data>
 </root>

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Windows;
 using System.Windows.Interop;
+using Kamilla;
 using Kamilla.Network.Logging;
 using Kamilla.Network.Protocols;
 using Kamilla.Network.Viewing;
@@ -14,6 +15,27 @@ namespace NetworkLogViewer
 {
     internal sealed class ViewerImplementation : NetworkLogViewerBase
     {
+        bool m_autoParse;
+        bool m_enabledDeallocQueue;
+
+        internal bool AutoParse
+        {
+            get { return m_autoParse; }
+            set
+            {
+                m_autoParse = value;
+
+                if (value)
+                    m_items.Update();
+            }
+        }
+
+        internal bool EnableDeallocQueue
+        {
+            get { return m_enabledDeallocQueue; }
+            set { m_enabledDeallocQueue = value; }
+        }
+
         MainWindow m_window;
         PacketAddedEventHandler m_packetAddedHandler;
         Protocol m_currentProtocol;
@@ -28,29 +50,66 @@ namespace NetworkLogViewer
             m_interopHelper = new WindowInteropHelper(window);
 
             m_items = new ViewerItemCollection(this);
-            m_items.ItemQueried += (o, e) =>
-            {
-                m_window.ThreadSafeBegin(_ =>
-                {
-                    if (this.ItemQueried != null)
-                        this.ItemQueried(o, e);
-                });
-            };
-
-            m_packetAddedHandler = (o, e) =>
-            {
-                var item = new ViewerItem(this, (NetworkLog)o, e.Packet, m_items.Count);
-                m_items.Add(item);
-
-                if (this.ItemAdded != null)
-                    this.ItemAdded(this, new ViewerItemEventArgs(item));
-            };
+            m_items.ItemQueried += new ViewerItemEventHandler(m_items_ItemQueried);
+            m_packetAddedHandler = new PacketAddedEventHandler(m_currentLog_PacketAdded);
 
             m_parsingWorker = new BackgroundWorker()
             {
                 WorkerSupportsCancellation = true
             };
             m_parsingWorker.DoWork += new DoWorkEventHandler(m_parsingWorker_DoWork);
+        }
+
+        internal void LoadSettings()
+        {
+            m_autoParse = Configuration.GetValue("AutoParse", true);
+            m_enabledDeallocQueue = Configuration.GetValue("DeallocQueue", true);
+        }
+
+        internal void SaveSettings()
+        {
+            Configuration.SetValue("AutoParse", m_autoParse);
+            Configuration.SetValue("DeallocQueue", m_enabledDeallocQueue);
+        }
+
+        void m_currentLog_PacketAdded(object sender, PacketAddedEventArgs e)
+        {
+            var item = new ViewerItem(this, (NetworkLog)sender, e.Packet, m_items.Count);
+            m_items.Add(item);
+
+            if (this.ItemAdded != null)
+                this.ItemAdded(this, new ViewerItemEventArgs(item));
+        }
+
+        void m_items_ItemQueried(object sender, ViewerItemEventArgs e)
+        {
+            if (m_autoParse)
+            {
+                var item = e.Item;
+                var parser = item.Parser;
+                if (parser == null || !parser.IsParsed)
+                    this.EnqueueParsing(item);
+            }
+
+            if (this.ItemQueried != null)
+            {
+                m_window.ThreadSafeBegin(_ =>
+                {
+                    if (this.ItemQueried != null)
+                        this.ItemQueried(sender, e);
+                });
+            }
+        }
+
+        internal void DropCache()
+        {
+            foreach (var item in m_items)
+            {
+                item.Parser = null;
+                item.Data = null;
+            }
+
+            m_items.Update();
         }
 
         internal void SetProtocol(Protocol value)
@@ -61,12 +120,6 @@ namespace NetworkLogViewer
             m_parsingWorker.CancelAsync();
 
             var old = m_currentProtocol;
-
-            foreach (var item in m_items)
-            {
-                item.Parser = null;
-                item.Data = null;
-            }
 
             // We should allow the protocol to integrate with viewer in viewer's thread.
             m_window.ThreadSafe(_ =>
@@ -83,7 +136,7 @@ namespace NetworkLogViewer
             if (this.ProtocolChanged != null)
                 this.ProtocolChanged(this, new ProtocolChangedEventArgs(old, value));
 
-            m_items.Update();
+            this.DropCache();
         }
 
         internal void SetLog(NetworkLog value)

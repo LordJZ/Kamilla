@@ -317,6 +317,7 @@ namespace NetworkLogViewer
             m_implementation.CloseFile();
 
             Configuration.SuspendSaving();
+            m_implementation.SaveSettings();
             Configuration.SetValue("Number of Views", m_currentNViews);
             this.SaveCurrentViews();
             Configuration.SetValue("Vertical Splitter", new[] {
@@ -339,6 +340,22 @@ namespace NetworkLogViewer
         void CloseFile()
         {
             m_implementation.CloseFile();
+        }
+
+        private void DropCache_Click(object sender, RoutedEventArgs e)
+        {
+            m_implementation.DropCache();
+            this.UpdateViews();
+        }
+
+        private void AutoParse_CheckedChanged(object sender, RoutedEventArgs e)
+        {
+            m_implementation.AutoParse = ui_miAutoParse.IsChecked;
+        }
+
+        private void AutoDropCache_CheckedChanged(object sender, RoutedEventArgs e)
+        {
+            m_implementation.EnableDeallocQueue = ui_miAutoDropCache.IsChecked;
         }
         #endregion
 
@@ -450,6 +467,12 @@ namespace NetworkLogViewer
             NetworkLogFactory.Initialize();
             InitializeProtocols();
             InitializeLanguages();
+            m_implementation.LoadSettings();
+            this.ThreadSafeBegin(_ =>
+            {
+                _.ui_miAutoDropCache.IsChecked = _.m_implementation.EnableDeallocQueue;
+                _.ui_miAutoParse.IsChecked = _.m_implementation.AutoParse;
+            });
         }
 
         private void ui_loadingWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -746,6 +769,13 @@ namespace NetworkLogViewer
         private void ui_lvPackets_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             this.UpdateViews();
+        }
+
+        private void AlignPanels_Click(object sender, RoutedEventArgs e)
+        {
+            double width = 1.0 / m_currentNViews;
+            foreach (var column in ViewsGrid.ColumnDefinitions)
+                column.Width = new GridLength(width, GridUnitType.Star);
         }
         #endregion
     }

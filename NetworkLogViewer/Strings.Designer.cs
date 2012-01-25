@@ -128,11 +128,47 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Align Panels.
+        /// </summary>
+        public static string Menu_AlignPanels {
+            get {
+                return ResourceManager.GetString("Menu_AlignPanels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto Flush Cache.
+        /// </summary>
+        public static string Menu_AutoDropCache {
+            get {
+                return ResourceManager.GetString("Menu_AutoDropCache", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto Parse Packets.
+        /// </summary>
+        public static string Menu_AutoParse {
+            get {
+                return ResourceManager.GetString("Menu_AutoParse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close File.
         /// </summary>
         public static string Menu_CloseFile {
             get {
                 return ResourceManager.GetString("Menu_CloseFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Flush List Cache.
+        /// </summary>
+        public static string Menu_DropCache {
+            get {
+                return ResourceManager.GetString("Menu_DropCache", resourceCulture);
             }
         }
         

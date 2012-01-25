@@ -25,6 +25,7 @@
       <MenuItem Header="{x:Static viewer:Strings.Menu_View}">
         <MenuItem Name="ui_miSkins" Header="{x:Static viewer:Strings.Menu_Skins}"/>
 
+        <Separator/>
         <MenuItem Header="{x:Static viewer:Strings.Menu_ViewPanels}" Name="ui_miViewsColumns">
           <MenuItem Header="1" Click="ui_miViewsCount_Click" Tag="1" />
           <MenuItem Header="2" Click="ui_miViewsCount_Click" Tag="2" />
@@ -33,6 +34,12 @@
           <MenuItem Header="5" Click="ui_miViewsCount_Click" Tag="5" />
           <MenuItem Header="6" Click="ui_miViewsCount_Click" Tag="6" />
         </MenuItem>
+        <MenuItem Header="{x:Static viewer:Strings.Menu_AlignPanels}" Click="AlignPanels_Click"/>
+
+        <Separator/>
+        <MenuItem Header="{x:Static viewer:Strings.Menu_DropCache}" Click="DropCache_Click"/>
+        <MenuItem Header="{x:Static viewer:Strings.Menu_AutoParse}" IsCheckable="True" Name="ui_miAutoParse" Checked="AutoParse_CheckedChanged" Unchecked="AutoParse_CheckedChanged"/>
+        <MenuItem Header="{x:Static viewer:Strings.Menu_AutoDropCache}" IsCheckable="True" Name="ui_miAutoDropCache" Checked="AutoDropCache_CheckedChanged" Unchecked="AutoDropCache_CheckedChanged"/>
       </MenuItem>
 
       <MenuItem Header="{x:Static viewer:Strings.Menu_Help}">
