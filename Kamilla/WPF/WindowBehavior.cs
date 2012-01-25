@@ -5,63 +5,117 @@ using System.Windows.Interop;
 
 namespace Kamilla.WPF
 {
-    public class WindowBehavior
+    public static class WindowBehavior
     {
-        public enum TitleBarButtons : uint
-        {
-            None        = 0,
-            Maximize    = 0x10000,
-            Minimize    = 0x20000,
-            Close       = 0x80000,
-            All         = Close | Minimize | Maximize
-        }
+        static readonly Type s_ownerType = typeof(WindowBehavior);
+        static readonly RoutedEventHandler s_loadedHandler = new RoutedEventHandler(InternalInitializeStyleFlags);
 
-        private static readonly Type OwnerType = typeof(WindowBehavior);
-
-        #region TitleBarButtons (attached property)
-        public static readonly DependencyProperty TitleBarButtonsProperty =
-            DependencyProperty.RegisterAttached("TitleBarButtons", typeof(TitleBarButtons), OwnerType,
-            new FrameworkPropertyMetadata(TitleBarButtons.All, new PropertyChangedCallback(TitleBarButtonsChangedCallback)));
+        #region Close Button
+        public static readonly DependencyProperty HasTitleBarCloseButtonProperty =
+            DependencyProperty.RegisterAttached("HasTitleBarCloseButton", typeof(bool), s_ownerType,
+                new FrameworkPropertyMetadata(true,
+                    new PropertyChangedCallback((o, e) =>
+                        HasTitleBarButtonChangedCallback(o, e, Win32.WindowStyles.WS_SYSMENU))));
 
         [AttachedPropertyBrowsableForType(typeof(Window))]
-        public static TitleBarButtons GetTitleBarButtons(Window obj)
+        public static bool GetHasTitleBarCloseButton(Window obj)
         {
-            return (TitleBarButtons)obj.GetValue(TitleBarButtonsProperty);
+            return (bool)obj.GetValue(HasTitleBarCloseButtonProperty);
         }
         [AttachedPropertyBrowsableForType(typeof(Window))]
-        public static void SetTitleBarButtons(Window obj, TitleBarButtons value)
+        public static void SetHasTitleBarCloseButton(Window obj, bool value)
         {
-            obj.SetValue(TitleBarButtonsProperty, value);
+            obj.SetValue(HasTitleBarCloseButtonProperty, value);
         }
-        private static void TitleBarButtonsChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        #endregion
+
+        #region Minimize Button
+        public static readonly DependencyProperty HasTitleBarMinimizeButtonProperty =
+            DependencyProperty.RegisterAttached("HasTitleBarMinimizeButton", typeof(bool), s_ownerType,
+                new FrameworkPropertyMetadata(true,
+                    new PropertyChangedCallback((o, e) =>
+                        HasTitleBarButtonChangedCallback(o, e, Win32.WindowStyles.WS_MINIMIZEBOX))));
+
+        [AttachedPropertyBrowsableForType(typeof(Window))]
+        public static bool GetHasTitleBarMinimizeButton(Window obj)
         {
-            var window = d as Window;
+            return (bool)obj.GetValue(HasTitleBarMinimizeButtonProperty);
+        }
+        [AttachedPropertyBrowsableForType(typeof(Window))]
+        public static void SetHasTitleBarMinimizeButton(Window obj, bool value)
+        {
+            obj.SetValue(HasTitleBarMinimizeButtonProperty, value);
+        }
+        #endregion
+
+        #region Maximize Button
+        public static readonly DependencyProperty HasTitleBarMaximizeButtonProperty =
+            DependencyProperty.RegisterAttached("HasTitleBarMaximizeButton", typeof(bool), s_ownerType,
+                new FrameworkPropertyMetadata(true,
+                    new PropertyChangedCallback((o, e) =>
+                        HasTitleBarButtonChangedCallback(o, e, Win32.WindowStyles.WS_MAXIMIZEBOX))));
+
+        [AttachedPropertyBrowsableForType(typeof(Window))]
+        public static bool GetHasTitleBarMaximizeButton(Window obj)
+        {
+            return (bool)obj.GetValue(HasTitleBarMaximizeButtonProperty);
+        }
+        [AttachedPropertyBrowsableForType(typeof(Window))]
+        public static void SetHasTitleBarMaximizeButton(Window obj, bool value)
+        {
+            obj.SetValue(HasTitleBarMaximizeButtonProperty, value);
+        }
+        #endregion
+
+
+        static void HasTitleBarButtonChangedCallback(DependencyObject obj,
+            DependencyPropertyChangedEventArgs e, Win32.WindowStyles button)
+        {
+            var window = obj as Window;
             if (window == null)
                 return;
 
-            var buttons = (TitleBarButtons)e.NewValue;
-
             if (!window.IsLoaded)
-                window.Loaded += LoadedDelegate;
+                window.Loaded += s_loadedHandler;
             else
-                SetTitleBarButtonsInternal(window, buttons);
+                InternalSetStyleFlag(window, button, (bool)e.NewValue);
         }
-        private static readonly RoutedEventHandler LoadedDelegate = (sender, args) =>
+
+        static void InternalSetStyleFlag(Window window, Win32.WindowStyles button, bool value)
         {
-            if (!(sender is Window))
+            var hwnd = new WindowInteropHelper(window).Handle;
+            uint style = Win32.GetWindowLong(hwnd, Win32.GWL_STYLE);
+
+            if (value)
+                style |= (uint)button;
+            else
+                style &= ~(uint)button;
+
+            Win32.SetWindowLong(hwnd, Win32.GWL_STYLE, style);
+        }
+
+        static void InternalInitializeStyleFlags(object sender, RoutedEventArgs e)
+        {
+            var window = sender as Window;
+            if (window == null)
                 return;
 
-            var w = (Window)sender;
-            SetTitleBarButtonsInternal(w, GetTitleBarButtons(w));
-            w.Loaded -= LoadedDelegate;
-        };
+            var hwnd = new WindowInteropHelper(window).Handle;
+            uint style = Win32.GetWindowLong(hwnd, Win32.GWL_STYLE);
 
-        private static void SetTitleBarButtonsInternal(Window w, TitleBarButtons buttons)
-        {
-            var hwnd = new WindowInteropHelper(w).Handle;
-            uint value = Win32.GetWindowLong(hwnd, Win32.GWL_STYLE);
-            Win32.SetWindowLong(hwnd, Win32.GWL_STYLE, (value & ~(uint)TitleBarButtons.All) | (uint)buttons);
+            style &= ~(uint)Win32.WindowStyles.WS_TITLEBARBUTTONS;
+
+            if (GetHasTitleBarCloseButton(window))
+                style |= (uint)Win32.WindowStyles.WS_SYSMENU;
+
+            if (GetHasTitleBarMinimizeButton(window))
+                style |= (uint)Win32.WindowStyles.WS_MINIMIZEBOX;
+
+            if (GetHasTitleBarMaximizeButton(window))
+                style |= (uint)Win32.WindowStyles.WS_MAXIMIZEBOX;
+
+            Win32.SetWindowLong(hwnd, Win32.GWL_STYLE, style);
+            window.Loaded -= s_loadedHandler;
         }
-        #endregion
     }
 }

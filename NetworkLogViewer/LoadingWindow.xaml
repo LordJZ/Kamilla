@@ -3,8 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:kwpf="clr-namespace:Kamilla.WPF;assembly=Kamilla"
         xmlns:viewer="clr-namespace:NetworkLogViewer"
-        kwpf:WindowBehavior.TitleBarButtons="None" Title="{x:Static viewer:Strings.LW_Title}"
-        Height="190" Width="435" WindowStyle="ToolWindow"
+        kwpf:WindowBehavior.HasTitleBarCloseButton="False"
+        kwpf:WindowBehavior.HasTitleBarMinimizeButton="False"
+        kwpf:WindowBehavior.HasTitleBarMaximizeButton="False"
+        Title="{x:Static viewer:Strings.LW_Title}"
+        Height="190" Width="435" WindowStyle="None" AllowsTransparency="True"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowInTaskbar="False">
   <Grid>
     <Grid.RowDefinitions>
