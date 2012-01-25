@@ -1,8 +1,126 @@
 ﻿<Application x:Class="NetworkLogViewer.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:kwpf="clr-namespace:Kamilla.WPF;assembly=Kamilla"
              StartupUri="MainWindow.xaml" ShutdownMode="OnMainWindowClose">
   <Application.Resources>
+    <Style x:Key="TitleBarStyle">
+      <EventSetter Event="UIElement.MouseLeftButtonDown" Handler="TitleBar_MouseLeftButtonDown"/>
+    </Style>
+    <DropShadowEffect x:Key="SlimShadowEffect" ShadowDepth="1" />
+    <Style x:Key="TitleBarButtonStyle" TargetType="{x:Type Button}">
+      <Setter Property="Padding" Value="0"/>
+      <Setter Property="Path.StrokeThickness" Value="2"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type Button}">
+            <Border Padding="5" Background="Transparent">
+              <Path Data="{Binding Path=Content,
+                                RelativeSource={RelativeSource TemplatedParent}}"
+                    x:Name="PART_Path"
+                    Stroke="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
+                    StrokeThickness="{TemplateBinding Path.StrokeThickness}"
+                    SnapsToDevicePixels="True" StrokeLineJoin="Bevel" />
+            </Border>
+
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Stroke"
+                        Value="{Binding Path=Foreground,
+                                RelativeSource={RelativeSource TemplatedParent}}"
+                        TargetName="PART_Path"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style x:Key="TitleBarMinimizeButtonStyle" TargetType="{x:Type Button}"
+           BasedOn="{StaticResource TitleBarButtonStyle}">
+      <Setter Property="Content" Value="M 0 10 L 10 10"/>
+      <EventSetter Event="Click" Handler="Minimize_Click"/>
+    </Style>
+    <Style x:Key="TitleBarMaximizeButtonStyle" TargetType="{x:Type Button}"
+           BasedOn="{StaticResource TitleBarButtonStyle}">
+      <Setter Property="Content" Value="M 0 0 L 10 0 L 10 10 L 0 10 L 0 0 M 0 1 L 10 1"/>
+      <EventSetter Event="Click" Handler="Maximize_Click"/>
+    </Style>
+    <Style x:Key="TitleBarNormalizeButtonStyle" TargetType="{x:Type Button}"
+           BasedOn="{StaticResource TitleBarButtonStyle}">
+      <Setter Property="Content" Value="M 3 3 L 3 0 L 10 0 L 10 7 L 7 7 L 7 10 L 0 10 L 0 3 L 7 3 L 7 7"/>
+      <EventSetter Event="Click" Handler="Normalize_Click"/>
+    </Style>
+    <Style x:Key="TitleBarCloseButtonStyle" TargetType="{x:Type Button}"
+           BasedOn="{StaticResource TitleBarButtonStyle}">
+      <Setter Property="Content" Value="M 0 0 L 10 10 M 0 10 L 10 0"/>
+      <EventSetter Event="Click" Handler="Close_Click"/>
+    </Style>
+
+    <ControlTemplate x:Key="CustomTitleBarWindowTemplate" TargetType="{x:Type Window}">
+      <Border Margin="10" BorderThickness="1" CornerRadius="3" x:Name="PART_WndBorder"
+              BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+              Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" Padding="2,0,2,2">
+        <Border.Effect>
+          <DropShadowEffect ShadowDepth="0" BlurRadius="10" />
+        </Border.Effect>
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="23" />
+            <RowDefinition Height="*" />
+          </Grid.RowDefinitions>
+
+          <Border BorderThickness="0,0,0,1"
+                  BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+                  Background="Transparent" VerticalAlignment="Center"
+                  Style="{StaticResource TitleBarStyle}">
+
+            <Grid>
+              <Label Content="{TemplateBinding Title}" VerticalAlignment="Center"
+                     VerticalContentAlignment="Center" Margin="5,0,0,0" Padding="0" />
+
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="PART_MinButton"
+                        Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
+                        Style="{StaticResource TitleBarMinimizeButtonStyle}"/>
+                <Button x:Name="PART_NormMaxButton"
+                        Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                <Button x:Name="PART_CloseButton"
+                        Foreground="Red"
+                        Style="{StaticResource TitleBarCloseButtonStyle}"/>
+              </StackPanel>
+            </Grid>
+          </Border>
+
+          <ContentPresenter Grid.Row="1" />
+        </Grid>
+      </Border>
+      <ControlTemplate.Triggers>
+
+        <Trigger Property="kwpf:WindowBehavior.HasTitleBarMinimizeButton" Value="False">
+          <Setter TargetName="PART_MinButton" Property="Visibility" Value="Collapsed"/>
+        </Trigger>
+        <Trigger Property="kwpf:WindowBehavior.HasTitleBarMaximizeButton" Value="False">
+          <Setter TargetName="PART_NormMaxButton" Property="Visibility" Value="Collapsed"/>
+        </Trigger>
+        <Trigger Property="kwpf:WindowBehavior.HasTitleBarCloseButton" Value="False">
+          <Setter TargetName="PART_CloseButton" Property="Visibility" Value="Collapsed"/>
+        </Trigger>
+
+        <Trigger Property="WindowState" Value="Maximized">
+          <Setter TargetName="PART_NormMaxButton" Property="Style"
+                            Value="{StaticResource TitleBarNormalizeButtonStyle}"/>
+          <Setter TargetName="PART_WndBorder" Property="Margin" Value="0"/>
+          <Setter TargetName="PART_WndBorder" Property="BorderThickness" Value="0"/>
+          <Setter TargetName="PART_WndBorder" Property="CornerRadius" Value="0"/>
+        </Trigger>
+        <Trigger Property="WindowState" Value="Normal">
+          <Setter TargetName="PART_NormMaxButton" Property="Style"
+                            Value="{StaticResource TitleBarMaximizeButtonStyle}"/>
+        </Trigger>
+
+      </ControlTemplate.Triggers>
+    </ControlTemplate>
+
     <Style x:Key="InvertedAeroColors">
       <Style.Resources>
         <SolidColorBrush x:Key="{x:Static SystemColors.ActiveBorderBrush}" Color="#FF4B4B4B"/>
@@ -36,6 +154,18 @@
         <SolidColorBrush x:Key="{x:Static SystemColors.WindowTextBrush}" Color="#FFFFFFFF"/>
       </Style.Resources>
     </Style>
+    <Style x:Key="DefaultStyle">
+      <Style.Triggers>
+        <MultiTrigger>
+          <MultiTrigger.Conditions>
+            <Condition Property="Window.WindowStyle" Value="None"/>
+            <Condition Property="Window.AllowsTransparency" Value="True"/>
+          </MultiTrigger.Conditions>
+          <Setter Property="Window.Background" Value="Transparent"/>
+          <Setter Property="Window.Template" Value="{StaticResource CustomTitleBarWindowTemplate}"/>
+        </MultiTrigger>
+      </Style.Triggers>
+    </Style>
     <Style x:Key="KamillaStyle">
       <Style.Resources>
         <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="#FF222222"/>
@@ -58,7 +188,7 @@
         <SolidColorBrush x:Key="{x:Static SystemColors.MenuBrushKey}" Color="DarkGreen"/>
         <SolidColorBrush x:Key="{x:Static SystemColors.MenuBarBrushKey}" Color="DarkGreen"/>
         <SolidColorBrush x:Key="{x:Static SystemColors.MenuHighlightBrush}" Color="LightGreen"/>
-        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#FF424242"/>
+        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#FF17AD1A"/>
         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#FF17AD1A"/>
         <SolidColorBrush x:Key="{x:Static SystemColors.HotTrackBrush}" Color="LightGreen"/>
 
@@ -112,7 +242,6 @@
           <Setter Property="Control.Foreground" Value="{StaticResource {x:Static SystemColors.WindowTextBrushKey}}"/>
         </Style>
 
-        <Style TargetType="{x:Type Window}" BasedOn="{StaticResource KamillaStyleBase}"/>
         <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource KamillaStyleBase}"/>
         <Style TargetType="{x:Type Grid}" BasedOn="{StaticResource KamillaStyleBase}"/>
 
@@ -1217,6 +1346,18 @@
         </Style>
 
       </Style.Resources>
+
+      <Style.Triggers>
+        <MultiTrigger>
+          <MultiTrigger.Conditions>
+            <Condition Property="Window.WindowStyle" Value="None"/>
+            <Condition Property="Window.AllowsTransparency" Value="True"/>
+          </MultiTrigger.Conditions>
+          <Setter Property="Window.Background" Value="Transparent"/>
+          <Setter Property="Window.Template" Value="{StaticResource CustomTitleBarWindowTemplate}"/>
+        </MultiTrigger>
+      </Style.Triggers>
+
     </Style>
   </Application.Resources>
 </Application>

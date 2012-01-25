@@ -552,7 +552,7 @@ namespace NetworkLogViewer
             m_skins = new Dictionary<string, Style>()
             {
                 { "KamillaStyle", (Style)this.FindResource("KamillaStyle") },
-                { "Windows", null },
+                { "Windows", (Style)this.FindResource("DefaultStyle") },
             };
 
             var resources = Strings.ResourceManager;
@@ -565,9 +565,6 @@ namespace NetworkLogViewer
                 item.Header = resources.GetString("Skin_" + skin.Key, culture);
                 item.Tag = skin.Key;
                 item.Click += new RoutedEventHandler(skinItem_Click);
-
-                if (skin.Key == "Windows")
-                    item.IsChecked = true;
 
                 ui_miSkins.Items.Add(item);
 

@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using Kamilla.WPF;
 
 namespace NetworkLogViewer
@@ -39,6 +36,51 @@ namespace NetworkLogViewer
 
                 return s_console;
             }
+        }
+
+        void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var window = Window.GetWindow((DependencyObject)sender);
+            if (window != null)
+            {
+                if (e.ClickCount == 2 && WindowBehavior.GetHasTitleBarMaximizeButton(window))
+                {
+                    if (window.WindowState == WindowState.Normal)
+                        window.WindowState = WindowState.Maximized;
+                    else
+                        window.WindowState = WindowState.Normal;
+                }
+                else
+                    window.DragMove();
+            }
+        }
+
+        void Minimize_Click(object sender, RoutedEventArgs e)
+        {
+            var window = Window.GetWindow((DependencyObject)sender);
+            if (window != null)
+                window.WindowState = WindowState.Minimized;
+        }
+
+        void Maximize_Click(object sender, RoutedEventArgs e)
+        {
+            var window = Window.GetWindow((DependencyObject)sender);
+            if (window != null)
+                window.WindowState = WindowState.Maximized;
+        }
+
+        void Normalize_Click(object sender, RoutedEventArgs e)
+        {
+            var window = Window.GetWindow((DependencyObject)sender);
+            if (window != null)
+                window.WindowState = WindowState.Normal;
+        }
+
+        void Close_Click(object sender, RoutedEventArgs e)
+        {
+            var window = Window.GetWindow((DependencyObject)sender);
+            if (window != null)
+                window.Close();
         }
     }
 }
