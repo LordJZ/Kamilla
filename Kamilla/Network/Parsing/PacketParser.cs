@@ -81,6 +81,9 @@ namespace Kamilla.Network.Parsing
 
             lock (m_syncRoot)
             {
+                if (this.IsParsed)
+                    return;
+
                 this.Output = new StringBuilder();
                 this.Reader = new StreamHandler(this.Packet.Data);
 
