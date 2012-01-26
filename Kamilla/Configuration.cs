@@ -210,7 +210,7 @@ namespace Kamilla
                 Name = name,
                 Owner = owner,
                 Value = value,
-            }, value);
+            }, null);
         }
 
         static string InternalSerialize(object value)
