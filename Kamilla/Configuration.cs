@@ -13,10 +13,45 @@ namespace Kamilla
     [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
     public class ConfigurationStub
     {
-        public class Option
+        public class Option : IComparable<Option>
         {
+            struct OptionComparer : IComparer<Option>
+            {
+                internal static int Compare(Option x, Option y)
+                {
+                    if ((object)x == (object)y)
+                        return 0;
+
+                    return Compare(x, y.Owner, y.Name);
+                }
+
+                internal static int Compare(Option x, string owner, string name)
+                {
+                    int result = StringReverseComparer.Compare(x.Owner, owner);
+                    if (result != 0)
+                        return result;
+
+                    return x.Name.CompareTo(name);
+                }
+
+                int IComparer<Option>.Compare(Option x, Option y)
+                {
+                    return Compare(x, y);
+                }
+            }
+
             public Option()
             {
+            }
+
+            public int CompareTo(Option other)
+            {
+                return OptionComparer.Compare(this, other);
+            }
+
+            public int CompareTo(string owner, string name)
+            {
+                return OptionComparer.Compare(this, owner, name);
             }
 
             [XmlAttribute("Name")]
@@ -37,7 +72,34 @@ namespace Kamilla
             }
 
             [XmlElement("Option")]
-            public List<Option> Options;
+            public List<Option> InternalOptions;
+
+            internal void CompleteDeserialization()
+            {
+                this.Options.Capacity = this.InternalOptions.Count;
+
+                foreach (var opt in this.InternalOptions)
+                    this.Options.Add(opt, null);
+
+                this.InternalOptions = null;
+            }
+
+            internal void PrepareSerialization()
+            {
+                this.InternalOptions = new List<Option>(this.Options.Count);
+
+                foreach (var opt in this.Options.Keys)
+                    this.InternalOptions.Add(opt);
+            }
+
+            internal void CompleteSerialization()
+            {
+                this.InternalOptions = null;
+            }
+
+            // Second type-param is dummy
+            [XmlIgnore]
+            internal SortedList<Option, object> Options = new SortedList<Option, object>();
         }
     }
 
@@ -74,17 +136,19 @@ namespace Kamilla
             string path = Path.Combine(".", s_configurationFilename);
             if (File.Exists(path))
             {
+                var sw = Stopwatch.StartNew();
+
                 using (var reader = new StreamReader(path))
                     s_currentConfiguration = (Stub.Configuration)s_configurationSerializer.Deserialize(reader);
+
+                s_currentConfiguration.CompleteDeserialization();
+
+                sw.Stop();
+                Console.WriteLine("Configuration file {0} opened in {2}: {1} configuration options.",
+                    s_configurationFilename, s_currentConfiguration.Options.Count, sw.Elapsed);
             }
             else
-            {
                 s_currentConfiguration = new Stub.Configuration();
-                s_currentConfiguration.Options = new List<Stub.Option>();
-            }
-
-            Console.WriteLine("Configuration file {0} opened: {1} configuration options.",
-                s_configurationFilename, s_currentConfiguration.Options.Count);
         }
 
         static bool s_suspendSaving;
@@ -114,21 +178,27 @@ namespace Kamilla
                 s_shouldSave = true;
             else
             {
+                var sw = Stopwatch.StartNew();
+                s_currentConfiguration.PrepareSerialization();
+
                 string path = Path.Combine(".", s_configurationFilename);
                 using (var writer = new StreamWriter(path))
                     s_configurationSerializer.Serialize(writer, s_currentConfiguration);
 
-                Console.WriteLine("Configuration file saved.");
+                s_currentConfiguration.CompleteSerialization();
+
+                sw.Stop();
+                Console.WriteLine("Configuration file saved in {0}.", sw.Elapsed);
             }
         }
 
         static string InternalGetValue(string owner, string name)
         {
-            foreach (var option in s_currentConfiguration.Options)
-            {
-                if (option.Owner == owner && option.Name == name)
-                    return option.Value ?? string.Empty;
-            }
+            var keys = s_currentConfiguration.Options.Keys;
+            int index = keys.BinaryIndexOf(opt => opt.CompareTo(owner, name));
+
+            if (index >= 0)
+                return keys[index].Value ?? string.Empty;
 
             return null;
         }
@@ -140,7 +210,7 @@ namespace Kamilla
                 Name = name,
                 Owner = owner,
                 Value = value,
-            });
+            }, value);
         }
 
         static string InternalSerialize(object value)
@@ -182,6 +252,9 @@ namespace Kamilla
         /// </returns>
         public static T GetValue<T>(string name, T defaultValue)
         {
+            if (name == null)
+                throw new ArgumentNullException("name");
+
             lock (s_syncRoot)
             {
                 var trace = new StackTrace(false);
@@ -236,6 +309,9 @@ namespace Kamilla
         /// </param>
         public static void SetValue(string name, object value)
         {
+            if (name == null)
+                throw new ArgumentNullException("name");
+
             lock (s_syncRoot)
             {
                 var trace = new StackTrace(false);
@@ -247,19 +323,14 @@ namespace Kamilla
                     stringValue = InternalSerialize(value);
 
                 var options = s_currentConfiguration.Options;
+                var keys = options.Keys;
 
-                for (int i = 0; i < options.Count; ++i)
-                {
-                    var option = options[i];
-                    if (option.Owner == owner && option.Name == name)
-                    {
-                        option.Value = stringValue;
-                        SaveConfiguration();
-                        return;
-                    }
-                }
+                int index = keys.BinaryIndexOf(opt => opt.CompareTo(owner, name));
+                if (index >= 0)
+                    keys[index].Value = stringValue;
+                else
+                    InternalAddValue(owner, name, stringValue);
 
-                InternalAddValue(owner, name, stringValue);
                 SaveConfiguration();
             }
         }
