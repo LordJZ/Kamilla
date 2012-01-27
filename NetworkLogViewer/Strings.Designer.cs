@@ -108,6 +108,17 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to open file.
+        ///
+        ///{0}.
+        /// </summary>
+        public static string FailedToOpenFile {
+            get {
+                return ResourceManager.GetString("FailedToOpenFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Loading file:
         ///
         ///{0}.
@@ -290,11 +301,38 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Save Binary Contents....
+        /// </summary>
+        public static string Menu_SaveBinaryContents {
+            get {
+                return ResourceManager.GetString("Menu_SaveBinaryContents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save....
         /// </summary>
         public static string Menu_SaveEllipsis {
             get {
                 return ResourceManager.GetString("Menu_SaveEllipsis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save Parser Output....
+        /// </summary>
+        public static string Menu_SaveParserOutput {
+            get {
+                return ResourceManager.GetString("Menu_SaveParserOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save Text Contents....
+        /// </summary>
+        public static string Menu_SaveTextContents {
+            get {
+                return ResourceManager.GetString("Menu_SaveTextContents", resourceCulture);
             }
         }
         
@@ -371,6 +409,24 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Packet #{0}.
+        /// </summary>
+        public static string PacketN {
+            get {
+                return ResourceManager.GetString("PacketN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parsing packets....
+        /// </summary>
+        public static string ParsingPackets {
+            get {
+                return ResourceManager.GetString("ParsingPackets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Kamilla Style.
         /// </summary>
         public static string Skin_KamillaStyle {
@@ -436,7 +492,7 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to save text into file.
+        ///   Looks up a localized string similar to Failed to save data into file.
         ///
         ///{0}.
         /// </summary>

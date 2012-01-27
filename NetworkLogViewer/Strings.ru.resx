@@ -287,4 +287,24 @@
   <data name="BinaryFiles" xml:space="preserve">
     <value>Двоичные файлы</value>
   </data>
+  <data name="Menu_SaveBinaryContents" xml:space="preserve">
+    <value>Сохранить двоичные данные...</value>
+  </data>
+  <data name="Menu_SaveParserOutput" xml:space="preserve">
+    <value>Сохранить выдачу парсеров...</value>
+  </data>
+  <data name="Menu_SaveTextContents" xml:space="preserve">
+    <value>Сохранить текстовые данные...</value>
+  </data>
+  <data name="FailedToOpenFile" xml:space="preserve">
+    <value>Не удалось открыть файл.
+
+{0}</value>
+  </data>
+  <data name="PacketN" xml:space="preserve">
+    <value>Пакет №{0}</value>
+  </data>
+  <data name="ParsingPackets" xml:space="preserve">
+    <value>Обработка пакетов...</value>
+  </data>
 </root>

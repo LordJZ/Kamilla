@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -11,6 +12,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using Kamilla;
+using Kamilla.Network;
 using Kamilla.Network.Logging;
 using Kamilla.Network.Protocols;
 using Kamilla.Network.Viewing;
@@ -141,6 +143,15 @@ namespace NetworkLogViewer
             };
             this.ui_readingWorker.DoWork += new DoWorkEventHandler(this.ui_readingWorker_DoWork);
             this.ui_readingWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.ui_readingWorker_RunWorkerCompleted);
+
+            ui_savingWorker = new BackgroundWorker()
+            {
+                WorkerSupportsCancellation = true,
+                WorkerReportsProgress = true
+            };
+            ui_savingWorker.DoWork += new DoWorkEventHandler(ui_savingWorker_DoWork);
+            ui_savingWorker.ProgressChanged += new ProgressChangedEventHandler(ui_savingWorker_ProgressChanged);
+            ui_savingWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(ui_savingWorker_RunWorkerCompleted);
 
             m_implementation.ProtocolChanged += new ProtocolChangedEventHandler(MainWindow_ProtocolChanged);
             m_implementation.NetworkLogChanged += new NetworkLogChangedEventHandler(MainWindow_NetworkLogChanged);
@@ -326,6 +337,7 @@ namespace NetworkLogViewer
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             ui_readingWorker.CancelAsync();
+            ui_savingWorker.CancelAsync();
             m_implementation.CloseFile();
 
             Configuration.SuspendSaving();
@@ -460,6 +472,8 @@ namespace NetworkLogViewer
         {
             var newLog = e.NewLog;
             ui_sbiNetworkLog.Content = newLog != null ? newLog.Name : Strings.NoNetworkLog;
+
+            UpdateSavingButtons();
         }
         #endregion
 
@@ -537,6 +551,8 @@ namespace NetworkLogViewer
 
             this.ThreadSafeBegin(_ =>
             {
+                UpdateSavingButtons();
+
                 if (newProtocol != null)
                 {
                     ui_sbiProtocol.Content = newProtocol.Name;
@@ -790,6 +806,115 @@ namespace NetworkLogViewer
             double width = 1.0 / m_currentNViews;
             foreach (var column in ViewsGrid.ColumnDefinitions)
                 column.Width = new GridLength(width, GridUnitType.Star);
+        }
+        #endregion
+
+        #region Saving
+        void UpdateSavingButtons()
+        {
+            this.ThreadSafeBegin(_ =>
+            {
+                bool enabled = _.CurrentProtocol != null && _.CurrentLog != null;
+                ui_miSaveBinaryContents.IsEnabled = enabled;
+                ui_miSaveParserOutput.IsEnabled = enabled;
+                ui_miSaveTextContents.IsEnabled = enabled;
+            });
+        }
+
+        BackgroundWorker ui_savingWorker;
+        private void ui_miSaveParserOutput_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SaveFileDialog();
+            dialog.AddExtension = true;
+            dialog.Filter = Strings.TextFiles + " (*.txt)|*.txt|" + NetworkStrings.AllFiles + " (*.*)|*.*";
+            dialog.FilterIndex = 0;
+            try
+            {
+                var file = MainWindow.SaveFileName;
+                dialog.FileName = Path.GetFileName(file);
+                dialog.InitialDirectory = Path.GetDirectoryName(file);
+            }
+            catch
+            {
+            }
+
+            if (dialog.ShowDialog(Window.GetWindow(this)) != true)
+                return;
+
+            var filename = dialog.FileName;
+
+            StreamWriter writer;
+            try
+            {
+                writer = new StreamWriter(filename, false, Encoding.UTF8);
+            }
+            catch
+            {
+                MessageWindow.Show(this, Strings.Error, Strings.FailedToOpenFile);
+                return;
+            }
+
+            ui_savingWorker.RunWorkerAsync(writer);
+            this.LoadingStatePush(new LoadingState(Strings.ParsingPackets, () => ui_savingWorker.CancelAsync()));
+        }
+
+        void ui_savingWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            e.Result = e.Argument;
+            var worker = (BackgroundWorker)sender;
+            var writer = (StreamWriter)e.Argument;
+
+            int progress = 0;
+            var items = m_implementation.m_items;
+            int count = items.Count;
+            var protocol = this.CurrentProtocol;
+            var format = "__ " + Strings.PacketN + " _________________________";
+            for (int i = 0; i < count; i++)
+            {
+                if (worker.CancellationPending)
+                    return;
+
+                var item = items[i];
+
+                var parser = item.Parser;
+                if (parser == null)
+                {
+                    protocol.CreateParser(item);
+                    parser = item.Parser;
+                }
+
+                if (!parser.IsParsed)
+                    parser.Parse();
+
+                writer.WriteLine(format.LocalizedFormat(i));
+                writer.WriteLine(protocol.PacketContentsViewHeader(item));
+
+                var text = parser.ParsedText;
+                if (!string.IsNullOrEmpty(text))
+                    writer.WriteLine(text);
+
+                int newProgress = i * 100 / count;
+                if (newProgress != progress)
+                {
+                    progress = newProgress;
+                    worker.ReportProgress(progress);
+                }
+            }
+        }
+
+        void ui_savingWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            LoadingStateSetProgress(e.ProgressPercentage);
+        }
+
+        void ui_savingWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            this.LoadingStatePop();
+
+            ((StreamWriter)e.Result).Close();
+
+            if (e.Error != null)
+                MessageWindow.Show(this, Strings.Error, e.Error.ToString());
         }
         #endregion
     }

@@ -280,11 +280,31 @@
     <value>Text Files</value>
   </data>
   <data name="View_FailedToSaveIntoFile" xml:space="preserve">
-    <value>Failed to save text into file.
+    <value>Failed to save data into file.
 
 {0}</value>
   </data>
   <data name="BinaryFiles" xml:space="preserve">
     <value>Binary Files</value>
+  </data>
+  <data name="Menu_SaveBinaryContents" xml:space="preserve">
+    <value>Save Binary Contents...</value>
+  </data>
+  <data name="Menu_SaveParserOutput" xml:space="preserve">
+    <value>Save Parser Output...</value>
+  </data>
+  <data name="Menu_SaveTextContents" xml:space="preserve">
+    <value>Save Text Contents...</value>
+  </data>
+  <data name="FailedToOpenFile" xml:space="preserve">
+    <value>Failed to open file.
+
+{0}</value>
+  </data>
+  <data name="PacketN" xml:space="preserve">
+    <value>Packet #{0}</value>
+  </data>
+  <data name="ParsingPackets" xml:space="preserve">
+    <value>Parsing packets...</value>
   </data>
 </root>

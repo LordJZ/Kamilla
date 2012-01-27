@@ -17,6 +17,10 @@
         <MenuItem Command="Open" Header="{x:Static viewer:Strings.Menu_OpenEllipsis}"/>
         <MenuItem Command="viewer:NetworkLogViewerCommands.CloseFile" Header="{x:Static viewer:Strings.Menu_CloseFile}"/>
         <Separator/>
+        <MenuItem Header="{x:Static viewer:Strings.Menu_SaveParserOutput}" Name="ui_miSaveParserOutput" Click="ui_miSaveParserOutput_Click" />
+        <MenuItem Header="{x:Static viewer:Strings.Menu_SaveBinaryContents}" Name="ui_miSaveBinaryContents" Visibility="Collapsed"/>
+        <MenuItem Header="{x:Static viewer:Strings.Menu_SaveTextContents}" Name="ui_miSaveTextContents" Visibility="Collapsed"/>
+        <Separator/>
         <MenuItem Header="{x:Static viewer:Strings.Menu_OpenConsole}" InputGestureText="F10" Command="viewer:NetworkLogViewerCommands.OpenConsole"/>
         <Separator/>
         <MenuItem Header="{x:Static viewer:Strings.Menu_Exit}" Command="Close"/>
