@@ -327,7 +327,12 @@ namespace Kamilla
 
                 int index = keys.BinaryIndexOf(opt => opt.CompareTo(owner, name));
                 if (index >= 0)
+                {
+                    if (keys[index].Value == stringValue)
+                        return;
+
                     keys[index].Value = stringValue;
+                }
                 else
                     InternalAddValue(owner, name, stringValue);
 
