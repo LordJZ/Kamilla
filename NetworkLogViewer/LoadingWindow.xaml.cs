@@ -24,5 +24,10 @@ namespace NetworkLogViewer
         {
             ui_pbMain.Value = progress;
         }
+
+        private void ui_btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            m_onCancel();
+        }
     }
 }

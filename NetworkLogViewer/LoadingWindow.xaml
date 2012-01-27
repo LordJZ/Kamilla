@@ -17,7 +17,7 @@
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
     <ProgressBar HorizontalAlignment="Stretch" Name="ui_pbMain" Grid.Row="2" Margin="10,2" />
-    <Button Content="{x:Static viewer:Strings.LW_Cancel}" Grid.Row="3" Height="23" HorizontalAlignment="Stretch" Margin="324,2,10,4" Name="ui_btnCancel" VerticalAlignment="Top" IsCancel="False" />
+    <Button Content="{x:Static viewer:Strings.LW_Cancel}" Grid.Row="3" Height="23" HorizontalAlignment="Stretch" Margin="324,2,10,4" Name="ui_btnCancel" VerticalAlignment="Top" IsCancel="False" Click="ui_btnCancel_Click" />
     <TextBlock Name="ui_tblLoading" Text="{x:Static viewer:Strings.LW_LoadingPleaseWait}" VerticalAlignment="Center" Margin="10,2" />
     <TextBlock Grid.Row="1" Margin="10,2" Name="ui_tbJobDescription" Text="A very long job description featuring some really long non-breakable parts, like paths: C:/dev/real/dev/docs/csharp/wpf/props/some/other/stuff/and/finally/file.jpg" TextWrapping="Wrap" />
   </Grid>
