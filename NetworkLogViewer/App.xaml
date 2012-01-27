@@ -187,10 +187,10 @@
         <SolidColorBrush x:Key="{x:Static SystemColors.AppWorkspaceBrushKey}" Color="DarkGreen"/>
         <SolidColorBrush x:Key="{x:Static SystemColors.MenuBrushKey}" Color="DarkGreen"/>
         <SolidColorBrush x:Key="{x:Static SystemColors.MenuBarBrushKey}" Color="DarkGreen"/>
-        <SolidColorBrush x:Key="{x:Static SystemColors.MenuHighlightBrush}" Color="LightGreen"/>
-        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#FF17AD1A"/>
+        <SolidColorBrush x:Key="{x:Static SystemColors.MenuHighlightBrushKey}" Color="LightGreen"/>
+        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#FF424242"/>
         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#FF17AD1A"/>
-        <SolidColorBrush x:Key="{x:Static SystemColors.HotTrackBrush}" Color="LightGreen"/>
+        <SolidColorBrush x:Key="{x:Static SystemColors.HotTrackBrush}" Color="#FF17AD1A"/>
 
         <SolidColorBrush x:Key="{x:Static SystemColors.WindowTextBrushKey}" Color="#FF17AD1A"/>
         <SolidColorBrush x:Key="{x:Static SystemColors.MenuTextBrushKey}" Color="#FF17AD1A"/>
@@ -244,6 +244,16 @@
 
         <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource KamillaStyleBase}"/>
         <Style TargetType="{x:Type Grid}" BasedOn="{StaticResource KamillaStyleBase}"/>
+
+        <Style TargetType="{x:Type TextBox}">
+          <Setter Property="SelectionBrush" Value="#FFAAAAAA"/>
+          <Setter Property="CaretBrush"  Value="{StaticResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+        </Style>
+
+        <Style TargetType="{x:Type RichTextBox}">
+          <Setter Property="SelectionBrush" Value="#FFAAAAAA"/>
+          <Setter Property="CaretBrush"  Value="{StaticResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+        </Style>
 
         <Style TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource KamillaStyleBase}">
           <Setter Property="Template">
@@ -1107,7 +1117,7 @@
             <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
               <Grid>
                 <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition />
                   <ColumnDefinition Width="20" />
                 </Grid.ColumnDefinitions>
                 <Border
@@ -1139,7 +1149,7 @@
               </ControlTemplate.Triggers>
             </ControlTemplate>
 
-            <ControlTemplate x:Key="ComboBoxTextBox" TargetType="TextBox">
+            <ControlTemplate x:Key="ComboBoxTextBox" TargetType="{x:Type TextBox}">
               <Border x:Name="PART_ContentHost" Focusable="False" Background="{TemplateBinding Background}" />
             </ControlTemplate>
           </Style.Resources>
@@ -1153,7 +1163,8 @@
             <Setter.Value>
               <ControlTemplate TargetType="ComboBox">
                 <Grid>
-                  <ToggleButton 
+                  <ToggleButton
+                              Grid.Column="2"
                               Name="ToggleButton"
                               Template="{StaticResource ComboBoxToggleButton}" 
                               Focusable="false"
@@ -1167,13 +1178,12 @@
                                     ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
                                     ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
                                     Margin="3,1,23,3"
-                                    VerticalAlignment="Center"
+                                    VerticalAlignment="Stretch"
                                     HorizontalAlignment="Left" />
                   <TextBox x:Name="PART_EditableTextBox"
-                        Style="{x:Null}" 
                         Template="{StaticResource ComboBoxTextBox}" 
                         HorizontalAlignment="Left" 
-                        VerticalAlignment="Center" 
+                        VerticalAlignment="Bottom" 
                         Margin="3,3,23,3"
                         Focusable="True" 
                         Background="Transparent"
