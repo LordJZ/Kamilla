@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.Reflection;
-using Kamilla;
-using Kamilla.Network.Parsing;
-using Kamilla.Network.Viewing;
-using Kamilla.Network.Protocols;
+using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Kamilla;
+using Kamilla.Network.Parsing;
+using Kamilla.Network.Protocols;
+using Kamilla.Network.Viewing;
 
 namespace NetworkLogViewer
 {
