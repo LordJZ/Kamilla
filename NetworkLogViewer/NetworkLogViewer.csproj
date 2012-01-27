@@ -88,7 +88,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -110,6 +109,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ParsingHelper.cs" />
     <Compile Include="Strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -117,6 +117,9 @@
     </Compile>
     <Compile Include="ViewerImplementation.cs" />
     <Compile Include="ViewerItemCollection.cs" />
+    <Compile Include="ViewTabs\BinaryContents.xaml.cs">
+      <DependentUpon>BinaryContents.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewTabs\ImageContents.xaml.cs">
       <DependentUpon>ImageContents.xaml</DependentUpon>
     </Compile>
@@ -127,6 +130,9 @@
       <DependentUpon>ParsedText.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewTabs\IViewTab.cs" />
+    <Compile Include="ViewTabs\TextContents.xaml.cs">
+      <DependentUpon>TextContents.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WpfRtbConsole.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -164,6 +170,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="ViewTabs\BinaryContents.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ViewTabs\ImageContents.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -173,6 +183,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ViewTabs\ParsedText.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ViewTabs\TextContents.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

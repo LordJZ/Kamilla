@@ -232,4 +232,45 @@
   <data name="Menu_DropCache" xml:space="preserve">
     <value>Flush List Cache</value>
   </data>
+  <data name="Menu_Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Console_Title" xml:space="preserve">
+    <value>Console</value>
+  </data>
+  <data name="View_BinaryContentsN" xml:space="preserve">
+    <value>Binary Data #{0}</value>
+  </data>
+  <data name="View_ImageN" xml:space="preserve">
+    <value>Image #{0}</value>
+  </data>
+  <data name="View_UnknownObjectN" xml:space="preserve">
+    <value>Unknown Object #{0}</value>
+  </data>
+  <data name="View_NoImages" xml:space="preserve">
+    <value>No Images</value>
+  </data>
+  <data name="View_NoBinaryData" xml:space="preserve">
+    <value>No Binary Data</value>
+  </data>
+  <data name="EncodingNotFound" xml:space="preserve">
+    <value>Encoding '{0}' not found. Please enter a correct text encoding or select an encoding from the list.</value>
+  </data>
+  <data name="View_ErrorDecoding" xml:space="preserve">
+    <value>Error while decoding {0}-byte data to string using '{1}' encoding:
+
+{2}</value>
+  </data>
+  <data name="View_NoTextData" xml:space="preserve">
+    <value>No Text Data</value>
+  </data>
+  <data name="View_Redecode" xml:space="preserve">
+    <value>Redecode</value>
+  </data>
+  <data name="View_TextContentsN" xml:space="preserve">
+    <value>Text Data #{0}</value>
+  </data>
+  <data name="View_UnknownObject" xml:space="preserve">
+    <value>Unknown Object</value>
+  </data>
 </root>

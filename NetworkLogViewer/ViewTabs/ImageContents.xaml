@@ -20,8 +20,8 @@
     </Grid.ColumnDefinitions>
 
     <Image Grid.Row="1" Grid.ColumnSpan="3" Name="ui_image" Stretch="Uniform" StretchDirection="DownOnly" />
-    <TextBlock Grid.Row="0" Grid.Column="0" Margin="8,0" Name="ui_tbText" VerticalAlignment="Center" />
-    <ComboBox Grid.Row="0" Grid.Column="1" Margin="2,2,1,2" IsEnabled="false" Name="ui_cbFormat">
+    <ComboBox Margin="2,2,1,2" Name="ui_cbImages" SelectionChanged="ui_cbImages_SelectionChanged" IsEnabled="False" />
+    <ComboBox Grid.Row="0" Grid.Column="1" Margin="1,2" IsEnabled="false" Name="ui_cbFormat">
       <ComboBoxItem Content="PNG" IsSelected="True" />
       <ComboBoxItem Content="JPEG" />
       <ComboBoxItem Content="GIF" />

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Controls;
+﻿using Kamilla.Network.Protocols;
 using Kamilla.Network.Viewing;
-using Kamilla.Network.Protocols;
 
 namespace NetworkLogViewer.ViewTabs
 {

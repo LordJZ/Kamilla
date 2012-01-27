@@ -232,4 +232,45 @@
   <data name="Menu_DropCache" xml:space="preserve">
     <value>Сбросить кэш списка</value>
   </data>
+  <data name="Menu_Search" xml:space="preserve">
+    <value>Поиск</value>
+  </data>
+  <data name="Console_Title" xml:space="preserve">
+    <value>Консоль</value>
+  </data>
+  <data name="View_BinaryContentsN" xml:space="preserve">
+    <value>Блок двоичных данных №{0}</value>
+  </data>
+  <data name="View_ImageN" xml:space="preserve">
+    <value>Изображение №{0}</value>
+  </data>
+  <data name="View_UnknownObjectN" xml:space="preserve">
+    <value>Неизвестный объект №{0}</value>
+  </data>
+  <data name="View_NoImages" xml:space="preserve">
+    <value>Нет изображений</value>
+  </data>
+  <data name="View_NoBinaryData" xml:space="preserve">
+    <value>Нет двоичных данных</value>
+  </data>
+  <data name="EncodingNotFound" xml:space="preserve">
+    <value>Кодировка '{0}' не найдена. Пожалуйста, введите верное название кодировки или выберите кодировку из списка.</value>
+  </data>
+  <data name="View_ErrorDecoding" xml:space="preserve">
+    <value>Во время преобразования {0} {0?plural-ru:байта:байт:байт} данных в текст используя кодировку '{1}' прозоишла ошибка:
+
+{2}</value>
+  </data>
+  <data name="View_NoTextData" xml:space="preserve">
+    <value>Нет текстовых данных</value>
+  </data>
+  <data name="View_Redecode" xml:space="preserve">
+    <value>Перекодировать</value>
+  </data>
+  <data name="View_TextContentsN" xml:space="preserve">
+    <value>Текстовые данные №{0}</value>
+  </data>
+  <data name="View_UnknownObject" xml:space="preserve">
+    <value>Неизвестный объект</value>
+  </data>
 </root>

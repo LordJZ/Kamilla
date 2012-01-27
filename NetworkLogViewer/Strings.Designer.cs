@@ -61,6 +61,24 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Console.
+        /// </summary>
+        public static string Console_Title {
+            get {
+                return ResourceManager.GetString("Console_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Encoding &apos;{0}&apos; not found. Please enter a correct text encoding or select an encoding from the list..
+        /// </summary>
+        public static string EncodingNotFound {
+            get {
+                return ResourceManager.GetString("EncodingNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error.
         /// </summary>
         public static string Error {
@@ -272,6 +290,15 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        public static string Menu_Search {
+            get {
+                return ResourceManager.GetString("Menu_Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Skins.
         /// </summary>
         public static string Menu_Skins {
@@ -362,11 +389,67 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Binary Data #{0}.
+        /// </summary>
+        public static string View_BinaryContentsN {
+            get {
+                return ResourceManager.GetString("View_BinaryContentsN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error while decoding {0}-byte data to string using &apos;{1}&apos; encoding:
+        ///
+        ///{2}.
+        /// </summary>
+        public static string View_ErrorDecoding {
+            get {
+                return ResourceManager.GetString("View_ErrorDecoding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Image.
         /// </summary>
         public static string View_Image {
             get {
                 return ResourceManager.GetString("View_Image", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image #{0}.
+        /// </summary>
+        public static string View_ImageN {
+            get {
+                return ResourceManager.GetString("View_ImageN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Binary Data.
+        /// </summary>
+        public static string View_NoBinaryData {
+            get {
+                return ResourceManager.GetString("View_NoBinaryData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Images.
+        /// </summary>
+        public static string View_NoImages {
+            get {
+                return ResourceManager.GetString("View_NoImages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Text Data.
+        /// </summary>
+        public static string View_NoTextData {
+            get {
+                return ResourceManager.GetString("View_NoTextData", resourceCulture);
             }
         }
         
@@ -389,11 +472,47 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redecode.
+        /// </summary>
+        public static string View_Redecode {
+            get {
+                return ResourceManager.GetString("View_Redecode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Text Data.
         /// </summary>
         public static string View_TextContents {
             get {
                 return ResourceManager.GetString("View_TextContents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text Data #{0}.
+        /// </summary>
+        public static string View_TextContentsN {
+            get {
+                return ResourceManager.GetString("View_TextContentsN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown Object.
+        /// </summary>
+        public static string View_UnknownObject {
+            get {
+                return ResourceManager.GetString("View_UnknownObject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown Object #{0}.
+        /// </summary>
+        public static string View_UnknownObjectN {
+            get {
+                return ResourceManager.GetString("View_UnknownObjectN", resourceCulture);
             }
         }
     }

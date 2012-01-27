@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using Kamilla.IO;
 using Kamilla.Network.Logging;
@@ -144,7 +145,7 @@ namespace Kamilla.Network.Parsing
         }
 
         protected string m_output;
-        protected object m_containedData;
+        IList<object> m_containedData;
 
         /// <summary>
         /// Gets the text result of the underlying <see cref="Kamilla.Network.Packet"/> interpretation.
@@ -158,6 +159,9 @@ namespace Kamilla.Network.Parsing
         /// 
         /// This value can be null.
         /// </summary>
-        public object ContainedData { get { return m_containedData; } }
+        public IList<object> ContainedData
+        {
+            get { return m_containedData ?? (m_containedData = new List<object>()); }
+        }
     }
 }

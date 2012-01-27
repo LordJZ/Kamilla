@@ -613,7 +613,9 @@ namespace NetworkLogViewer
         {
             typeof(PacketContents),
             typeof(ParsedText),
-            //typeof(ImageContents),
+            typeof(BinaryContents),
+            typeof(TextContents),
+            typeof(ImageContents),
         };
 
         int m_currentNViews;
@@ -727,6 +729,8 @@ namespace NetworkLogViewer
                 if (!tab.IsFilled)
                     tab.Fill(this.CurrentProtocol, m_implementation.m_items[index]);
             }
+
+            e.Handled = true;
         }
 
         void UpdateViews()
@@ -766,6 +770,7 @@ namespace NetworkLogViewer
         private void ui_lvPackets_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             this.UpdateViews();
+            e.Handled = true;
         }
 
         private void AlignPanels_Click(object sender, RoutedEventArgs e)

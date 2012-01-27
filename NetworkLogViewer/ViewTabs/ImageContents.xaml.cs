@@ -1,22 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
+﻿using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Interop;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Kamilla;
 using Kamilla.Network.Protocols;
 using Kamilla.Network.Viewing;
-using System.IO;
-using Kamilla;
-using GdiBitmap = System.Drawing.Bitmap;
 
 namespace NetworkLogViewer.ViewTabs
 {
@@ -34,72 +20,78 @@ namespace NetworkLogViewer.ViewTabs
 
         public bool IsFilled { get; set; }
 
+        ValueTuple<object, ImageSource>[] m_images;
+
         void IViewTab.Reset()
         {
+            m_images = null;
             ui_image.Source = null;
+            ui_cbImages.IsEnabled = false;
+            ui_cbImages.Items.Clear();
+            ui_cbImages.Items.Add(Strings.View_NoImages);
+            ui_cbImages.SelectedIndex = 0;
+            ui_cbFormat.IsEnabled = false;
+            ui_btnSave.IsEnabled = false;
+
             this.IsFilled = false;
+        }
+
+        void SelectImage(int index)
+        {
+            ui_image.Source = m_images[index].Item2;
+
+            var obj = m_images[index].Item1;
+            if (obj is ImageSource)
+            {
+                ui_cbFormat.IsEnabled = true;
+                ui_btnSave.IsEnabled = true;
+            }
+            else
+            {
+                ui_cbFormat.IsEnabled = false;
+                ui_btnSave.IsEnabled = false;
+            }
         }
 
         void IViewTab.Fill(Protocol protocol, ViewerItem item)
         {
-            var parser = item.Parser;
-            if (parser == null)
+            ((IViewTab)this).Reset();
+
+            m_images = ParsingHelper.ExtractImages(protocol, item, true);
+            int count = m_images.Length;
+
+            if (count > 0)
             {
-                protocol.CreateParser(item);
-                parser = item.Parser;
+                ui_cbImages.Items.Clear();
+
+                for (int i = 0; i < count; i++)
+                {
+                    var cbItem = new ComboBoxItem();
+
+                    cbItem.Content = ParsingHelper.GetContentName(m_images[i].Item1, i);
+
+                    ui_cbImages.Items.Add(cbItem);
+                }
+
+                ui_cbImages.SelectedIndex = 0;
+
+                if (count > 1)
+                    ui_cbImages.IsEnabled = true;
+
+                //this.SelectImage(0);
             }
-
-            if (parser.IsParsed)
-                parser.Parse();
-
-            ImageSource source = null;
-            bool fail = true;
-
-            var data = parser.ContainedData;
-            if (fail && data is GdiBitmap)
-            {
-                fail = false;
-                var image = (GdiBitmap)data;
-
-                var handle = image.GetHbitmap();
-                try
-                {
-                    source = Imaging.CreateBitmapSourceFromHBitmap(handle, IntPtr.Zero,
-                        Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-                }
-                catch
-                {
-                    fail = true;
-                }
-                finally
-                {
-                    Win32.DeleteObject(handle);
-                }
-            }
-            if (fail && data is byte[])
-            {
-                fail = false;
-                var arr = (byte[])data;
-                using (var stream = new MemoryStream(arr))
-                {
-                    try
-                    {
-                        source = BitmapFrame.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
-                    }
-                    catch
-                    {
-                        fail = true;
-                    }
-                }
-            }
-
-            ui_btnSave.IsEnabled = source != null;
-            ui_cbFormat.IsEnabled = source != null;
-
-            if (source != null)
-                ui_image.Source = source;
 
             this.IsFilled = true;
+        }
+
+        private void ui_cbImages_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int index = ui_cbImages.SelectedIndex;
+
+            if (index >= 0 && m_images != null && m_images.Length > 0)
+                this.SelectImage(index);
+
+            e.Handled = true;
         }
     }
 }
