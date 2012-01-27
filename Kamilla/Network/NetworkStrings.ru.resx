@@ -156,4 +156,7 @@
   <data name="ParserException" xml:space="preserve">
     <value>Ошибка в парсере:</value>
   </data>
+  <data name="AllFiles" xml:space="preserve">
+    <value>Все файлы</value>
+  </data>
 </root>

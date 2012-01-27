@@ -156,4 +156,7 @@
   <data name="ParserException" xml:space="preserve">
     <value>Exception in parser:</value>
   </data>
+  <data name="AllFiles" xml:space="preserve">
+    <value>All Files</value>
+  </data>
 </root>

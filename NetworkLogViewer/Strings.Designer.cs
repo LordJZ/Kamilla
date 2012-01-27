@@ -61,6 +61,15 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Binary Files.
+        /// </summary>
+        public static string BinaryFiles {
+            get {
+                return ResourceManager.GetString("BinaryFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Console.
         /// </summary>
         public static string Console_Title {
@@ -380,6 +389,15 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Text Files.
+        /// </summary>
+        public static string TextFiles {
+            get {
+                return ResourceManager.GetString("TextFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Binary Data.
         /// </summary>
         public static string View_BinaryContents {
@@ -398,13 +416,33 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error while decoding {0}-byte data to string using &apos;{1}&apos; encoding:
+        ///   Looks up a localized string similar to An error occured while decoding {0}-byte data to string using &apos;{1}&apos; encoding:
         ///
         ///{2}.
         /// </summary>
         public static string View_ErrorDecoding {
             get {
                 return ResourceManager.GetString("View_ErrorDecoding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occured while saving text using &apos;{0}&apos; encoding..
+        /// </summary>
+        public static string View_ErrorEncoding {
+            get {
+                return ResourceManager.GetString("View_ErrorEncoding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to save text into file.
+        ///
+        ///{0}.
+        /// </summary>
+        public static string View_FailedToSaveIntoFile {
+            get {
+                return ResourceManager.GetString("View_FailedToSaveIntoFile", resourceCulture);
             }
         }
         

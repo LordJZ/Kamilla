@@ -84,7 +84,7 @@ namespace Kamilla.Network.Logging
 
                     ++count;
                 }
-                filters.Append("All Files (*.*)|*.*");
+                filters.Append(NetworkStrings.AllFiles + " (*.*)|*.*");
                 ++count;
 
                 AllFileFiltersWithAny = filters.ToString();

@@ -65,13 +65,7 @@ namespace NetworkLogViewer.ViewTabs
                 ui_cbImages.Items.Clear();
 
                 for (int i = 0; i < count; i++)
-                {
-                    var cbItem = new ComboBoxItem();
-
-                    cbItem.Content = ParsingHelper.GetContentName(m_images[i].Item1, i);
-
-                    ui_cbImages.Items.Add(cbItem);
-                }
+                    ui_cbImages.Items.Add(ParsingHelper.GetContentName(m_images[i].Item1, i));
 
                 ui_cbImages.SelectedIndex = 0;
 

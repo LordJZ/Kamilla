@@ -1,8 +1,12 @@
 ﻿using System;
+using System.IO;
+using Microsoft.Win32;
 using System.Text;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using Kamilla;
+using Kamilla.Network;
 using Kamilla.Network.Protocols;
 using Kamilla.Network.Viewing;
 using Kamilla.WPF;
@@ -14,9 +18,17 @@ namespace NetworkLogViewer.ViewTabs
     /// </summary>
     public partial class TextContents : UserControl, IViewTab
     {
+        string SavedEncoding
+        {
+            get { return Configuration.GetValue("Encoding", "UTF-8"); }
+            set { Configuration.SetValue("Encoding", value); }
+        }
+
         public TextContents()
         {
             InitializeComponent();
+
+            ui_cbEncodings.Text = this.SavedEncoding;
         }
 
         string IViewTab.Header { get { return Strings.View_TextContents; } }
@@ -77,12 +89,8 @@ namespace NetworkLogViewer.ViewTabs
 
                 for (int i = 0; i < count; i++)
                 {
-                    var cbItem = new ComboBoxItem();
-
                     var obj = i >= nStrings ? m_binaryDatas[i - nStrings].Item1 : m_strings[i].Item1;
-                    cbItem.Content = ParsingHelper.GetContentName(obj, i);
-
-                    ui_cbDatas.Items.Add(cbItem);
+                    ui_cbDatas.Items.Add(ParsingHelper.GetContentName(obj, i));
                 }
 
                 ui_cbDatas.SelectedIndex = 0;
@@ -123,6 +131,8 @@ namespace NetworkLogViewer.ViewTabs
                 return;
             }
 
+            this.SavedEncoding = encoding.WebName;
+
             try
             {
                 ui_tbMain.Text = encoding.GetString(data);
@@ -148,7 +158,62 @@ namespace NetworkLogViewer.ViewTabs
             }
             else
             {
-                // TODO: save text here
+                Encoding encoding;
+                try
+                {
+                    encoding = Encoding.GetEncoding(ui_cbEncodings.Text);
+                }
+                catch
+                {
+                    var text = Strings.EncodingNotFound.LocalizedFormat(ui_cbEncodings.Text);
+                    ui_tbMain.Text = text;
+                    MessageWindow.Show(Window.GetWindow(this), Strings.Error, text);
+                    return;
+                }
+
+                this.SavedEncoding = encoding.WebName;
+
+                byte[] data;
+                try
+                {
+                    data = encoding.GetBytes(m_strings[index].Item2);
+                }
+                catch
+                {
+                    MessageWindow.Show(Window.GetWindow(this), Strings.Error, Strings.View_ErrorEncoding);
+                    return;
+                }
+
+                var dialog = new SaveFileDialog();
+                dialog.AddExtension = true;
+                dialog.Filter = Strings.TextFiles + " (*.txt)|*.txt|" + NetworkStrings.AllFiles + " (*.*)|*.*";
+                dialog.FilterIndex = 0;
+                try
+                {
+                    var file = MainWindow.SaveFileName;
+                    dialog.FileName = Path.GetFileName(file);
+                    dialog.InitialDirectory = Path.GetDirectoryName(file);
+                }
+                catch
+                {
+                }
+
+                if (dialog.ShowDialog(Window.GetWindow(this)) != true)
+                    return;
+
+                var filename = dialog.FileName;
+
+                try
+                {
+                    File.WriteAllBytes(filename, data);
+                }
+                catch
+                {
+                    MessageWindow.Show(Window.GetWindow(this), Strings.Error, Strings.View_FailedToSaveIntoFile);
+                    return;
+                }
+
+                MainWindow.SaveFileName = filename;
             }
         }
     }

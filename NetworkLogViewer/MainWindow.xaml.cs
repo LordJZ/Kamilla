@@ -28,6 +28,18 @@ namespace NetworkLogViewer
         ViewerImplementation m_implementation;
         internal ViewerImplementation Implementation { get { return m_implementation; } }
 
+        public static string OpenFileName
+        {
+            get { return Configuration.GetValue("Open File Name", string.Empty); }
+            set { Configuration.SetValue("Open File Name", value); }
+        }
+
+        public static string SaveFileName
+        {
+            get { return Configuration.GetValue("Save File Name", string.Empty); }
+            set { Configuration.SetValue("Save File Name", value); }
+        }
+
         #region .ctor
         public MainWindow()
         {
@@ -276,7 +288,7 @@ namespace NetworkLogViewer
                 m_openFileDialog.CheckFileExists = true;
                 try
                 {
-                    var file = Configuration.GetValue("Open File Name", string.Empty);
+                    var file = OpenFileName;
                     m_openFileDialog.FileName = Path.GetFileName(file);
                     m_openFileDialog.InitialDirectory = Path.GetDirectoryName(file);
                 }
@@ -290,7 +302,7 @@ namespace NetworkLogViewer
             if (true == result)
             {
                 var filename = m_openFileDialog.FileName;
-                Configuration.SetValue("Open File Name", filename);
+                OpenFileName = filename;
                 OpenFile(filename);
             }
         }

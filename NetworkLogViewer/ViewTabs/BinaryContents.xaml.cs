@@ -1,4 +1,9 @@
 ﻿using System.Windows;
+using Kamilla.Network;
+using Kamilla.WPF;
+using System.IO;
+using System;
+using Microsoft.Win32;
 using System.Windows.Controls;
 using Kamilla;
 using Kamilla.Network.Protocols;
@@ -58,13 +63,7 @@ namespace NetworkLogViewer.ViewTabs
                 ui_cbDatas.Items.Clear();
 
                 for (int i = 0; i < count; i++)
-                {
-                    var cbItem = new ComboBoxItem();
-
-                    cbItem.Content = ParsingHelper.GetContentName(m_datas[i].Item1, i);
-
-                    ui_cbDatas.Items.Add(cbItem);
-                }
+                    ui_cbDatas.Items.Add(ParsingHelper.GetContentName(m_datas[i].Item1, i));
 
                 ui_cbDatas.SelectedIndex = 0;
 
@@ -91,7 +90,36 @@ namespace NetworkLogViewer.ViewTabs
         {
             e.Handled = true;
 
-            // TODO: save here
+            var dialog = new SaveFileDialog();
+            dialog.AddExtension = true;
+            dialog.Filter = Strings.BinaryFiles + " (*.bin)|*.bin|" + NetworkStrings.AllFiles + " (*.*)|*.*";
+            dialog.FilterIndex = 0;
+            try
+            {
+                var file = MainWindow.SaveFileName;
+                dialog.FileName = Path.GetFileName(file);
+                dialog.InitialDirectory = Path.GetDirectoryName(file);
+            }
+            catch
+            {
+            }
+
+            if (dialog.ShowDialog(Window.GetWindow(this)) != true)
+                return;
+
+            var filename = dialog.FileName;
+
+            try
+            {
+                File.WriteAllBytes(filename, m_datas[ui_cbDatas.SelectedIndex].Item2);
+            }
+            catch
+            {
+                MessageWindow.Show(Window.GetWindow(this), Strings.Error, Strings.View_FailedToSaveIntoFile);
+                return;
+            }
+
+            MainWindow.SaveFileName = filename;
         }
     }
 }

@@ -273,4 +273,18 @@
   <data name="View_UnknownObject" xml:space="preserve">
     <value>Неизвестный объект</value>
   </data>
+  <data name="View_ErrorEncoding" xml:space="preserve">
+    <value>Во время сохранения текста в кодировке '{0}' произошла ошибка.</value>
+  </data>
+  <data name="TextFiles" xml:space="preserve">
+    <value>Текстовые файлы</value>
+  </data>
+  <data name="View_FailedToSaveIntoFile" xml:space="preserve">
+    <value>Не удалось сохранить данные в файл.
+
+{0}</value>
+  </data>
+  <data name="BinaryFiles" xml:space="preserve">
+    <value>Двоичные файлы</value>
+  </data>
 </root>

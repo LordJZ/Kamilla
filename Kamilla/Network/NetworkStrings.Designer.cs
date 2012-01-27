@@ -61,6 +61,15 @@ namespace Kamilla.Network {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All Files.
+        /// </summary>
+        public static string AllFiles {
+            get {
+                return ResourceManager.GetString("AllFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} {0?plural-en:byte:bytes}.
         /// </summary>
         public static string bytes {

@@ -257,7 +257,7 @@
     <value>Encoding '{0}' not found. Please enter a correct text encoding or select an encoding from the list.</value>
   </data>
   <data name="View_ErrorDecoding" xml:space="preserve">
-    <value>Error while decoding {0}-byte data to string using '{1}' encoding:
+    <value>An error occured while decoding {0}-byte data to string using '{1}' encoding:
 
 {2}</value>
   </data>
@@ -272,5 +272,19 @@
   </data>
   <data name="View_UnknownObject" xml:space="preserve">
     <value>Unknown Object</value>
+  </data>
+  <data name="View_ErrorEncoding" xml:space="preserve">
+    <value>An error occured while saving text using '{0}' encoding.</value>
+  </data>
+  <data name="TextFiles" xml:space="preserve">
+    <value>Text Files</value>
+  </data>
+  <data name="View_FailedToSaveIntoFile" xml:space="preserve">
+    <value>Failed to save text into file.
+
+{0}</value>
+  </data>
+  <data name="BinaryFiles" xml:space="preserve">
+    <value>Binary Files</value>
   </data>
 </root>
