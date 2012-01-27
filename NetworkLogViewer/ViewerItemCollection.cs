@@ -164,12 +164,7 @@ namespace NetworkLogViewer
                 if (index < 0 || index >= m_list.Count)
                     throw new ArgumentOutOfRangeException("index");
 
-                var result = m_list[index];
-
-                if (result != null && this.ItemQueried != null)
-                    this.ItemQueried(this, new ViewerItemEventArgs(result));
-
-                return result;
+                return m_list[index];
             }
             set
             {
@@ -273,7 +268,12 @@ namespace NetworkLogViewer
         {
             get
             {
-                return ((IList<ViewerItem>)this)[index];
+                var result = ((IList<ViewerItem>)this)[index];
+
+                if (result != null && this.ItemQueried != null)
+                    this.ItemQueried(this, new ViewerItemEventArgs(result));
+
+                return result;
             }
             set
             {
