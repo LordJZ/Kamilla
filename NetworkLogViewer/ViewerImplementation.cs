@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
@@ -334,6 +333,8 @@ namespace NetworkLogViewer
                         turnOffTimes = 0;
                         parser.Parse();
                     }
+
+                    Thread.Sleep(1);
                 }
 
                 while (!worker.CancellationPending && (m_parsingQueue.IsEmpty || m_currentProtocol == null))
