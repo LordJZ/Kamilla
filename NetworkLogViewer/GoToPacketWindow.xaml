@@ -8,7 +8,7 @@
         kwpf:WindowBehavior.HasTitleBarMinimizeButton="False"
         Height="143" Width="306"
         WindowStyle="None" AllowsTransparency="True" WindowStartupLocation="CenterOwner"
-        FocusManager.FocusedElement="{Binding ElementName=ui_tbValue}">
+        FocusManager.FocusedElement="{Binding ElementName=ui_tbValue}" ShowInTaskbar="False">
   <Grid>
     <Button Content="{x:Static viewer:Strings.Cancel}" Height="23" HorizontalAlignment="Right" Margin="0,69,12,0" Name="ui_btnCancel" VerticalAlignment="Top" Width="75" IsCancel="True" Click="ui_btnCancel_Click" />
     <Button Content="{x:Static viewer:Strings.OK}" Height="23" HorizontalAlignment="Right" Margin="0,69,93,0" Name="ui_btnOK" VerticalAlignment="Top" Width="75" IsDefault="True" Click="ui_btnOK_Click" />
