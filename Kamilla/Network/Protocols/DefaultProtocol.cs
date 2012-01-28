@@ -139,6 +139,11 @@ namespace Kamilla.Network.Protocols
             get { return NetworkStrings.Protocol_Default; }
         }
 
+        public override Type OpcodesEnumType
+        {
+            get { return null; }
+        }
+
         void viewer_ItemQueried(object sender, ViewerItemEventArgs e)
         {
             var item = e.Item;

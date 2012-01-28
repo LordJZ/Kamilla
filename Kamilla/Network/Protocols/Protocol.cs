@@ -24,6 +24,11 @@ namespace Kamilla.Network.Protocols
         public ProtocolWrapper Wrapper { get { return m_wrapper; } }
 
         /// <summary>
+        /// Gets the <see cref="System.Type"/> of the opcodes enum. This value can be null.
+        /// </summary>
+        public abstract Type OpcodesEnumType { get; }
+
+        /// <summary>
         /// Gets the localized name of the current <see cref="Kamilla.Network.Protocols.Protocol"/>.
         /// </summary>
         public abstract string Name { get; }
