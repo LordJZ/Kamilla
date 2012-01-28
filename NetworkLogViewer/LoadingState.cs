@@ -13,13 +13,13 @@ namespace NetworkLogViewer
             this.OnCancel = null;
         }
 
-        public LoadingState(string desc, Action onCancel)
+        public LoadingState(string desc, Action<MainWindow> onCancel)
         {
             this.Description = desc;
             this.OnCancel = onCancel;
         }
 
         public readonly string Description;
-        public readonly Action OnCancel;
+        public readonly Action<MainWindow> OnCancel;
     }
 }

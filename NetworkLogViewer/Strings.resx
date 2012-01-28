@@ -307,4 +307,34 @@
   <data name="ParsingPackets" xml:space="preserve">
     <value>Parsing packets...</value>
   </data>
+  <data name="Menu_GoToPacketN" xml:space="preserve">
+    <value>Go To Packet...</value>
+  </data>
+  <data name="Menu_NextError" xml:space="preserve">
+    <value>Go To Next Error</value>
+  </data>
+  <data name="Menu_NextUndefinedParser" xml:space="preserve">
+    <value>Go To Next Undefined Parser</value>
+  </data>
+  <data name="Menu_NextUnknownOpcode" xml:space="preserve">
+    <value>Go To Next Unknown Opcode</value>
+  </data>
+  <data name="Search_NotFound" xml:space="preserve">
+    <value>No packets found.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Searching...</value>
+  </data>
+  <data name="GoToPacket" xml:space="preserve">
+    <value>Go To Packet</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="GoTo_PacketNumber" xml:space="preserve">
+    <value>Packet Number ({0} – {1}):</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
 </root>

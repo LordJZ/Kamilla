@@ -251,6 +251,8 @@ namespace NetworkLogViewer
         /// </summary>
         public override IEnumerable<ViewerItem> Items { get { return m_items; } }
 
+        public override ViewerItem SelectedItem { get { return m_window.SelectedItem; } }
+
         /// <summary>
         /// Gets or sets the current <see cref="Kamilla.Network.Protocols.Protocol"/>.
         /// </summary>

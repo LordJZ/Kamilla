@@ -115,6 +115,12 @@ namespace Kamilla.Network.Viewing
         /// Gets the handle of the viewer window. This value can be <see cref="System.IntPtr.Zero"/>.
         /// </summary>
         public abstract IntPtr WindowHandle { get; }
+
+        /// <summary>
+        /// Gets the <see cref="Kamilla.Network.Viewing.ViewerItem"/> that is currently selected.
+        /// This value can be null.
+        /// </summary>
+        public abstract ViewerItem SelectedItem { get; }
         #endregion
     }
 }

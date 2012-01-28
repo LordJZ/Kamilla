@@ -5,11 +5,14 @@ namespace NetworkLogViewer
 {
     partial class LoadingWindow : Window
     {
-        Action m_onCancel;
+        MainWindow m_window;
+        Action<MainWindow> m_onCancel;
 
-        public LoadingWindow()
+        public LoadingWindow(MainWindow window)
         {
             InitializeComponent();
+
+            m_window = window;
         }
 
         public void SetLoadingState(LoadingState state)
@@ -27,7 +30,7 @@ namespace NetworkLogViewer
 
         private void ui_btnCancel_Click(object sender, RoutedEventArgs e)
         {
-            m_onCancel();
+            m_onCancel(m_window);
         }
     }
 }

@@ -70,6 +70,15 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string Cancel {
+            get {
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Console.
         /// </summary>
         public static string Console_Title {
@@ -115,6 +124,24 @@ namespace NetworkLogViewer {
         public static string FailedToOpenFile {
             get {
                 return ResourceManager.GetString("FailedToOpenFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Packet Number ({0} – {1}):.
+        /// </summary>
+        public static string GoTo_PacketNumber {
+            get {
+                return ResourceManager.GetString("GoTo_PacketNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go To Packet.
+        /// </summary>
+        public static string GoToPacket {
+            get {
+                return ResourceManager.GetString("GoToPacket", resourceCulture);
             }
         }
         
@@ -238,6 +265,15 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Go To Packet....
+        /// </summary>
+        public static string Menu_GoToPacketN {
+            get {
+                return ResourceManager.GetString("Menu_GoToPacketN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Help.
         /// </summary>
         public static string Menu_Help {
@@ -252,6 +288,33 @@ namespace NetworkLogViewer {
         public static string Menu_LanguageWEn {
             get {
                 return ResourceManager.GetString("Menu_LanguageWEn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go To Next Error.
+        /// </summary>
+        public static string Menu_NextError {
+            get {
+                return ResourceManager.GetString("Menu_NextError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go To Next Undefined Parser.
+        /// </summary>
+        public static string Menu_NextUndefinedParser {
+            get {
+                return ResourceManager.GetString("Menu_NextUndefinedParser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go To Next Unknown Opcode.
+        /// </summary>
+        public static string Menu_NextUnknownOpcode {
+            get {
+                return ResourceManager.GetString("Menu_NextUnknownOpcode", resourceCulture);
             }
         }
         
@@ -409,6 +472,15 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to OK.
+        /// </summary>
+        public static string OK {
+            get {
+                return ResourceManager.GetString("OK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Packet #{0}.
         /// </summary>
         public static string PacketN {
@@ -423,6 +495,24 @@ namespace NetworkLogViewer {
         public static string ParsingPackets {
             get {
                 return ResourceManager.GetString("ParsingPackets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No packets found..
+        /// </summary>
+        public static string Search_NotFound {
+            get {
+                return ResourceManager.GetString("Search_NotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Searching....
+        /// </summary>
+        public static string Searching {
+            get {
+                return ResourceManager.GetString("Searching", resourceCulture);
             }
         }
         

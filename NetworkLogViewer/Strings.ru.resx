@@ -307,4 +307,34 @@
   <data name="ParsingPackets" xml:space="preserve">
     <value>Обработка пакетов...</value>
   </data>
+  <data name="Menu_GoToPacketN" xml:space="preserve">
+    <value>Перейти к пакету...</value>
+  </data>
+  <data name="Menu_NextError" xml:space="preserve">
+    <value>Следующая ошибка</value>
+  </data>
+  <data name="Menu_NextUndefinedParser" xml:space="preserve">
+    <value>Следующий пакет без парсера</value>
+  </data>
+  <data name="Menu_NextUnknownOpcode" xml:space="preserve">
+    <value>Следующий неизвестный опкод</value>
+  </data>
+  <data name="Search_NotFound" xml:space="preserve">
+    <value>Подходящих пакетов не найдено.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Выполняется поиск...</value>
+  </data>
+  <data name="GoToPacket" xml:space="preserve">
+    <value>Перейти к пакету</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="GoTo_PacketNumber" xml:space="preserve">
+    <value>Номер пакета ({0} – {1}):</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>ОК</value>
+  </data>
 </root>

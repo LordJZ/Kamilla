@@ -14,6 +14,7 @@ using System.Windows.Media;
 using Kamilla;
 using Kamilla.Network;
 using Kamilla.Network.Logging;
+using Kamilla.Network.Parsing;
 using Kamilla.Network.Protocols;
 using Kamilla.Network.Viewing;
 using Kamilla.WPF;
@@ -24,9 +25,6 @@ namespace NetworkLogViewer
 {
     partial class MainWindow : Window
     {
-        BackgroundWorker ui_loadingWorker;
-        BackgroundWorker ui_readingWorker;
-
         ViewerImplementation m_implementation;
         internal ViewerImplementation Implementation { get { return m_implementation; } }
 
@@ -119,14 +117,28 @@ namespace NetworkLogViewer
                 new CommandBinding(ApplicationCommands.Close, ApplicationClose_Executed),
                 new CommandBinding(ApplicationCommands.Open, ApplicationOpen_Executed),
                 new CommandBinding(NetworkLogViewerCommands.OpenConsole, OpenConsole_Executed),
-                new CommandBinding(NetworkLogViewerCommands.CloseFile, CloseFile_Executed),
+                new CommandBinding(NetworkLogViewerCommands.CloseFile, CloseFile_Executed, (o, e) =>
+                {
+                    e.CanExecute = this.CurrentLog != null;
+                    e.Handled = true;
+                }),
+                new CommandBinding(NetworkLogViewerCommands.GoToPacketN, GoToPacketN_Executed, CanSearch),
+                new CommandBinding(NetworkLogViewerCommands.NextError, NextError_Executed, CanSearch),
+                new CommandBinding(NetworkLogViewerCommands.NextUndefinedParser, NextUndefinedParser_Executed, CanSearch),
+                new CommandBinding(NetworkLogViewerCommands.NextUnknownOpcode, NextUnknownOpcode_Executed, (o, e) =>
+                {
+                    CanSearch(o, e);
+
+                    if (e.CanExecute)
+                        e.CanExecute = this.CurrentProtocol.OpcodesEnumType != null;
+                }),
             });
 
             // Key Bindings
             this.InputBindings.AddRange(new[] {
                 new KeyBinding(ApplicationCommands.Close, Key.X, ModifierKeys.Alt),
-                new KeyBinding(ApplicationCommands.Open, (KeyGesture)ApplicationCommands.Open.InputGestures[0]),
-                new KeyBinding(NetworkLogViewerCommands.OpenConsole, Key.F10, ModifierKeys.None),
+                //new KeyBinding(ApplicationCommands.Open, (KeyGesture)ApplicationCommands.Open.InputGestures[0]),
+                new KeyBinding(NetworkLogViewerCommands.OpenConsole, Key.F12, ModifierKeys.None),
             });
 
             // Background Workers
@@ -152,6 +164,15 @@ namespace NetworkLogViewer
             ui_savingWorker.DoWork += new DoWorkEventHandler(ui_savingWorker_DoWork);
             ui_savingWorker.ProgressChanged += new ProgressChangedEventHandler(ui_savingWorker_ProgressChanged);
             ui_savingWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(ui_savingWorker_RunWorkerCompleted);
+
+            ui_searchWorker = new BackgroundWorker()
+            {
+                WorkerSupportsCancellation = true,
+                WorkerReportsProgress = true
+            };
+            ui_searchWorker.DoWork += new DoWorkEventHandler(ui_searchWorker_DoWork);
+            ui_searchWorker.ProgressChanged += new ProgressChangedEventHandler(ui_searchWorker_ProgressChanged);
+            ui_searchWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(ui_searchWorker_RunWorkerCompleted);
 
             m_implementation.ProtocolChanged += new ProtocolChangedEventHandler(MainWindow_ProtocolChanged);
             m_implementation.NetworkLogChanged += new NetworkLogChangedEventHandler(MainWindow_NetworkLogChanged);
@@ -243,7 +264,7 @@ namespace NetworkLogViewer
 
                 if (m_loadingWindow == null)
                 {
-                    m_loadingWindow = new LoadingWindow();
+                    m_loadingWindow = new LoadingWindow(this);
                     m_loadingWindow.Style = this.Style;
                     m_implementation.StyleChanged += (o, e) => m_loadingWindow.Style = this.Style;
                 }
@@ -258,10 +279,7 @@ namespace NetworkLogViewer
 
         void LoadingStateSetProgress(int percent)
         {
-            this.ThreadSafeBegin(safeThis =>
-            {
-                m_loadingWindow.SetProgress(percent);
-            });
+            this.ThreadSafeBegin(_ => _.m_loadingWindow.SetProgress(percent));
         }
 
         void LoadingStatePop()
@@ -285,6 +303,8 @@ namespace NetworkLogViewer
         void ApplicationClose_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             this.Close();
+
+            e.Handled = true;
         }
 
         OpenFileDialog m_openFileDialog;
@@ -316,6 +336,8 @@ namespace NetworkLogViewer
                 OpenFileName = filename;
                 OpenFile(filename);
             }
+
+            e.Handled = true;
         }
 
         void OpenConsole_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -327,11 +349,15 @@ namespace NetworkLogViewer
 
             if (!console.IsFocused)
                 console.Focus();
+
+            e.Handled = true;
         }
 
         void CloseFile_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             this.CloseFile();
+
+            e.Handled = true;
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -384,9 +410,9 @@ namespace NetworkLogViewer
         #endregion
 
         #region Reading
-        // Code that reads the dump file.
-
+        BackgroundWorker ui_readingWorker;
         string m_currentFile;
+
         void OpenFile(string filename)
         {
             NetworkLog log;
@@ -473,11 +499,13 @@ namespace NetworkLogViewer
             var newLog = e.NewLog;
             ui_sbiNetworkLog.Content = newLog != null ? newLog.Name : Strings.NoNetworkLog;
 
-            UpdateSavingButtons();
+            UpdateUIAsProtocolOrLogChanges();
         }
         #endregion
 
         #region Loading
+        BackgroundWorker ui_loadingWorker;
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             ui_loadingWorker.RunWorkerAsync();
@@ -551,7 +579,7 @@ namespace NetworkLogViewer
 
             this.ThreadSafeBegin(_ =>
             {
-                UpdateSavingButtons();
+                UpdateUIAsProtocolOrLogChanges();
 
                 if (newProtocol != null)
                 {
@@ -637,6 +665,18 @@ namespace NetworkLogViewer
         #endregion
 
         #region Viewing
+        public ViewerItem SelectedItem
+        {
+            get
+            {
+                int index = ui_lvPackets.SelectedIndex;
+                if (index >= 0)
+                    return m_implementation.m_items[index];
+
+                return null;
+            }
+        }
+
         static Type[] s_viewTabTypes = new[]
         {
             typeof(PacketContents),
@@ -810,17 +850,6 @@ namespace NetworkLogViewer
         #endregion
 
         #region Saving
-        void UpdateSavingButtons()
-        {
-            this.ThreadSafeBegin(_ =>
-            {
-                bool enabled = _.CurrentProtocol != null && _.CurrentLog != null;
-                ui_miSaveBinaryContents.IsEnabled = enabled;
-                ui_miSaveParserOutput.IsEnabled = enabled;
-                ui_miSaveTextContents.IsEnabled = enabled;
-            });
-        }
-
         BackgroundWorker ui_savingWorker;
         private void ui_miSaveParserOutput_Click(object sender, RoutedEventArgs e)
         {
@@ -855,7 +884,7 @@ namespace NetworkLogViewer
             }
 
             ui_savingWorker.RunWorkerAsync(writer);
-            this.LoadingStatePush(new LoadingState(Strings.ParsingPackets, () => ui_savingWorker.CancelAsync()));
+            this.LoadingStatePush(new LoadingState(Strings.ParsingPackets, _ => _.ui_savingWorker.CancelAsync()));
         }
 
         void ui_savingWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -917,5 +946,159 @@ namespace NetworkLogViewer
                 MessageWindow.Show(this, Strings.Error, e.Error.ToString());
         }
         #endregion
+
+        #region Search
+        BackgroundWorker ui_searchWorker;
+
+        void CanSearch(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = this.CurrentProtocol != null && this.CurrentLog != null;
+            e.Handled = true;
+        }
+
+        void GoToPacketN_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            e.Handled = true;
+
+            var window = new GoToPacketWindow(this);
+            var result = window.ShowDialog();
+            if (result != true)
+                return;
+
+            this.FinishSearch(m_implementation.m_items[window.Index]);
+        }
+
+        void NextError_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            e.Handled = true;
+
+            this.StartSearch(item =>
+            {
+                var parser = item.Parser;
+                if (parser == null)
+                {
+                    item.Viewer.CurrentProtocol.CreateParser(item);
+                    parser = item.Parser;
+                }
+
+                if (!parser.IsParsed)
+                    parser.Parse();
+
+                return parser.ParsingError;
+            });
+        }
+
+        void NextUndefinedParser_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            e.Handled = true;
+
+            this.StartSearch(item =>
+            {
+                var parser = item.Parser;
+                if (parser == null)
+                {
+                    item.Viewer.CurrentProtocol.CreateParser(item);
+                    parser = item.Parser;
+                }
+
+                return parser is UndefinedPacketParser;
+            });
+        }
+
+        void NextUnknownOpcode_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            e.Handled = true;
+
+            var values = (uint[])this.CurrentProtocol.OpcodesEnumType.GetEnumValues();
+
+            this.StartSearch(item =>
+            {
+                var packet = item.Packet as IPacketWithOpcode;
+                if (packet == null)
+                    return false;
+
+                return !values.Contains(packet.Opcode);
+            });
+        }
+
+        void StartSearch(Predicate<ViewerItem> pred)
+        {
+            ui_searchWorker.RunWorkerAsync(new ValueTuple<int, Predicate<ViewerItem>>(ui_lvPackets.SelectedIndex + 1, pred));
+            this.LoadingStatePush(new LoadingState(Strings.Searching, _ => _.ui_searchWorker.CancelAsync()));
+        }
+
+        void ui_searchWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            e.Result = -1;
+            var tuple = (ValueTuple<int, Predicate<ViewerItem>>)e.Argument;
+            var worker = (BackgroundWorker)sender;
+
+            int progress = 0;
+            var items = m_implementation.m_items;
+            int count = items.Count;
+
+            for (int i = tuple.Item1; i < count; i++)
+            {
+                if (worker.CancellationPending)
+                    return;
+
+                var item = items[i];
+                if (tuple.Item2(item))
+                {
+                    e.Result = item;
+                    return;
+                }
+
+                int newProgress = i * 100 / count;
+                if (newProgress != progress)
+                {
+                    progress = newProgress;
+                    worker.ReportProgress(progress);
+                }
+            }
+        }
+
+        void ui_searchWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            LoadingStateSetProgress(e.ProgressPercentage);
+        }
+
+        void ui_searchWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            LoadingStatePop();
+
+            if (e.Error != null)
+            {
+                MessageWindow.Show(this, Strings.Error, e.Error.ToString());
+                return;
+            }
+
+            this.FinishSearch((ViewerItem)e.Result);
+        }
+
+        void FinishSearch(ViewerItem item)
+        {
+            if (item != null)
+            {
+                ui_lvPackets.SelectedIndex = item.Index;
+                ui_lvPackets.ScrollIntoView(item);
+                ((ListViewItem)ui_lvPackets.ItemContainerGenerator.ContainerFromItem(item)).Focus();
+            }
+            else
+                MessageWindow.Show(this, Strings.Menu_Search, Strings.Search_NotFound);
+        }
+        #endregion
+
+        void UpdateUIAsProtocolOrLogChanges()
+        {
+            this.ThreadSafeBegin(_ =>
+            {
+                bool haveProtocolAndLog = _.CurrentProtocol != null && _.CurrentLog != null;
+
+                ui_miSaveBinaryContents.IsEnabled = haveProtocolAndLog;
+                ui_miSaveParserOutput.IsEnabled = haveProtocolAndLog;
+                ui_miSaveTextContents.IsEnabled = haveProtocolAndLog;
+            });
+        }
     }
 }

@@ -25,8 +25,16 @@
         <Separator/>
         <MenuItem Header="{x:Static viewer:Strings.Menu_Exit}" Command="Close"/>
       </MenuItem>
+
       <MenuItem Header="{x:Static viewer:Strings.Menu_Edit}">
         <MenuItem Header="{x:Static viewer:Strings.Menu_Protocols}" Name="ui_miProtocol"/>
+      </MenuItem>
+
+      <MenuItem Header="{x:Static viewer:Strings.Menu_Search}">
+        <MenuItem Name="ui_miGoToPacket" Header="{x:Static viewer:Strings.Menu_GoToPacketN}" Command="viewer:NetworkLogViewerCommands.GoToPacketN"/>
+        <MenuItem Name="ui_miNextError" Header="{x:Static viewer:Strings.Menu_NextError}" Command="viewer:NetworkLogViewerCommands.NextError"/>
+        <MenuItem Name="ui_miNextUndefinedParser" Header="{x:Static viewer:Strings.Menu_NextUndefinedParser}" Command="viewer:NetworkLogViewerCommands.NextUndefinedParser"/>
+        <MenuItem Name="ui_miNextUnknownOpcode" Header="{x:Static viewer:Strings.Menu_NextUnknownOpcode}" Command="viewer:NetworkLogViewerCommands.NextUnknownOpcode"/>
       </MenuItem>
 
       <MenuItem Header="{x:Static viewer:Strings.Menu_View}">

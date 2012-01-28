@@ -1,0 +1,18 @@
+﻿<Window x:Class="NetworkLogViewer.GoToPacketWindow" x:ClassModifier="internal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:viewer="clr-namespace:NetworkLogViewer"
+        xmlns:kwpf="clr-namespace:Kamilla.WPF;assembly=Kamilla"
+        Title="{x:Static viewer:Strings.GoToPacket}"
+        kwpf:WindowBehavior.HasTitleBarMaximizeButton="False"
+        kwpf:WindowBehavior.HasTitleBarMinimizeButton="False"
+        Height="143" Width="306"
+        WindowStyle="None" AllowsTransparency="True" WindowStartupLocation="CenterOwner"
+        FocusManager.FocusedElement="{Binding ElementName=ui_tbValue}">
+  <Grid>
+    <Button Content="{x:Static viewer:Strings.Cancel}" Height="23" HorizontalAlignment="Right" Margin="0,69,12,0" Name="ui_btnCancel" VerticalAlignment="Top" Width="75" IsCancel="True" Click="ui_btnCancel_Click" />
+    <Button Content="{x:Static viewer:Strings.OK}" Height="23" HorizontalAlignment="Right" Margin="0,69,93,0" Name="ui_btnOK" VerticalAlignment="Top" Width="75" IsDefault="True" Click="ui_btnOK_Click" />
+    <TextBox BorderThickness="1.0001" Height="23" HorizontalAlignment="Stretch" Name="ui_tbValue" VerticalAlignment="Top" Margin="12,39,12,0" TextChanged="ui_tbValue_TextChanged" />
+    <Label Content="Label" HorizontalAlignment="Stretch" Margin="12,12,12,0" Name="ui_lblPacketNumber" VerticalAlignment="Top" Padding="0,5,0,0" />
+  </Grid>
+</Window>
