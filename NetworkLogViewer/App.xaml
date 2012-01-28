@@ -240,17 +240,18 @@
 
           <Setter Property="Control.Background" Value="{StaticResource {x:Static SystemColors.WindowBrushKey}}"/>
           <Setter Property="Control.Foreground" Value="{StaticResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+          <Setter Property="Control.BorderBrush" Value="{StaticResource BorderBrush}"/>
         </Style>
 
         <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource KamillaStyleBase}"/>
         <Style TargetType="{x:Type Grid}" BasedOn="{StaticResource KamillaStyleBase}"/>
 
-        <Style TargetType="{x:Type TextBox}">
+        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource KamillaStyleBase}">
           <Setter Property="SelectionBrush" Value="#FFAAAAAA"/>
           <Setter Property="CaretBrush"  Value="{StaticResource {x:Static SystemColors.ControlTextBrushKey}}"/>
         </Style>
 
-        <Style TargetType="{x:Type RichTextBox}">
+        <Style TargetType="{x:Type RichTextBox}" BasedOn="{StaticResource KamillaStyleBase}">
           <Setter Property="SelectionBrush" Value="#FFAAAAAA"/>
           <Setter Property="CaretBrush"  Value="{StaticResource {x:Static SystemColors.ControlTextBrushKey}}"/>
         </Style>
