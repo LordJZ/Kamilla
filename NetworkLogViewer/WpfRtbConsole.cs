@@ -115,6 +115,7 @@ namespace NetworkLogViewer
                     {
                         var run = new Run(tok.Trim());
 
+                        run.Foreground = brush;
                         m_para.Inlines.Add(run);
                         m_para.Inlines.Add(new LineBreak());
                     }
