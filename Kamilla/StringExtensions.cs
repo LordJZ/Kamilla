@@ -812,5 +812,23 @@ namespace Kamilla
 
             return true;
         }
+
+        public static uint ParseUInt32(this string str)
+        {
+            if (str == null)
+                throw new ArgumentNullException("str");
+
+            str = str.Trim();
+            if (str == string.Empty)
+                throw new ArgumentException("str cannot be empty.", "str");
+
+            if (str.StartsWith("0x", StringComparison.InvariantCultureIgnoreCase))
+                return uint.Parse(str.Substring(2), NumberStyles.AllowHexSpecifier);
+
+            if (str.EndsWith("h", StringComparison.InvariantCultureIgnoreCase))
+                return uint.Parse(str.Substring(0, str.Length - 1), NumberStyles.AllowHexSpecifier);
+
+            return uint.Parse(str);
+        }
     }
 }
