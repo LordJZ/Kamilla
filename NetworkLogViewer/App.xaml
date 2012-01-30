@@ -1439,6 +1439,11 @@
             <Condition Property="Window.WindowStyle" Value="None"/>
             <Condition Property="Window.AllowsTransparency" Value="True"/>
           </MultiTrigger.Conditions>
+          <Setter Property="Window.Effect">
+            <Setter.Value>
+              <DropShadowEffect BlurRadius="10" Color="Black" ShadowDepth="1" />
+            </Setter.Value>
+          </Setter>
           <Setter Property="Window.Background" Value="Transparent"/>
           <Setter Property="Window.Template" Value="{StaticResource CustomTitleBarWindowTemplate}"/>
         </MultiTrigger>
