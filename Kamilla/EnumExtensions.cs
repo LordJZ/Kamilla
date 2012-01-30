@@ -90,6 +90,10 @@ namespace Kamilla
                 else
                     value = obj.ToInt64(null);
 
+                // Sometimes there are two fields with the same value
+                if (ei.ContainsKey(value))
+                    continue;
+
                 ei.Add(value, field);
             }
 
