@@ -15,11 +15,7 @@ namespace NetworkLogViewer
         internal static void InitializeConsole(MainWindow wnd)
         {
             if (s_console == null)
-            {
-                s_console = new ConsoleWindow();
-                s_console.Style = wnd.Style;
-                wnd.Implementation.StyleChanged += (o, e) => s_console.Style = wnd.Style;
-            }
+                s_console = new ConsoleWindow(wnd);
             else
                 throw new InvalidOperationException("Console is already initialized.");
         }

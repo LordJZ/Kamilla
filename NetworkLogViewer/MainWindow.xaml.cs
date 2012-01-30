@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Text;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -55,8 +56,6 @@ namespace NetworkLogViewer
             InitializeComponent();
 
             m_implementation = new ViewerImplementation(this);
-
-            App.InitializeConsole(this);
 
             // Perform operations that alter UI here
             {
@@ -110,6 +109,7 @@ namespace NetworkLogViewer
                 }
 
                 InitializeSkins();
+                App.InitializeConsole(this);
             }
 
             // Command Bindings
@@ -130,8 +130,11 @@ namespace NetworkLogViewer
                     CanSearch(o, e);
 
                     if (e.CanExecute)
-                        e.CanExecute = this.CurrentProtocol.OpcodesEnumType != null;
+                        e.CanExecute = this.CurrentProtocol != null && this.CurrentProtocol.OpcodesEnumType != null;
                 }),
+                new CommandBinding(NetworkLogViewerCommands.Search, Search_Executed, CanSearch),
+                new CommandBinding(NetworkLogViewerCommands.SearchUp, SearchUp_Executed, CanSearch),
+                new CommandBinding(NetworkLogViewerCommands.SearchDown, SearchDown_Executed, CanSearch),
             });
 
             // Key Bindings
@@ -263,11 +266,7 @@ namespace NetworkLogViewer
                 m_loadingStateStack.Push(state);
 
                 if (m_loadingWindow == null)
-                {
                     m_loadingWindow = new LoadingWindow(this);
-                    m_loadingWindow.Style = this.Style;
-                    m_implementation.StyleChanged += (o, e) => m_loadingWindow.Style = this.Style;
-                }
 
                 m_loadingWindow.SetLoadingState(state);
 
@@ -362,6 +361,7 @@ namespace NetworkLogViewer
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
+            e.Cancel = false;
             ui_readingWorker.CancelAsync();
             ui_savingWorker.CancelAsync();
             m_implementation.CloseFile();
@@ -382,9 +382,6 @@ namespace NetworkLogViewer
             this.CurrentLog = null;
             this.CurrentProtocol = null;
             Configuration.ResumeSaving();
-
-            App.ConsoleWindow.m_closing = true;
-            App.ConsoleWindow.Close();
         }
 
         void CloseFile()
@@ -948,12 +945,34 @@ namespace NetworkLogViewer
         #endregion
 
         #region Search
+        internal SearchMode m_searchMode;
+        internal bool m_regex;
+        internal bool m_matchCase;
+        internal bool m_allowChars;
+        SearchWindow m_searchWindow;
+
         BackgroundWorker ui_searchWorker;
+
+        void OpenSearchWindow()
+        {
+            if (m_searchWindow == null)
+                m_searchWindow = new SearchWindow(this);
+
+            if (!m_searchWindow.IsVisible)
+                m_searchWindow.Show();
+
+            m_searchWindow.Focus();
+        }
 
         void CanSearch(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = this.CurrentProtocol != null && this.CurrentLog != null;
             e.Handled = true;
+        }
+
+        void Search_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.OpenSearchWindow();
         }
 
         void GoToPacketN_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -972,7 +991,7 @@ namespace NetworkLogViewer
         {
             e.Handled = true;
 
-            this.StartSearch(item =>
+            this.StartSearch(new SearchRequest(true, true, item =>
             {
                 var parser = item.Parser;
                 if (parser == null)
@@ -985,14 +1004,14 @@ namespace NetworkLogViewer
                     parser.Parse();
 
                 return parser.ParsingError;
-            });
+            }, FinishSearch));
         }
 
         void NextUndefinedParser_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             e.Handled = true;
 
-            this.StartSearch(item =>
+            this.StartSearch(new SearchRequest(true, true, item =>
             {
                 var parser = item.Parser;
                 if (parser == null)
@@ -1002,7 +1021,7 @@ namespace NetworkLogViewer
                 }
 
                 return parser is UndefinedPacketParser;
-            });
+            }, FinishSearch));
         }
 
         void NextUnknownOpcode_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -1011,42 +1030,259 @@ namespace NetworkLogViewer
 
             var values = (uint[])this.CurrentProtocol.OpcodesEnumType.GetEnumValues();
 
-            this.StartSearch(item =>
+            this.StartSearch(new SearchRequest(true, true, item =>
             {
                 var packet = item.Packet as IPacketWithOpcode;
                 if (packet == null)
                     return false;
 
                 return !values.Contains(packet.Opcode);
-            });
+            }, FinishSearch));
         }
 
-        void StartSearch(Predicate<ViewerItem> pred)
+        void SearchUp_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            ui_searchWorker.RunWorkerAsync(new ValueTuple<int, Predicate<ViewerItem>>(ui_lvPackets.SelectedIndex + 1, pred));
+            if (m_searchWindow == null)
+            {
+                this.OpenSearchWindow();
+                return;
+            }
+
+            var matcher = this.GetSearchMatcher();
+            if (matcher == null)
+                return;
+
+            this.StartSearch(new SearchRequest(false, true, matcher, FinishSearch));
+        }
+
+        void SearchDown_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (m_searchWindow == null)
+            {
+                this.OpenSearchWindow();
+                return;
+            }
+
+            var matcher = this.GetSearchMatcher();
+            if (matcher == null)
+                return;
+
+            this.StartSearch(new SearchRequest(true, true, matcher, FinishSearch));
+        }
+
+        bool ToByteSequence(string s, out byte?[] result)
+        {
+            var tokens = s.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            int count = tokens.Length;
+
+            result = new byte?[count];
+            for (int i = 0; i < count; i++)
+			{
+                var token = tokens[i];
+                if (token == "?" || token == "??")
+                    result[i] = null;
+                else
+                {
+                    byte b;
+                    if (!byte.TryParse(token, NumberStyles.AllowHexSpecifier,
+                        CultureInfo.InvariantCulture, out b))
+                    {
+                        MessageWindow.Show(this, Strings.Error,
+                            Strings.SearchString2ByteSeqFailed.LocalizedFormat(s));
+                        return false;
+                    }
+                    result[i] = b;
+                }
+			}
+
+            return true;
+        }
+
+        internal Predicate<ViewerItem> GetSearchMatcher()
+        {
+            var text = m_searchWindow.ui_cbSearch.Text;
+            byte?[] byteSequence;
+            Regex regex;
+            Predicate<string> textMatcher;
+
+            switch (m_searchMode)
+            {
+                case SearchMode.Opcodes:
+                    var type = this.CurrentProtocol.OpcodesEnumType;
+                    if (type == null)
+                    {
+                        MessageWindow.Show(this, Strings.Error, Strings.SearchFailedNoOpcodes);
+                        return null;
+                    }
+                    uint opcode;
+                    try
+                    {
+                        try
+                        {
+                            opcode = (uint)Enum.Parse(type, text, true);
+                        }
+                        catch
+                        {
+                            opcode = text.ParseUInt32();
+                        }
+                    }
+                    catch
+                    {
+                        MessageWindow.Show(this, Strings.Error,
+                            Strings.SearchString2OpcodeFailed.LocalizedFormat(text));
+                        return null;
+                    }
+                    return item =>
+                    {
+                        var packet = item.Packet as IPacketWithOpcode;
+                        if (packet == null)
+                            return false;
+
+                        return packet.Opcode == opcode;
+                    };
+                case SearchMode.BinaryContents:
+                    if (!ToByteSequence(text, out byteSequence))
+                        return null;
+
+                    return item =>
+                    {
+                        var parser = item.Parser;
+                        if (parser == null)
+                        {
+                            this.CurrentProtocol.CreateParser(item);
+                            parser = item.Parser;
+                        }
+
+                        if (!parser.IsParsed)
+                            parser.Parse();
+
+                        var datas = ParsingHelper.ExtractBinaryDatas(this.CurrentProtocol, item);
+                        for (int i = 0; i < datas.Length; i++)
+                        {
+                            if (datas[i].Item2.IndexOfSequence(byteSequence) >= 0)
+                                return true;
+                        }
+
+                        return false;
+                    };
+                case SearchMode.PacketContents:
+                    if (!ToByteSequence(text, out byteSequence))
+                        return null;
+
+                    return item => item.Packet.Data.IndexOfSequence(byteSequence) >= 0;
+                case SearchMode.ParserOutput:
+                case SearchMode.TextContents:
+                    if (m_regex)
+                    {
+                        try
+                        {
+                            regex = new Regex(text, m_matchCase ? RegexOptions.None : RegexOptions.IgnoreCase);
+                        }
+                        catch
+                        {
+                            MessageWindow.Show(this, Strings.Error,
+                                Strings.SearchString2RegexFailed.LocalizedFormat(text));
+                            return null;
+                        }
+
+                        textMatcher = s => regex.IsMatch(s);
+                    }
+                    else
+                    {
+                        var searchPattern = text;
+                        if (m_allowChars)
+                        {
+                            searchPattern = searchPattern
+                                .Replace("\\r", "\r")
+                                .Replace("\\n", "\n")
+                                .Replace("\\t", "\t")
+                                .Replace("\\0", "\0");
+                        }
+                        var comparison = m_matchCase ? StringComparison.InvariantCulture
+                            : StringComparison.InvariantCultureIgnoreCase;
+
+                        textMatcher = s => s.IndexOf(searchPattern, comparison) >= 0;
+                    }
+
+                    if (m_searchMode == SearchMode.TextContents)
+                    {
+                        return item =>
+                        {
+                            var parser = item.Parser;
+                            if (parser == null)
+                            {
+                                this.CurrentProtocol.CreateParser(item);
+                                parser = item.Parser;
+                            }
+
+                            if (!parser.IsParsed)
+                                parser.Parse();
+
+                            var datas = ParsingHelper.ExtractStrings(this.CurrentProtocol, item);
+                            for (int i = 0; i < datas.Length; i++)
+                            {
+                                if (textMatcher(datas[i].Item2))
+                                    return true;
+                            }
+
+                            return false;
+                        };
+                    }
+                    else
+                    {
+                        return item =>
+                        {
+                            var parser = item.Parser;
+                            if (parser == null)
+                            {
+                                this.CurrentProtocol.CreateParser(item);
+                                parser = item.Parser;
+                            }
+
+                            if (!parser.IsParsed)
+                                parser.Parse();
+
+                            return textMatcher(parser.ParsedText ?? string.Empty);
+                        };
+                    }
+            }
+
+            return null;
+        }
+
+        internal void StartSearch(SearchRequest request)
+        {
+            if (request == null)
+                throw new ArgumentNullException("request");
+
+            ui_searchWorker.RunWorkerAsync(request);
             this.LoadingStatePush(new LoadingState(Strings.Searching, _ => _.ui_searchWorker.CancelAsync()));
         }
 
         void ui_searchWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             e.Result = -1;
-            var tuple = (ValueTuple<int, Predicate<ViewerItem>>)e.Argument;
+            var request = (SearchRequest)e.Argument;
             var worker = (BackgroundWorker)sender;
+
+            int delta = request.IsDown ? 1 : -1;
+            int start = request.IsContinue ? (ui_lvPackets.ThreadSafe(_ => _.SelectedIndex) + delta) : 0;
 
             int progress = 0;
             var items = m_implementation.m_items;
             int count = items.Count;
+            ViewerItem result = null;
 
-            for (int i = tuple.Item1; i < count; i++)
+            for (int i = start; i < count && i >= 0; i += delta)
             {
                 if (worker.CancellationPending)
                     return;
 
                 var item = items[i];
-                if (tuple.Item2(item))
+                if (request.Matches(item))
                 {
-                    e.Result = item;
-                    return;
+                    result = item;
+                    break;
                 }
 
                 int newProgress = i * 100 / count;
@@ -1056,6 +1292,8 @@ namespace NetworkLogViewer
                     worker.ReportProgress(progress);
                 }
             }
+
+            e.Result = new Tuple<SearchRequest, ViewerItem>(request, result);
         }
 
         void ui_searchWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -1073,7 +1311,9 @@ namespace NetworkLogViewer
                 return;
             }
 
-            this.FinishSearch((ViewerItem)e.Result);
+            var tuple = (Tuple<SearchRequest, ViewerItem>)e.Result;
+
+            tuple.Item1.Completed(tuple.Item2);
         }
 
         void FinishSearch(ViewerItem item)

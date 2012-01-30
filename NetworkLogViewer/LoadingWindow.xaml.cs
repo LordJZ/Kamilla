@@ -12,6 +12,9 @@ namespace NetworkLogViewer
         {
             InitializeComponent();
 
+            this.Owner = window;
+            this.Style = window.Style;
+            window.Implementation.StyleChanged += (o, e) => this.Style = this.Owner.Style;
             m_window = window;
         }
 

@@ -1,0 +1,36 @@
+﻿<Window x:Class="NetworkLogViewer.SearchWindow" x:ClassModifier="internal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:viewer="clr-namespace:NetworkLogViewer"
+        xmlns:kwpf="clr-namespace:Kamilla.WPF;assembly=Kamilla"
+        kwpf:WindowBehavior.HasTitleBarMinimizeButton="False"
+        kwpf:WindowBehavior.HasTitleBarMaximizeButton="False"
+        Title="{x:Static viewer:Strings.SearchTitle}"
+        Height="305" Width="570"
+        FocusManager.FocusedElement="{Binding ElementName=ui_cbSearch}"
+        WindowStartupLocation="CenterOwner" WindowStyle="None" AllowsTransparency="True"
+        ShowInTaskbar="False" Closing="Window_Closing">
+    <Grid>
+    <ComboBox x:FieldModifier="internal" HorizontalAlignment="Right" Margin="0,12,138,0" Name="ui_cbSearch" VerticalAlignment="Top" Width="297" IsEditable="True" Height="22" />
+    <TextBlock HorizontalAlignment="Stretch" Margin="12,41,138,156" Name="ui_tbModeDescription" Text="TextBlock" VerticalAlignment="Stretch" Padding="10,0" TextWrapping="Wrap" />
+    <CheckBox Content="{x:Static viewer:Strings.SearchRegex}" HorizontalAlignment="Left" Margin="198,0,0,111" Name="ui_cbRegex" VerticalAlignment="Bottom" Checked="ui_cbRegex_Checked" Unchecked="ui_cbRegex_Unchecked" />
+    <CheckBox Content="{x:Static viewer:Strings.SearchCase}" HorizontalAlignment="Left" Margin="198,0,0,89" Name="ui_cbMatchCase" VerticalAlignment="Bottom" Checked="ui_cbMatchCase_Checked" Unchecked="ui_cbMatchCase_Unchecked" />
+    <CheckBox Content="{x:Static viewer:Strings.SearchChars}" HorizontalAlignment="Left" Margin="198,0,0,67" Name="ui_cbAllowSpecialChars" VerticalAlignment="Bottom" Checked="ui_cbAllowSpecialChars_Checked" Unchecked="ui_cbAllowSpecialChars_Unchecked" />
+    <Button Content="{x:Static viewer:Strings.SearchUp}" Height="23" HorizontalAlignment="Right" Margin="0,12,12,0" Name="ui_btnSearchUp" VerticalAlignment="Top" Width="120" Click="ui_btnSearchUp_Click" />
+    <Button Content="{x:Static viewer:Strings.SearchDown}" Height="23" HorizontalAlignment="Right" IsDefault="True" Margin="0,41,12,0" Name="btn_SearchDown" VerticalAlignment="Top" Width="120" Click="btn_SearchDown_Click" />
+    <Button Content="{x:Static viewer:Strings.SearchCount}" Height="23" HorizontalAlignment="Right" Margin="0,70,12,0" Name="ui_btnCount" VerticalAlignment="Top" Width="120" />
+    <Button Content="{x:Static viewer:Strings.SearchMark}" Height="23" HorizontalAlignment="Right" Margin="0,99,12,0" Name="ui_btnMark" VerticalAlignment="Top" Width="120" IsEnabled="False" />
+    <Button Content="{x:Static viewer:Strings.SearchClearMarks}" Height="23" HorizontalAlignment="Right" IsEnabled="False" Margin="0,128,12,0" Name="ui_btnClearMarks" VerticalAlignment="Top" Width="120" />
+    <Button Content="{x:Static viewer:Strings.SearchClose}" Height="23" HorizontalAlignment="Right" Margin="0,157,12,0" Name="ui_btnClose" VerticalAlignment="Top" Width="120" IsCancel="True" Click="ui_btnClose_Click" />
+    <Label Content="{x:Static viewer:Strings.SearchColon}" HorizontalAlignment="Right" Margin="0,10,441,0" VerticalAlignment="Top" Target="{Binding ElementName=ui_cbSearch}" />
+    <GroupBox Header="{x:Static viewer:Strings.SearchMode}" Height="138" HorizontalAlignment="Left" Margin="12,0,0,12" VerticalAlignment="Bottom" Width="180">
+      <Grid>
+        <RadioButton Content="{x:Static viewer:Strings.SearchOpcodes}" HorizontalAlignment="Left" Margin="6,6,0,0" Name="ui_rbOpcodes" VerticalAlignment="Top" Tag="Opcodes" Checked="ui_rbSearchMode_Checked" />
+        <RadioButton Content="{x:Static viewer:Strings.SearchParserOutput}" HorizontalAlignment="Left" Margin="6,28,0,0" Name="ui_rbParserOutput" VerticalAlignment="Top" Tag="ParserOutput" Checked="ui_rbSearchMode_Checked" />
+        <RadioButton Content="{x:Static viewer:Strings.SearchPacketContents}" HorizontalAlignment="Left" Margin="6,50,0,0" Name="ui_rbPacketContents" VerticalAlignment="Top" Tag="PacketContents" Checked="ui_rbSearchMode_Checked" />
+        <RadioButton Content="{x:Static viewer:Strings.SearchBinaryContents}" HorizontalAlignment="Left" Margin="6,72,0,0" Name="ui_rbBinaryContents" VerticalAlignment="Top" Tag="BinaryContents" Checked="ui_rbSearchMode_Checked" />
+        <RadioButton Content="{x:Static viewer:Strings.SearchTextContents}" HorizontalAlignment="Left" Margin="6,94,0,0" Name="ui_rbTextContents" VerticalAlignment="Top" Tag="TextContents" Checked="ui_rbSearchMode_Checked" />
+      </Grid>
+    </GroupBox>
+  </Grid>
+</Window>

@@ -254,7 +254,7 @@
     <value>Нет двоичных данных</value>
   </data>
   <data name="EncodingNotFound" xml:space="preserve">
-    <value>Кодировка '{0}' не найдена. Пожалуйста, введите верное название кодировки или выберите кодировку из списка.</value>
+    <value>Кодировка "{0}" не найдена. Пожалуйста, введите верное название кодировки или выберите кодировку из списка.</value>
   </data>
   <data name="View_ErrorDecoding" xml:space="preserve">
     <value>Во время преобразования {0} {0?plural-ru:байта:байт:байт} данных в текст используя кодировку '{1}' прозоишла ошибка:
@@ -274,7 +274,7 @@
     <value>Неизвестный объект</value>
   </data>
   <data name="View_ErrorEncoding" xml:space="preserve">
-    <value>Во время сохранения текста в кодировке '{0}' произошла ошибка.</value>
+    <value>Во время сохранения текста в кодировке "{0}" произошла ошибка.</value>
   </data>
   <data name="TextFiles" xml:space="preserve">
     <value>Текстовые файлы</value>
@@ -336,5 +336,95 @@
   </data>
   <data name="OK" xml:space="preserve">
     <value>ОК</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Искать</value>
+  </data>
+  <data name="SearchBinaryContents" xml:space="preserve">
+    <value>Двои_чные данные</value>
+  </data>
+  <data name="SearchCase" xml:space="preserve">
+    <value>_Учитывать регистр</value>
+  </data>
+  <data name="SearchClearMarks" xml:space="preserve">
+    <value>Удалить ме_тки</value>
+  </data>
+  <data name="SearchClose" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="SearchColon" xml:space="preserve">
+    <value>_Найти:</value>
+  </data>
+  <data name="SearchCount" xml:space="preserve">
+    <value>_Подсчитать</value>
+  </data>
+  <data name="SearchDirection" xml:space="preserve">
+    <value>Направление</value>
+  </data>
+  <data name="SearchDown" xml:space="preserve">
+    <value>Искать вни_з</value>
+  </data>
+  <data name="SearchLoop" xml:space="preserve">
+    <value>Зациклить поиск</value>
+  </data>
+  <data name="SearchMark" xml:space="preserve">
+    <value>От_метить</value>
+  </data>
+  <data name="SearchMode" xml:space="preserve">
+    <value>Режим поиска</value>
+  </data>
+  <data name="SearchOpcodes" xml:space="preserve">
+    <value>_Опкоды</value>
+  </data>
+  <data name="SearchPacketContents" xml:space="preserve">
+    <value>Данн_ые пакетов</value>
+  </data>
+  <data name="SearchParserOutput" xml:space="preserve">
+    <value>_Выдача парсеров</value>
+  </data>
+  <data name="SearchRegex" xml:space="preserve">
+    <value>_Регулярное выражение</value>
+  </data>
+  <data name="SearchTextContents" xml:space="preserve">
+    <value>Т_екстовые данные</value>
+  </data>
+  <data name="SearchTitle" xml:space="preserve">
+    <value>Найти</value>
+  </data>
+  <data name="SearchUp" xml:space="preserve">
+    <value>Искать ввер_х</value>
+  </data>
+  <data name="SearchEllipsis" xml:space="preserve">
+    <value>Найти...</value>
+  </data>
+  <data name="SearchModeDesc_Opcodes" xml:space="preserve">
+    <value>Укажите опкод, чтобы найти все пакеты с таким опкодом. Вы можете ввести название опкода или его десятичную или шестнадцатеричную запись.</value>
+  </data>
+  <data name="SearchChars" xml:space="preserve">
+    <value>Разре_шить \n, \r, \t, \0</value>
+  </data>
+  <data name="SearchModeDesc_BinaryContents" xml:space="preserve">
+    <value>Введите последовательность байтов, которую вы хотите найти в двоичных данных пакетов (вкладка "Объект"). Разделяйте шестнадцатеричные записи байтов пробелом, используйте ? или ?? для обозначение любого байта.</value>
+  </data>
+  <data name="SearchModeDesc_PacketContents" xml:space="preserve">
+    <value>Введите последовательность байтов, которую вы хотите найти в пакетах (вкладка "Пакет"). Разделяйте шестнадцатеричные записи байтов пробелом, используйте ? или ?? для обозначение любого байта.</value>
+  </data>
+  <data name="SearchModeDesc_ParserOutput" xml:space="preserve">
+    <value>Введите строку, которую вы хотите найти в данных парсеров (вкладка "Данные").</value>
+  </data>
+  <data name="SearchModeDesc_TextContents" xml:space="preserve">
+    <value>Введите строку, которую вы хотите найти в текстовых данных пакетов (вкладка "Текст").</value>
+  </data>
+  <data name="SearchFailedNoOpcodes" xml:space="preserve">
+    <value>Невозможно искать по опкодам: протокол не поддерживает опкоды.</value>
+  </data>
+  <data name="SearchString2ByteSeqFailed" xml:space="preserve">
+    <value>Не удалось преобразовать строку "{0}" в последовательность байтов.</value>
+  </data>
+  <data name="SearchString2OpcodeFailed" xml:space="preserve">
+    <value>Не удалось преобразовать строку "{0}" в опкод.</value>
+  </data>
+  <data name="SearchString2RegexFailed" xml:space="preserve">
+    <value>Не удалось преобразовать строку "{0}" в регулярное выражение.</value>
   </data>
 </root>

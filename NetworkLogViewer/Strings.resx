@@ -337,4 +337,94 @@
   <data name="OK" xml:space="preserve">
     <value>OK</value>
   </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="SearchBinaryContents" xml:space="preserve">
+    <value>Binary Contents</value>
+  </data>
+  <data name="SearchCase" xml:space="preserve">
+    <value>Match Case</value>
+  </data>
+  <data name="SearchClearMarks" xml:space="preserve">
+    <value>Clear Marks</value>
+  </data>
+  <data name="SearchClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="SearchColon" xml:space="preserve">
+    <value>Search:</value>
+  </data>
+  <data name="SearchCount" xml:space="preserve">
+    <value>Count</value>
+  </data>
+  <data name="SearchDirection" xml:space="preserve">
+    <value>Direction</value>
+  </data>
+  <data name="SearchDown" xml:space="preserve">
+    <value>Search Down</value>
+  </data>
+  <data name="SearchLoop" xml:space="preserve">
+    <value>Looped Search</value>
+  </data>
+  <data name="SearchMark" xml:space="preserve">
+    <value>Mark</value>
+  </data>
+  <data name="SearchMode" xml:space="preserve">
+    <value>Search Mode</value>
+  </data>
+  <data name="SearchOpcodes" xml:space="preserve">
+    <value>_Opcodes</value>
+  </data>
+  <data name="SearchPacketContents" xml:space="preserve">
+    <value>Packet Contents</value>
+  </data>
+  <data name="SearchParserOutput" xml:space="preserve">
+    <value>Parser Output</value>
+  </data>
+  <data name="SearchRegex" xml:space="preserve">
+    <value>Regular Expression</value>
+  </data>
+  <data name="SearchTextContents" xml:space="preserve">
+    <value>Text Contents</value>
+  </data>
+  <data name="SearchTitle" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="SearchUp" xml:space="preserve">
+    <value>Search Up</value>
+  </data>
+  <data name="SearchEllipsis" xml:space="preserve">
+    <value>Search...</value>
+  </data>
+  <data name="SearchChars" xml:space="preserve">
+    <value>Allow \r, \n, \t, \0</value>
+  </data>
+  <data name="SearchModeDesc_BinaryContents" xml:space="preserve">
+    <value>Specify byte sequence you want to find in binary data contained in packets ('Binary Data' tab). Separate hexadecimal digits with spaces, ? or ?? means any byte.</value>
+  </data>
+  <data name="SearchModeDesc_Opcodes" xml:space="preserve">
+    <value>Specify opcodes you want to find packets with. You can use opcode name or decimal or hexadecimal opcode value.</value>
+  </data>
+  <data name="SearchModeDesc_PacketContents" xml:space="preserve">
+    <value>Specify byte sequence you want to find in packets' data ('Contents' tab). Separate hexadecimal digits with spaces, ? or ?? means any byte.</value>
+  </data>
+  <data name="SearchModeDesc_ParserOutput" xml:space="preserve">
+    <value>Specify text you want to find in output of packets' parsers ('Parsed' tab).</value>
+  </data>
+  <data name="SearchModeDesc_TextContents" xml:space="preserve">
+    <value>Specify text you want to find in text data contained in packets ('Text Data' tab).</value>
+  </data>
+  <data name="SearchFailedNoOpcodes" xml:space="preserve">
+    <value>Cannot search by opcode with no opcodes provided by the protocol.</value>
+  </data>
+  <data name="SearchString2ByteSeqFailed" xml:space="preserve">
+    <value>Failed to convert string '{0}' to byte sequence.</value>
+  </data>
+  <data name="SearchString2OpcodeFailed" xml:space="preserve">
+    <value>Failed to convert string '{0}' to opcode.</value>
+  </data>
+  <data name="SearchString2RegexFailed" xml:space="preserve">
+    <value>Failed to convert string '{0}' to a regular expression.</value>
+  </data>
 </root>

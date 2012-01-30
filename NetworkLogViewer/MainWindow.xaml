@@ -31,6 +31,10 @@
       </MenuItem>
 
       <MenuItem Header="{x:Static viewer:Strings.Menu_Search}">
+        <MenuItem Name="ui_miSearch" Header="{x:Static viewer:Strings.SearchEllipsis}" Command="viewer:NetworkLogViewerCommands.Search"/>
+        <MenuItem Name="ui_miSearchUp" Header="{x:Static viewer:Strings.SearchUp}" Command="viewer:NetworkLogViewerCommands.SearchUp"/>
+        <MenuItem Name="ui_miSearchDown" Header="{x:Static viewer:Strings.SearchDown}" Command="viewer:NetworkLogViewerCommands.SearchDown"/>
+        <Separator/>
         <MenuItem Name="ui_miGoToPacket" Header="{x:Static viewer:Strings.Menu_GoToPacketN}" Command="viewer:NetworkLogViewerCommands.GoToPacketN"/>
         <MenuItem Name="ui_miNextError" Header="{x:Static viewer:Strings.Menu_NextError}" Command="viewer:NetworkLogViewerCommands.NextError"/>
         <MenuItem Name="ui_miNextUndefinedParser" Header="{x:Static viewer:Strings.Menu_NextUndefinedParser}" Command="viewer:NetworkLogViewerCommands.NextUndefinedParser"/>

@@ -8,7 +8,7 @@
         Title="{x:Static viewer:Strings.Console_Title}"
         Height="340" Width="650" MinWidth="425" MinHeight="199"
         WindowStartupLocation="CenterOwner" WindowStyle="None" AllowsTransparency="True"
-        Visibility="Hidden" ShowInTaskbar="False" Topmost="True"
+        Visibility="Hidden" ShowInTaskbar="False"
         Closed="Window_Closed" Closing="Window_Closing"
         Deactivated="Window_Deactivated" Activated="Window_Activated">
   <RichTextBox Name="tbMain" IsReadOnly="True" VerticalScrollBarVisibility="Visible" FontFamily="Lucida Console" VerticalContentAlignment="Bottom" BorderThickness="0" AcceptsReturn="True"/>

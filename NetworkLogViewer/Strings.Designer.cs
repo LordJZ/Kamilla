@@ -499,6 +499,15 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        public static string Search {
+            get {
+                return ResourceManager.GetString("Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No packets found..
         /// </summary>
         public static string Search_NotFound {
@@ -508,11 +517,272 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Binary Contents.
+        /// </summary>
+        public static string SearchBinaryContents {
+            get {
+                return ResourceManager.GetString("SearchBinaryContents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Match Case.
+        /// </summary>
+        public static string SearchCase {
+            get {
+                return ResourceManager.GetString("SearchCase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow \r, \n, \t, \0.
+        /// </summary>
+        public static string SearchChars {
+            get {
+                return ResourceManager.GetString("SearchChars", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear Marks.
+        /// </summary>
+        public static string SearchClearMarks {
+            get {
+                return ResourceManager.GetString("SearchClearMarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string SearchClose {
+            get {
+                return ResourceManager.GetString("SearchClose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search:.
+        /// </summary>
+        public static string SearchColon {
+            get {
+                return ResourceManager.GetString("SearchColon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Count.
+        /// </summary>
+        public static string SearchCount {
+            get {
+                return ResourceManager.GetString("SearchCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Direction.
+        /// </summary>
+        public static string SearchDirection {
+            get {
+                return ResourceManager.GetString("SearchDirection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search Down.
+        /// </summary>
+        public static string SearchDown {
+            get {
+                return ResourceManager.GetString("SearchDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search....
+        /// </summary>
+        public static string SearchEllipsis {
+            get {
+                return ResourceManager.GetString("SearchEllipsis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot search by opcode with no opcodes provided by the protocol..
+        /// </summary>
+        public static string SearchFailedNoOpcodes {
+            get {
+                return ResourceManager.GetString("SearchFailedNoOpcodes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Searching....
         /// </summary>
         public static string Searching {
             get {
                 return ResourceManager.GetString("Searching", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Looped Search.
+        /// </summary>
+        public static string SearchLoop {
+            get {
+                return ResourceManager.GetString("SearchLoop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mark.
+        /// </summary>
+        public static string SearchMark {
+            get {
+                return ResourceManager.GetString("SearchMark", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search Mode.
+        /// </summary>
+        public static string SearchMode {
+            get {
+                return ResourceManager.GetString("SearchMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specify byte sequence you want to find in binary data contained in packets (&apos;Binary Data&apos; tab). Separate hexadecimal digits with spaces, ? or ?? means any byte..
+        /// </summary>
+        public static string SearchModeDesc_BinaryContents {
+            get {
+                return ResourceManager.GetString("SearchModeDesc_BinaryContents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specify opcodes you want to find packets with. You can use opcode name or decimal or hexadecimal opcode value..
+        /// </summary>
+        public static string SearchModeDesc_Opcodes {
+            get {
+                return ResourceManager.GetString("SearchModeDesc_Opcodes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specify byte sequence you want to find in packets&apos; data (&apos;Contents&apos; tab). Separate hexadecimal digits with spaces, ? or ?? means any byte..
+        /// </summary>
+        public static string SearchModeDesc_PacketContents {
+            get {
+                return ResourceManager.GetString("SearchModeDesc_PacketContents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specify text you want to find in output of packets&apos; parsers (&apos;Parsed&apos; tab)..
+        /// </summary>
+        public static string SearchModeDesc_ParserOutput {
+            get {
+                return ResourceManager.GetString("SearchModeDesc_ParserOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specify text you want to find in text data contained in packets (&apos;Text Data&apos; tab)..
+        /// </summary>
+        public static string SearchModeDesc_TextContents {
+            get {
+                return ResourceManager.GetString("SearchModeDesc_TextContents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Opcodes.
+        /// </summary>
+        public static string SearchOpcodes {
+            get {
+                return ResourceManager.GetString("SearchOpcodes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Packet Contents.
+        /// </summary>
+        public static string SearchPacketContents {
+            get {
+                return ResourceManager.GetString("SearchPacketContents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parser Output.
+        /// </summary>
+        public static string SearchParserOutput {
+            get {
+                return ResourceManager.GetString("SearchParserOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Regular Expression.
+        /// </summary>
+        public static string SearchRegex {
+            get {
+                return ResourceManager.GetString("SearchRegex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to convert string &apos;{0}&apos; to byte sequence..
+        /// </summary>
+        public static string SearchString2ByteSeqFailed {
+            get {
+                return ResourceManager.GetString("SearchString2ByteSeqFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to convert string &apos;{0}&apos; to opcode..
+        /// </summary>
+        public static string SearchString2OpcodeFailed {
+            get {
+                return ResourceManager.GetString("SearchString2OpcodeFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to convert string &apos;{0}&apos; to a regular expression..
+        /// </summary>
+        public static string SearchString2RegexFailed {
+            get {
+                return ResourceManager.GetString("SearchString2RegexFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text Contents.
+        /// </summary>
+        public static string SearchTextContents {
+            get {
+                return ResourceManager.GetString("SearchTextContents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        public static string SearchTitle {
+            get {
+                return ResourceManager.GetString("SearchTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search Up.
+        /// </summary>
+        public static string SearchUp {
+            get {
+                return ResourceManager.GetString("SearchUp", resourceCulture);
             }
         }
         

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 
 namespace NetworkLogViewer
@@ -8,16 +9,18 @@ namespace NetworkLogViewer
     /// </summary>
     partial class ConsoleWindow : Window
     {
-        internal bool m_closing;
-
         WpfRtbConsole m_console;
 
         /// <summary>
         /// Initializes a new instance of <see cref="Kamilla.PacketViewer.WPF.ConsoleWindow"/> class.
         /// </summary>
-        public ConsoleWindow()
+        public ConsoleWindow(MainWindow window)
         {
+            //this.Owner = window;
             InitializeComponent();
+
+            this.Style = window.Style;
+            window.Implementation.StyleChanged += (o, e) => this.Style = window.Style;
 
             m_console = new WpfRtbConsole(tbMain);
             Console.SetOut(m_console);
@@ -32,11 +35,10 @@ namespace NetworkLogViewer
             m_console.Close();
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object sender, CancelEventArgs e)
         {
-            e.Cancel = !m_closing;
-            if (!m_closing)
-                this.Hide();
+            e.Cancel = true;
+            this.Hide();
         }
 
         private void Window_Deactivated(object sender, EventArgs e)
