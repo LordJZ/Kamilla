@@ -1377,15 +1377,15 @@
                   <Trigger Property="IsEnabled" Value="false">
                     <Setter Property="Foreground" Value="{StaticResource {x:Static SystemColors.GrayTextBrushKey}}"/>
                   </Trigger>
-                  <Trigger Property="IsPressed" Value="true">
-                    <Setter TargetName="Border" Property="Background" Value="{StaticResource PressedBorderBrush}" />
-                  </Trigger>
                   <Trigger Property="IsFocused" Value="true">
                     <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource {x:Static SystemColors.ControlTextBrushKey}}"/>
                   </Trigger>
                   <Trigger Property="IsMouseOver" Value="true">
                     <Setter TargetName="Border" Property="Background" Value="{StaticResource HighlightBackgroundBrush}" />
                     <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+                  </Trigger>
+                  <Trigger Property="IsPressed" Value="true">
+                    <Setter TargetName="Border" Property="Background" Value="{StaticResource PressedBorderBrush}" />
                   </Trigger>
                 </ControlTemplate.Triggers>
               </ControlTemplate>
