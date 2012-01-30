@@ -1100,7 +1100,7 @@
                   <Setter TargetName="Border" Property="Background" Value="{StaticResource HighlightBackgroundBrush}" />
                 </Trigger>
                 <Trigger Property="ToggleButton.IsChecked" Value="true">
-                  <Setter TargetName="Border" Property="Background" Value="{StaticResource PressedBrush}" />
+                  <Setter TargetName="Border" Property="Background" Value="{StaticResource PressedBorderBrush}" />
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="False">
                   <Setter Property="Foreground" Value="{StaticResource {x:Static SystemColors.GrayTextBrushKey}}"/>
@@ -1355,7 +1355,7 @@
                   BorderThickness="1">
                   <ContentPresenter
                                     Name="ContentSite"
-                                    IsHitTestVisible="False" 
+                                    IsHitTestVisible="False"
                                     ContentSource="{TemplateBinding Content}"
                                     VerticalAlignment="Center"
                                     HorizontalAlignment="Center" />
