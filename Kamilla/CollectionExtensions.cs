@@ -655,6 +655,29 @@ namespace Kamilla
             return -1;
         }
 
+        public static int IndexOfSequence<T>(this T[] array, T?[] sequence) where T : struct
+        {
+            var eqcmp = EqualityComparer<T>.Default;
+
+            for (int i = 0; i < array.Length - sequence.Length + 1; ++i)
+            {
+                for (int j = 0; j < sequence.Length; ++j)
+                {
+                    if (sequence[j].HasValue)
+                    {
+                        if (!eqcmp.Equals(array[i + j], sequence[j].Value))
+                            goto _cont;
+                    }
+                }
+
+                return i;
+            _cont:
+                continue;
+            }
+
+            return -1;
+        }
+
         public static void CombineItems<T>(ref List<T> items, int first, int count, Func<T> insertedItem)
         {
             if (insertedItem == null)
