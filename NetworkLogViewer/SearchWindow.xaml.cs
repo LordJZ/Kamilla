@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Kamilla;
+using Kamilla.Network;
 using Kamilla.Network.Viewing;
 using Kamilla.WPF;
 
@@ -41,7 +43,7 @@ namespace NetworkLogViewer
                 new ProtocolChangedEventHandler(Implementation_ProtocolChanged);
 
             if (window.CurrentProtocol != null && window.CurrentProtocol.OpcodesEnumType != null)
-                m_opcodeNames = window.CurrentProtocol.OpcodesEnumType.GetEnumNames();
+                this.UpdateOpcodeNames();
 
             var modeRadioButtons = new[]
             {
@@ -86,10 +88,27 @@ namespace NetworkLogViewer
             else
             {
                 ui_rbOpcodes.IsEnabled = true;
-                m_opcodeNames = e.NewProtocol.OpcodesEnumType.GetEnumNames();
+                this.UpdateOpcodeNames();
                 if (ui_rbOpcodes.IsChecked == true)
                     ui_cbSearch.ItemsSource = m_opcodeNames;
             }
+        }
+
+        void UpdateOpcodeNames()
+        {
+            var fields = m_window.CurrentProtocol.OpcodesEnumType
+                .GetFields(BindingFlags.Static | BindingFlags.Public);
+
+            var list = new List<string>(fields.Length);
+            foreach (var field in fields)
+            {
+                var value = (uint)field.GetRawConstantValue();
+                if (value != SpecialOpcodes.UnknownOpcode)
+                    list.Add(field.Name);
+            }
+            list.Sort();
+
+            m_opcodeNames = list.ToArray();
         }
 
         private void ui_rbSearchMode_Checked(object sender, RoutedEventArgs e)
