@@ -79,12 +79,12 @@
                      VerticalContentAlignment="Center" Margin="5,0,0,0" Padding="0" />
 
               <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button x:Name="PART_MinButton"
+                <Button x:Name="PART_MinButton" Focusable="False"
                         Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
                         Style="{StaticResource TitleBarMinimizeButtonStyle}"/>
-                <Button x:Name="PART_NormMaxButton"
+                <Button x:Name="PART_NormMaxButton" Focusable="False"
                         Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
-                <Button x:Name="PART_CloseButton"
+                <Button x:Name="PART_CloseButton" Focusable="False"
                         Foreground="Red"
                         Style="{StaticResource TitleBarCloseButtonStyle}"/>
               </StackPanel>
@@ -1208,6 +1208,15 @@
                     <Setter TargetName="ToggleButton" Property="BorderBrush" Value="{StaticResource BackgroundBrush}"/>
                     <Setter TargetName="ToggleButton" Property="BorderThickness" Value="1,0,0,0"/>
                   </MultiTrigger>
+                  <Trigger Property="IsFocused" Value="True">
+                    <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource GlyphBrush}"/>
+                  </Trigger>
+                  <Trigger SourceName="PART_EditableTextBox" Property="IsFocused" Value="True">
+                    <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource GlyphBrush}"/>
+                  </Trigger>
+                  <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+                  </Trigger>
                 </ControlTemplate.Triggers>
               </ControlTemplate>
             </Setter.Value>
@@ -1245,7 +1254,7 @@
         <Style TargetType="{x:Type CheckBox}" BasedOn="{StaticResource KamillaStyle}">
           <Setter Property="SnapsToDevicePixels" Value="true"/>
           <Setter Property="OverridesDefaultStyle" Value="true"/>
-          <Setter Property="Foreground" Value="{StaticResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+          <Setter Property="Foreground" Value="{StaticResource {x:Static SystemColors.ControlTextBrushKey}}"/>
           <Setter Property="Template">
             <Setter.Value>
               <ControlTemplate TargetType="{x:Type CheckBox}">
@@ -1292,6 +1301,9 @@
                   <Trigger Property="IsChecked" Value="{x:Null}">
                     <Setter TargetName="InderminateMark" Property="Visibility" Value="Visible"/>
                   </Trigger>
+                  <Trigger Property="IsFocused" Value="True">
+                    <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+                  </Trigger>
                 </ControlTemplate.Triggers>
               </ControlTemplate>
             </Setter.Value>
@@ -1334,6 +1346,9 @@
                   <Trigger Property="IsEnabled" Value="false">
                     <Setter Property="Foreground" Value="{StaticResource {x:Static SystemColors.GrayTextBrushKey}}"/>
                   </Trigger>
+                  <Trigger Property="IsFocused" Value="true">
+                    <Setter TargetName="Border" Property="Stroke" Value="{StaticResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+                  </Trigger>
                 </ControlTemplate.Triggers>
               </ControlTemplate>
             </Setter.Value>
@@ -1353,22 +1368,24 @@
                   Background="{StaticResource BackgroundBrush}"
                   BorderBrush="{StaticResource BorderBrush}"
                   BorderThickness="1">
-                  <ContentPresenter
-                                    Name="ContentSite"
-                                    IsHitTestVisible="False"
+                  <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False"
+                                    RecognizesAccessKey="True"
                                     ContentSource="{TemplateBinding Content}"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Center" />
+                                    VerticalAlignment="Center" HorizontalAlignment="Center" />
                 </Border>
                 <ControlTemplate.Triggers>
                   <Trigger Property="IsEnabled" Value="false">
                     <Setter Property="Foreground" Value="{StaticResource {x:Static SystemColors.GrayTextBrushKey}}"/>
                   </Trigger>
-                  <Trigger Property="IsMouseOver" Value="true">
-                    <Setter TargetName="Border" Property="Background" Value="{StaticResource HighlightBackgroundBrush}" />
-                  </Trigger>
                   <Trigger Property="IsPressed" Value="true">
                     <Setter TargetName="Border" Property="Background" Value="{StaticResource PressedBorderBrush}" />
+                  </Trigger>
+                  <Trigger Property="IsFocused" Value="true">
+                    <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+                  </Trigger>
+                  <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="Border" Property="Background" Value="{StaticResource HighlightBackgroundBrush}" />
+                    <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
                   </Trigger>
                 </ControlTemplate.Triggers>
               </ControlTemplate>
