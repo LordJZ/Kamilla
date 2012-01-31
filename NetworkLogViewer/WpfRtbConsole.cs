@@ -100,7 +100,7 @@ namespace NetworkLogViewer
             {
                 m_output.ThreadSafeBegin(rtb =>
                 {
-                    Brush brush = null;
+                    Brush brush = rtb.Foreground;
                     if (text.StartsWith("error", StringComparison.InvariantCultureIgnoreCase))
                         brush = Brushes.Red;
                     else if (text.StartsWith("warning", StringComparison.InvariantCultureIgnoreCase))
