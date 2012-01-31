@@ -366,22 +366,23 @@ namespace NetworkLogViewer
             ui_savingWorker.CancelAsync();
             m_implementation.CloseFile();
 
-            Configuration.SuspendSaving();
-            m_implementation.SaveSettings();
-            Configuration.SetValue("Number of Views", m_currentNViews);
-            this.SaveCurrentViews();
-            Configuration.SetValue("Vertical Splitter", new[] {
-                this.VerticalGrid.RowDefinitions[1].Height.Value,
-                this.VerticalGrid.RowDefinitions[2].Height.Value,
-            });
-            Configuration.SetValue("Window State", this.WindowState);
-            Configuration.SetValue("Window Height", this.Height);
-            Configuration.SetValue("Window Width", this.Width);
-            Configuration.SetValue("Window Left", this.Left);
-            Configuration.SetValue("Window Top", this.Top);
-            this.CurrentLog = null;
-            this.CurrentProtocol = null;
-            Configuration.ResumeSaving();
+            using (Configuration.SuspendSaving())
+            {
+                m_implementation.SaveSettings();
+                Configuration.SetValue("Number of Views", m_currentNViews);
+                this.SaveCurrentViews();
+                Configuration.SetValue("Vertical Splitter", new[] {
+                    this.VerticalGrid.RowDefinitions[1].Height.Value,
+                    this.VerticalGrid.RowDefinitions[2].Height.Value,
+                });
+                Configuration.SetValue("Window State", this.WindowState);
+                Configuration.SetValue("Window Height", this.Height);
+                Configuration.SetValue("Window Width", this.Width);
+                Configuration.SetValue("Window Left", this.Left);
+                Configuration.SetValue("Window Top", this.Top);
+                this.CurrentLog = null;
+                this.CurrentProtocol = null;
+            }
         }
 
         void CloseFile()

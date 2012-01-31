@@ -1363,7 +1363,7 @@
             <Setter.Value>
               <ControlTemplate TargetType="Button">
                 <Border
-                  x:Name="Border" 
+                  x:Name="Border"
                   CornerRadius="1"
                   Background="{StaticResource BackgroundBrush}"
                   BorderBrush="{StaticResource BorderBrush}"

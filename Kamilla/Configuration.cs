@@ -108,6 +108,31 @@ namespace Kamilla
     /// </summary>
     public static class Configuration
     {
+        public class SuspendedState : IDisposable
+        {
+            bool m_disposed;
+
+            internal SuspendedState()
+            {
+                ++s_suspendSavingCounter;
+            }
+
+            void IDisposable.Dispose()
+            {
+                if (!m_disposed)
+                {
+                    m_disposed = true;
+
+                    --s_suspendSavingCounter;
+                    if (s_suspendSavingCounter == 0)
+                    {
+                        if (s_shouldSave)
+                            SaveConfiguration();
+                    }
+                }
+            }
+        }
+
         private static object s_syncRoot;
         private static string s_configurationFilename;
         private static Stub.Configuration s_currentConfiguration;
@@ -151,33 +176,21 @@ namespace Kamilla
                 s_currentConfiguration = new Stub.Configuration();
         }
 
-        static bool s_suspendSaving;
+        static int s_suspendSavingCounter;
         static bool s_shouldSave;
 
-        /// <summary>
-        /// Prevents the configuration from saving to file automatically.
-        /// </summary>
-        public static void SuspendSaving()
+        public static SuspendedState SuspendSaving()
         {
-            s_suspendSaving = true;
-        }
-
-        /// <summary>
-        /// Resumes automatical saving to file.
-        /// </summary>
-        public static void ResumeSaving()
-        {
-            s_suspendSaving = false;
-            if (s_shouldSave)
-                SaveConfiguration();
+            return new SuspendedState();
         }
 
         static void SaveConfiguration()
         {
-            if (s_suspendSaving)
+            if (s_suspendSavingCounter > 0)
                 s_shouldSave = true;
             else
             {
+                s_shouldSave = false;
                 var sw = Stopwatch.StartNew();
                 s_currentConfiguration.PrepareSerialization();
 
