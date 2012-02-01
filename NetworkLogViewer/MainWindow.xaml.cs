@@ -9,7 +9,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using Kamilla;
@@ -53,9 +52,16 @@ namespace NetworkLogViewer
             UICulture.Initialize();
             UICulture.UICultureChanged += new EventHandler(UICulture_UICultureChanged);
 
-            InitializeComponent();
+            ConsoleWriter.Initialize();
 
             m_implementation = new ViewerImplementation(this);
+
+            m_implementation.ProtocolChanged += new ProtocolChangedEventHandler(MainWindow_ProtocolChanged);
+            m_implementation.NetworkLogChanged += new NetworkLogChangedEventHandler(MainWindow_NetworkLogChanged);
+
+            InitializeComponent();
+
+            App.InitializeConsole(this);
 
             // Perform operations that alter UI here
             {
@@ -109,7 +115,6 @@ namespace NetworkLogViewer
                 }
 
                 InitializeSkins();
-                App.InitializeConsole(this);
             }
 
             // Command Bindings
@@ -176,9 +181,6 @@ namespace NetworkLogViewer
             ui_searchWorker.DoWork += new DoWorkEventHandler(ui_searchWorker_DoWork);
             ui_searchWorker.ProgressChanged += new ProgressChangedEventHandler(ui_searchWorker_ProgressChanged);
             ui_searchWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(ui_searchWorker_RunWorkerCompleted);
-
-            m_implementation.ProtocolChanged += new ProtocolChangedEventHandler(MainWindow_ProtocolChanged);
-            m_implementation.NetworkLogChanged += new NetworkLogChangedEventHandler(MainWindow_NetworkLogChanged);
 
             ui_lvPackets.ItemsSource = m_implementation.m_items;
 

@@ -109,6 +109,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ConsoleWriteEventArgs.cs" />
+    <Compile Include="ConsoleWriter.cs" />
     <Compile Include="GoToPacketWindow.xaml.cs">
       <DependentUpon>GoToPacketWindow.xaml</DependentUpon>
     </Compile>
@@ -139,7 +141,6 @@
     <Compile Include="ViewTabs\TextContents.xaml.cs">
       <DependentUpon>TextContents.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WpfRtbConsole.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConsoleWindow.xaml.cs">

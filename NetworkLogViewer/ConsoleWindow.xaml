@@ -11,5 +11,11 @@
         Visibility="Hidden" ShowInTaskbar="False"
         Closed="Window_Closed" Closing="Window_Closing"
         Deactivated="Window_Deactivated" Activated="Window_Activated">
-  <RichTextBox Name="tbMain" IsReadOnly="True" VerticalScrollBarVisibility="Visible" FontFamily="Lucida Console" VerticalContentAlignment="Bottom" BorderThickness="0" AcceptsReturn="True"/>
+  <RichTextBox Name="ui_tbMain" IsReadOnly="True" VerticalScrollBarVisibility="Visible" FontFamily="Lucida Console" VerticalContentAlignment="Bottom" BorderThickness="0" AcceptsReturn="True">
+    <RichTextBox.Document>
+      <FlowDocument>
+        <Paragraph Name="ui_para" />
+      </FlowDocument>
+    </RichTextBox.Document>
+  </RichTextBox>
 </Window>
