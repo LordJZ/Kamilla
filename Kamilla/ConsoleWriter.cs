@@ -2,9 +2,8 @@
 using System.IO;
 using System.Reflection;
 using System.Text;
-using Kamilla;
 
-namespace NetworkLogViewer
+namespace Kamilla
 {
     public static class ConsoleWriter
     {
