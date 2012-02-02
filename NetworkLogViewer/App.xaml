@@ -433,7 +433,25 @@
 
                   <!-- Role = TopLevelItem :  this is a child menu item from the top level without any child items-->
                   <Trigger Property="Role" Value="TopLevelItem">
+                    <Setter Property="Background">
+                      <Setter.Value>
+                        <LinearGradientBrush EndPoint="0,1">
+                          <LinearGradientBrush.GradientStops>
+                            <GradientStop Color="#FF404040" Offset="0.0" />
+                            <GradientStop Color="#FF383838" Offset="0.5" />
+                            <GradientStop Color="#FF303030" Offset="1.0" />
+                          </LinearGradientBrush.GradientStops>
+                        </LinearGradientBrush>
+                      </Setter.Value>
+                    </Setter>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource {x:Static SystemColors.InactiveBorderBrushKey}}"/>
                     <Setter Property="Padding" Value="6,1,6,1"/>
+                    <Setter Property="MinWidth" Value="0" TargetName="Col0"/>
+                    <Setter Property="Width" Value="Auto" TargetName="Col3"/>
+                    <Setter Property="Visibility" Value="Collapsed" TargetName="Icon"/>
+                    <Setter Property="Visibility" Value="Collapsed" TargetName="GlyphPanel"/>
+                    <Setter Property="Visibility" Value="Collapsed" TargetName="IGTHost"/>
                     <Setter Property="Visibility" Value="Collapsed" TargetName="ArrowPanel"/>
                   </Trigger>
 

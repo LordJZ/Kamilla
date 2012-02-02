@@ -61,7 +61,7 @@
         <MenuItem Header="{x:Static viewer:Strings.Menu_AutoDropCache}" IsCheckable="True" Name="ui_miAutoDropCache" Checked="AutoDropCache_CheckedChanged" Unchecked="AutoDropCache_CheckedChanged"/>
       </MenuItem>
 
-      <MenuItem Header="{x:Static viewer:Strings.Menu_Plugins}" Name="ui_miPlugins" x:FieldModifier="internal"/>
+      <MenuItem Header="{x:Static viewer:Strings.Menu_Plugins}" Name="ui_miPlugins" x:FieldModifier="internal" IsEnabled="False" />
 
       <MenuItem Header="{x:Static viewer:Strings.Menu_Help}">
         <MenuItem Header="{x:Static viewer:Strings.Menu_LanguageWEn}" Name="ui_miLanguage"/>

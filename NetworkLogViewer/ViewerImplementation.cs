@@ -282,6 +282,7 @@ namespace NetworkLogViewer
                 };
 
                 _.ui_miPlugins.Items.Add(item);
+                _.ui_miPlugins.IsEnabled = true;
             });
         }
 
@@ -312,6 +313,9 @@ namespace NetworkLogViewer
                         .Cast<MenuItem>()
                         .Single(item => (PluginCommand)((MenuItem)item).Tag == command)
                 );
+
+                if (!_.ui_miPlugins.HasItems)
+                    _.ui_miPlugins.IsEnabled = false;
             });
         }
 
