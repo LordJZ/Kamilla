@@ -51,6 +51,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeHighlighting\CodeHighlighter.cs" />
+    <Compile Include="CodeHighlighting\CodeTokens.cs" />
+    <Compile Include="CodeHighlighting\HighlightedItem.cs" />
+    <Compile Include="CodeHighlighting\HighlightingProfile.cs" />
     <Compile Include="CollectionExtensions.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="ConsoleWriteEventArgs.cs" />
@@ -95,10 +99,11 @@
     <Compile Include="Network\TransferDirection.cs" />
     <Compile Include="Network\TransferDirectionExtensions.cs" />
     <Compile Include="Network\Viewing\NetworkLogViewerBase.cs" />
-    <Compile Include="Network\Viewing\INetworkLogViewerPlugin.cs" />
+    <Compile Include="Network\Viewing\Plugins\INetworkLogViewerPlugin.cs" />
     <Compile Include="Network\Viewing\NetworkLogChangedEventArgs.cs" />
+    <Compile Include="Network\Viewing\Plugins\PluginCommand.cs" />
+    <Compile Include="Network\Viewing\Plugins\PluginManager.cs" />
     <Compile Include="Network\Viewing\ViewerItemEventArgs.cs" />
-    <Compile Include="Network\Viewing\NetworkLogViewerPluginAttribute.cs" />
     <Compile Include="Network\Viewing\ProtocolChangedEventArgs.cs" />
     <Compile Include="Network\Viewing\ViewerItem.cs" />
     <Compile Include="ProjectInformation.cs" />
@@ -112,6 +117,7 @@
     <Compile Include="Vector2.cs" />
     <Compile Include="Vector3.cs" />
     <Compile Include="Win32.cs" />
+    <Compile Include="WPF\INotifyStyleChanged.cs" />
     <Compile Include="WPF\MessageWindow.xaml.cs">
       <DependentUpon>MessageWindow.xaml</DependentUpon>
     </Compile>

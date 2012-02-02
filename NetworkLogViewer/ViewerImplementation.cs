@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,6 +11,9 @@ using Kamilla.Network.Logging;
 using Kamilla.Network.Protocols;
 using Kamilla.Network.Viewing;
 using Kamilla.WPF;
+using System.Windows.Input;
+using Kamilla.Network.Viewing.Plugins;
+using System.Windows.Controls;
 
 namespace NetworkLogViewer
 {
@@ -91,6 +95,8 @@ namespace NetworkLogViewer
         WindowInteropHelper m_interopHelper;
         BackgroundWorker m_parsingWorker;
         DeallocQueue m_deallocQueue;
+        INetworkLogViewerPlugin[] m_plugins;
+        List<PluginCommand> m_pluginCommands;
 
         internal ViewerImplementation(MainWindow window)
         {
@@ -108,6 +114,7 @@ namespace NetworkLogViewer
                 WorkerSupportsCancellation = true
             };
             m_parsingWorker.DoWork += new DoWorkEventHandler(m_parsingWorker_DoWork);
+            m_pluginCommands = new List<PluginCommand>();
         }
 
         internal void LoadSettings()
@@ -220,8 +227,6 @@ namespace NetworkLogViewer
         {
             m_window.ThreadSafe(_ =>
             {
-                if (this.StyleChanged != null)
-                    this.StyleChanged(this, EventArgs.Empty);
             });
         }
 
@@ -232,18 +237,89 @@ namespace NetworkLogViewer
             m_parsingWorker.CancelAsync();
         }
 
-        #region Overrides
-        /// <summary>
-        /// Retrieves an object that contains style information. This value can be null.
-        /// </summary>
-        public override object Style { get { return m_window.Style; } }
+        internal void InitializePlugins()
+        {
+            m_plugins = PluginManager.CreatePluginSet();
+
+            m_window.ThreadSafeBegin(_ =>
+            {
+                var impl = _.Implementation;
+                foreach (var plugin in impl.m_plugins)
+                    plugin.Initialize(impl);
+            });
+        }
 
         /// <summary>
-        /// Occurs when <see cref="NetworkLogViewer.MainWindow.Style"/> property changes.
-        /// 
-        /// Handlers of this event are called from the UI thread.
+        /// Registers a <see cref="Kamilla.Network.Viewing.Plugins.PluginCommand"/>.
         /// </summary>
-        public override event EventHandler StyleChanged;
+        /// <param name="command">
+        /// The <see cref="Kamilla.Network.Viewing.Plugins.PluginCommand"/> that should be registered.
+        /// </param>
+        /// <exception cref="System.ArgumentNullException">
+        /// <c>command</c> is null.
+        /// </exception>
+        public override void RegisterPluginCommand(PluginCommand command)
+        {
+            if (m_pluginCommands.Contains(command))
+                throw new ArgumentException("Such command is already registered.", "command");
+
+            Console.WriteLine("Debug: RegisterPluginCommand '{0}' ({1}, {2})",
+                command.Title, command.Gesture.DisplayString, command.Gesture);
+
+            m_pluginCommands.Add(command);
+
+            m_window.ThreadSafeBegin(_ =>
+            {
+                var item = new MenuItem();
+
+                item.Header = command.Title;
+                item.InputGestureText = command.Gesture.GetDisplayString();
+                item.Tag = command;
+                item.Click += (o, e) =>
+                {
+                    e.Handled = true;
+                    command.Callback();
+                };
+
+                _.ui_miPlugins.Items.Add(item);
+            });
+        }
+
+        /// <summary>
+        /// Unregisters a <see cref="Kamilla.Network.Viewing.Plugins.PluginCommand"/>.
+        /// </summary>
+        /// <param name="command">
+        /// The <see cref="Kamilla.Network.Viewing.Plugins.PluginCommand"/> that should be unregistered.
+        /// </param>
+        /// <exception cref="System.ArgumentNullException">
+        /// <c>command</c> is null.
+        /// </exception>
+        /// <exception cref="System.ArgumentException">
+        /// The provided <see cref="Kamilla.Network.Viewing.Plugins.PluginCommand"/> is not
+        /// registered with the current <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase"/>.
+        /// </exception>
+        public override void UnregisterPluginCommand(PluginCommand command)
+        {
+            if (!m_pluginCommands.Contains(command))
+                throw new ArgumentException("Such command is not registered.", "command");
+
+            m_pluginCommands.Remove(command);
+
+            m_window.ThreadSafeBegin(_ =>
+            {
+                _.ui_miPlugins.Items.Remove(
+                    _.ui_miPlugins.Items
+                        .Cast<MenuItem>()
+                        .Single(item => (PluginCommand)((MenuItem)item).Tag == command)
+                );
+            });
+        }
+
+        #region Overrides
+        /// <summary>
+        /// Retrieves the object that is responsible for the user interface.
+        /// </summary>
+        public override object InterfaceObject { get { return m_window; } }
 
         /// <summary>
         /// Gets the collection of items currently loaded.

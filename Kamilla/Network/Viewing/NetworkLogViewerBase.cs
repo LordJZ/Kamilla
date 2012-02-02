@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Input;
 using Kamilla.Network.Logging;
 using Kamilla.Network.Protocols;
+using Kamilla.Network.Viewing.Plugins;
 
 namespace Kamilla.Network.Viewing
 {
@@ -43,14 +45,37 @@ namespace Kamilla.Network.Viewing
         /// </param>
         public abstract void EnqueueParsing(ViewerItem item);
 
-        #region Events
         /// <summary>
-        /// Occurs when <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase.Style"/> property changes.
-        /// 
-        /// Handlers of this event MUST be called from the UI thread if one exists.
+        /// Registers a <see cref="Kamilla.Network.Viewing.Plugins.PluginCommand"/>.
         /// </summary>
-        public abstract event EventHandler StyleChanged;
+        /// <param name="command">
+        /// The <see cref="Kamilla.Network.Viewing.Plugins.PluginCommand"/> that should be registered.
+        /// </param>
+        /// <exception cref="System.ArgumentNullException">
+        /// <c>command</c> is null.
+        /// </exception>
+        /// <exception cref="System.ArgumentException">
+        /// The provided <see cref="Kamilla.Network.Viewing.Plugins.PluginCommand"/> is already
+        /// registered with the current <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase"/>.
+        /// </exception>
+        public abstract void RegisterPluginCommand(PluginCommand command);
 
+        /// <summary>
+        /// Unregisters a <see cref="Kamilla.Network.Viewing.Plugins.PluginCommand"/>.
+        /// </summary>
+        /// <param name="command">
+        /// The <see cref="Kamilla.Network.Viewing.Plugins.PluginCommand"/> that should be unregistered.
+        /// </param>
+        /// <exception cref="System.ArgumentNullException">
+        /// <c>command</c> is null.
+        /// </exception>
+        /// <exception cref="System.ArgumentException">
+        /// The provided <see cref="Kamilla.Network.Viewing.Plugins.PluginCommand"/> is not
+        /// registered with the current <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase"/>.
+        /// </exception>
+        public abstract void UnregisterPluginCommand(PluginCommand command);
+
+        #region Events
         /// <summary>
         /// Occurs when the <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase.CurrentProtocol"/>
         /// property changes.
@@ -92,6 +117,11 @@ namespace Kamilla.Network.Viewing
 
         #region Properties
         /// <summary>
+        /// Retrieves the object that is responsible for the user interface. This value can be null.
+        /// </summary>
+        public abstract object InterfaceObject { get; }
+
+        /// <summary>
         /// Gets the currently viewed <see cref="Kamilla.Network.Logging.NetworkLog"/>. This value can be null.
         /// </summary>
         public abstract NetworkLog CurrentLog { get; }
@@ -105,11 +135,6 @@ namespace Kamilla.Network.Viewing
         /// Gets the collection of items currently loaded.
         /// </summary>
         public abstract IEnumerable<ViewerItem> Items { get; }
-
-        /// <summary>
-        /// Retrieves an object that contains style information. This value can be null.
-        /// </summary>
-        public abstract object Style { get; }
 
         /// <summary>
         /// Gets the handle of the viewer window. This value can be <see cref="System.IntPtr.Zero"/>.

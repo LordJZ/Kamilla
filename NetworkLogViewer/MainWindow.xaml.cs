@@ -17,13 +17,14 @@ using Kamilla.Network.Logging;
 using Kamilla.Network.Parsing;
 using Kamilla.Network.Protocols;
 using Kamilla.Network.Viewing;
+using Kamilla.Network.Viewing.Plugins;
 using Kamilla.WPF;
 using Microsoft.Win32;
 using NetworkLogViewer.ViewTabs;
 
 namespace NetworkLogViewer
 {
-    partial class MainWindow : Window
+    partial class MainWindow : Window, INotifyStyleChanged
     {
         ViewerImplementation m_implementation;
         internal ViewerImplementation Implementation { get { return m_implementation; } }
@@ -189,11 +190,14 @@ namespace NetworkLogViewer
         #endregion
 
         #region Implementation Interop
+        public event EventHandler StyleChanged;
+
         protected override void OnStyleChanged(Style oldStyle, Style newStyle)
         {
             base.OnStyleChanged(oldStyle, newStyle);
 
-            m_implementation.OnStyleChanged(oldStyle, newStyle);
+            if (this.StyleChanged != null)
+                this.StyleChanged(this, EventArgs.Empty);
         }
 
         internal Protocol CurrentProtocol
@@ -519,6 +523,7 @@ namespace NetworkLogViewer
             TypeManager.Initialize();
             ProtocolManager.Initialize();
             NetworkLogFactory.Initialize();
+            PluginManager.Initialize();
             InitializeProtocols();
             InitializeLanguages();
             m_implementation.LoadSettings();
@@ -527,6 +532,7 @@ namespace NetworkLogViewer
                 _.ui_miAutoDropCache.IsChecked = _.m_implementation.EnableDeallocQueue;
                 _.ui_miAutoParse.IsChecked = _.m_implementation.AutoParse;
             });
+            m_implementation.InitializePlugins();
         }
 
         private void ui_loadingWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -1342,6 +1348,22 @@ namespace NetworkLogViewer
                 ui_miSaveParserOutput.IsEnabled = haveProtocolAndLog;
                 ui_miSaveTextContents.IsEnabled = haveProtocolAndLog;
             });
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!e.Handled)
+            {
+                foreach (MenuItem item in ui_miPlugins.Items)
+                {
+                    var command = (PluginCommand)item.Tag;
+                    if (command.Gesture.Matches(sender, e))
+                    {
+                        command.Callback();
+                        e.Handled = true;
+                    }
+                }
+            }
         }
     }
 }

@@ -38,7 +38,7 @@ namespace NetworkLogViewer
 
             m_window = window;
             this.Style = window.Style;
-            window.Implementation.StyleChanged += (o, e) => this.Style = this.Owner.Style;
+            window.StyleChanged += (o, e) => this.Style = this.Owner.Style;
             window.Implementation.ProtocolChanged +=
                 new ProtocolChangedEventHandler(Implementation_ProtocolChanged);
 

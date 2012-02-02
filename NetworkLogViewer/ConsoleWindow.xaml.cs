@@ -27,7 +27,7 @@ namespace NetworkLogViewer
 
             m_window = window;
             this.Style = window.Style;
-            window.Implementation.StyleChanged += (o, e) => this.Style = m_window.Style;
+            window.StyleChanged += (o, e) => this.Style = m_window.Style;
             window.Activated += new EventHandler(MainWindow_Activated);
 
             ConsoleWriter.ConsoleWrite += new ConsoleWriteEventHandler(ConsoleWriter_ConsoleWrite);
@@ -73,7 +73,6 @@ namespace NetworkLogViewer
                     inlines.Remove(inlines.FirstInline);
 
                 ui_tbMain.EndChange();
-                ui_tbMain.ScrollToEnd();
             });
         }
 

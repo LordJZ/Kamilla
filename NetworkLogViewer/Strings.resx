@@ -427,4 +427,7 @@
   <data name="SearchString2RegexFailed" xml:space="preserve">
     <value>Failed to convert string '{0}' to a regular expression.</value>
   </data>
+  <data name="Menu_Plugins" xml:space="preserve">
+    <value>Plugins</value>
+  </data>
 </root>

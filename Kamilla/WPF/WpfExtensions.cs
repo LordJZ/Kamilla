@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Text;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace Kamilla.WPF
@@ -141,6 +143,31 @@ namespace Kamilla.WPF
                 // Manual closure implementation
                 window.Activated += new SafeSetOwnerLambda(window, owner).Window_Activated;
             }
+        }
+
+        public static string GetDisplayString(this KeyGesture gesture)
+        {
+            var mods = gesture.Modifiers;
+
+            if (mods != ModifierKeys.None)
+            {
+                var builder = new StringBuilder(32);
+
+                if ((mods & ModifierKeys.Windows) != 0)
+                    builder.Append("Win+");
+                if ((mods & ModifierKeys.Alt) != 0)
+                    builder.Append("Alt+");
+                if ((mods & ModifierKeys.Control) != 0)
+                    builder.Append("Ctrl+");
+                if ((mods & ModifierKeys.Shift) != 0)
+                    builder.Append("Shift+");
+
+                builder.Append(gesture.Key.ToString());
+
+                return builder.ToString();
+            }
+
+            return gesture.Key.ToString();
         }
     }
 }

@@ -116,13 +116,11 @@ namespace Kamilla.Network.Protocols
 
             s_initialized = true;
 
-            var protocolTypes = new List<Type>(10);
-            var parserTypes = new List<Type>(1000);
-            //var pluginTypes = new List<Type>(30);
+            var protocolTypes = new List<Type>(16);
+            var parserTypes = new List<Type>(2048);
 
             var basePacketParser = typeof(PacketParser);
             var baseProtocol = typeof(Protocol);
-            //var baseViewerPlugin = typeof(NetworkLogViewerBasePlugin);
 
             foreach (var type in TypeManager.Types)
             {
@@ -130,8 +128,6 @@ namespace Kamilla.Network.Protocols
                     protocolTypes.Add(type);
                 else if (type.IsSubclassOf(basePacketParser))
                     parserTypes.Add(type);
-                //else if (type.IsSubclassOf(baseViewerPlugin))
-                //    pluginTypes.Add(type);
             }
 
             // Load Protocols
@@ -171,26 +167,6 @@ namespace Kamilla.Network.Protocols
                     protocol.m_parsers.Add(attr.Opcode, type);
                 }
             }
-
-            // Load Plugins
-            //var pluginAttrType = typeof(NetworkLogViewerPluginAttribute);
-            //foreach (var type in pluginTypes)
-            //{
-            //    var attrs = (NetworkLogViewerPluginAttribute[])type.GetCustomAttributes(pluginAttrType, true);
-
-            //    foreach (var attr in attrs)
-            //    {
-            //        var protocol = FindWrapper(attr.ProtocolType);
-            //        if (protocol == null)
-            //        {
-            //            Console.WriteLine("Error: Cannot find protocol '{0}' for plugin type '{1}'",
-            //                protocol, type);
-            //            continue;
-            //        }
-
-            //        // TODO: add to protocol
-            //    }
-            //}
         }
     }
 }

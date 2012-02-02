@@ -346,6 +346,15 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Plugins.
+        /// </summary>
+        public static string Menu_Plugins {
+            get {
+                return ResourceManager.GetString("Menu_Plugins", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Protocols.
         /// </summary>
         public static string Menu_Protocols {
