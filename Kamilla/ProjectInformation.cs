@@ -13,7 +13,7 @@ namespace Kamilla
         /// <summary>
         /// Indicates the version of the base libraries.
         /// </summary>
-        public const string Version = "4.0.1.0";
+        public const string Version = "4.0.2.0";
 
         /// <summary>
         /// Indicates the title name of the project.
