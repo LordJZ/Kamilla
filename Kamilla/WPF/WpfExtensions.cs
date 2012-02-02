@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Threading;
 
 namespace Kamilla.WPF
@@ -103,6 +104,43 @@ namespace Kamilla.WPF
                 return (TResult)dispatcherObject.Dispatcher.Invoke(func, dispatcherObject);
 
             return func(dispatcherObject);
+        }
+
+        class SafeSetOwnerLambda
+        {
+            Window m_window;
+            Window m_owner;
+
+            public SafeSetOwnerLambda(Window window, Window owner)
+            {
+                m_window = window;
+                m_owner = owner;
+            }
+
+            public void Window_Activated(object sender, EventArgs e)
+            {
+                m_window.Owner = m_owner;
+                m_window.Activated -= Window_Activated;
+            }
+        }
+
+        public static void SafeSetOwner(this Window window, Window owner)
+        {
+            if (window == null)
+                throw new ArgumentNullException("window");
+
+            if (window == owner || owner.Owner == window)
+                throw new ArgumentException();
+
+            try
+            {
+                window.Owner = owner;
+            }
+            catch
+            {
+                // Manual closure implementation
+                window.Activated += new SafeSetOwnerLambda(window, owner).Window_Activated;
+            }
         }
     }
 }
