@@ -57,8 +57,8 @@ namespace NetworkLogViewer
 
             m_implementation = new ViewerImplementation(this);
 
-            m_implementation.ProtocolChanged += new ProtocolChangedEventHandler(MainWindow_ProtocolChanged);
-            m_implementation.NetworkLogChanged += new NetworkLogChangedEventHandler(MainWindow_NetworkLogChanged);
+            m_implementation.ProtocolChanged += new EventHandler(MainWindow_ProtocolChanged);
+            m_implementation.NetworkLogChanged += new EventHandler(MainWindow_NetworkLogChanged);
 
             InitializeComponent();
 
@@ -505,7 +505,7 @@ namespace NetworkLogViewer
             }
         }
 
-        void MainWindow_NetworkLogChanged(object sender, NetworkLogChangedEventArgs e)
+        void MainWindow_NetworkLogChanged(object sender, EventArgs e)
         {
             this.ThreadSafeBegin(_ =>
             {
@@ -586,7 +586,7 @@ namespace NetworkLogViewer
             this.CurrentProtocol = protocol;
         }
 
-        void MainWindow_ProtocolChanged(object sender, ProtocolChangedEventArgs e)
+        void MainWindow_ProtocolChanged(object sender, EventArgs e)
         {
             this.ThreadSafeBegin(_ =>
             {

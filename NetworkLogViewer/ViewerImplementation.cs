@@ -189,7 +189,7 @@ namespace NetworkLogViewer
             });
 
             if (this.ProtocolChanged != null)
-                this.ProtocolChanged(this, new ProtocolChangedEventArgs(old, value));
+                this.ProtocolChanged(this, EventArgs.Empty);
 
             this.DropCache();
         }
@@ -210,7 +210,7 @@ namespace NetworkLogViewer
                 value.PacketAdded += m_packetAddedHandler;
 
             if (this.NetworkLogChanged != null)
-                this.NetworkLogChanged(this, new NetworkLogChangedEventArgs(old, value));
+                this.NetworkLogChanged(this, EventArgs.Empty);
         }
 
         protected override void OnParsingDone(ViewerItem item)
@@ -345,14 +345,14 @@ namespace NetworkLogViewer
         /// 
         /// Handlers of this event are called from any suiting thread.
         /// </summary>
-        public override event ProtocolChangedEventHandler ProtocolChanged;
+        public override event EventHandler ProtocolChanged;
 
         /// <summary>
         /// Occurs when the <see cref="NetworkLogViewer.MainWindow.CurrentLog"/> property changes.
         /// 
         /// Handlers of this event are called from any suiting thread.
         /// </summary>
-        public override event NetworkLogChangedEventHandler NetworkLogChanged;
+        public override event EventHandler NetworkLogChanged;
 
         /// <summary>
         /// Occurs when data of a <see cref="Kamilla.Network.Viewing.ViewerItem"/> is queried.

@@ -81,7 +81,7 @@ namespace Kamilla.Network.Viewing
         /// 
         /// Handlers of this event should be called from any suiting thread.
         /// </summary>
-        public abstract event ProtocolChangedEventHandler ProtocolChanged;
+        public abstract event EventHandler ProtocolChanged;
 
         /// <summary>
         /// Occurs when the <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase.CurrentLog"/>
@@ -89,7 +89,7 @@ namespace Kamilla.Network.Viewing
         /// 
         /// Handlers of this event should be called from any suiting thread.
         /// </summary>
-        public abstract event NetworkLogChangedEventHandler NetworkLogChanged;
+        public abstract event EventHandler NetworkLogChanged;
 
         /// <summary>
         /// Occurs when data of a <see cref="Kamilla.Network.Viewing.ViewerItem"/> is queried.

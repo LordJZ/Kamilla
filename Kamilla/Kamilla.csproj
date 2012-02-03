@@ -100,11 +100,9 @@
     <Compile Include="Network\TransferDirectionExtensions.cs" />
     <Compile Include="Network\Viewing\NetworkLogViewerBase.cs" />
     <Compile Include="Network\Viewing\Plugins\INetworkLogViewerPlugin.cs" />
-    <Compile Include="Network\Viewing\NetworkLogChangedEventArgs.cs" />
     <Compile Include="Network\Viewing\Plugins\PluginCommand.cs" />
     <Compile Include="Network\Viewing\Plugins\PluginManager.cs" />
     <Compile Include="Network\Viewing\ViewerItemEventArgs.cs" />
-    <Compile Include="Network\Viewing\ProtocolChangedEventArgs.cs" />
     <Compile Include="Network\Viewing\ViewerItem.cs" />
     <Compile Include="ProjectInformation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

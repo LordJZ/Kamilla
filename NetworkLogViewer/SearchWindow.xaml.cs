@@ -31,8 +31,7 @@ namespace NetworkLogViewer
             m_window = window;
             this.Style = window.Style;
             window.StyleChanged += (o, e) => this.Style = this.Owner.Style;
-            window.Implementation.ProtocolChanged +=
-                new ProtocolChangedEventHandler(Implementation_ProtocolChanged);
+            window.Implementation.ProtocolChanged += new EventHandler(Implementation_ProtocolChanged);
 
             if (window.CurrentProtocol != null && window.CurrentProtocol.OpcodesEnumType != null)
                 this.UpdateOpcodeNames();
@@ -68,9 +67,10 @@ namespace NetworkLogViewer
             ui_cbAllowSpecialChars.IsChecked = Configuration.GetValue("Chars", false);
         }
 
-        void Implementation_ProtocolChanged(object sender, ProtocolChangedEventArgs e)
+        void Implementation_ProtocolChanged(object sender, EventArgs e)
         {
-            var type = e.NewProtocol != null ? e.NewProtocol.OpcodesEnumType : null;
+            var newProtocol = m_window.CurrentProtocol;
+            var type = newProtocol != null ? newProtocol.OpcodesEnumType : null;
             if (type == null)
             {
                 ui_rbOpcodes.IsEnabled = false;
