@@ -186,12 +186,18 @@ namespace NetworkLogViewer
 
                 if (value != null)
                     value.Load(this);
+
+                this.DropCache();
             });
 
             if (this.ProtocolChanged != null)
                 this.ProtocolChanged(this, EventArgs.Empty);
+        }
 
-            this.DropCache();
+        internal void HookLog(NetworkLog value)
+        {
+            if (value != null)
+                value.PacketAdded += m_packetAddedHandler;
         }
 
         internal void SetLog(NetworkLog value)
@@ -206,8 +212,6 @@ namespace NetworkLogViewer
                 old.PacketAdded -= m_packetAddedHandler;
 
             m_currentLog = value;
-            if (value != null)
-                value.PacketAdded += m_packetAddedHandler;
 
             if (this.NetworkLogChanged != null)
                 this.NetworkLogChanged(this, EventArgs.Empty);
