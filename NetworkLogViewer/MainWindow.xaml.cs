@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -451,7 +452,8 @@ namespace NetworkLogViewer
             m_implementation.HookLog(log);
 
             ui_readingWorker.RunWorkerAsync(log);
-            this.LoadingStatePush(new LoadingState(string.Format(Strings.LoadingFile, filename)));
+            this.LoadingStatePush(new LoadingState(string.Format(Strings.LoadingFile, filename),
+                _ => _.ui_readingWorker.CancelAsync()));
         }
 
         private void ui_readingWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -461,21 +463,50 @@ namespace NetworkLogViewer
             var sw = Stopwatch.StartNew();
             var log = (NetworkLog)e.Argument;
 
-            log.OpenForReading(m_currentFile);
-
-            if (log.Capacity > m_implementation.m_items.Capacity)
-                m_implementation.m_items.Capacity = log.Capacity;
-
-            m_implementation.m_items.SuspendUpdating();
-            log.Read(progress =>
+            try
             {
-                LoadingStateSetProgress(progress);
-            });
+                log.OpenForReading(m_currentFile);
+
+                // Check for cancel after long operation
+                if (!ui_readingWorker.CancellationPending)
+                {
+                    if (log.Capacity > m_implementation.m_items.Capacity)
+                        m_implementation.m_items.Capacity = log.Capacity;
+
+                    m_implementation.m_items.SuspendUpdating();
+                    log.Read(progress =>
+                    {
+                        if (ui_readingWorker.CancellationPending)
+                            throw new OperationCanceledException();
+
+                        LoadingStateSetProgress(progress);
+                    });
+                }
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            catch
+            {
+                if (!ui_readingWorker.CancellationPending)
+                    throw;
+            }
+            finally
+            {
+                log.CloseStream();
+                sw.Stop();
+            }
+
+            // Check for cancel after long operation
+            if (ui_readingWorker.CancellationPending)
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            Console.WriteLine("Finished reading file in {0}", sw.Elapsed);
 
             var wrapper = log.SuggestedProtocol ?? ProtocolManager.FindWrapper(typeof(DefaultProtocol));
-
-            sw.Stop();
-            Console.WriteLine("Finished reading file in {0}", sw.Elapsed);
 
             // This way we also execute the event handlers from the worker thread.
             Console.WriteLine("Debug: Changing current log and/or protocol...");
@@ -492,14 +523,19 @@ namespace NetworkLogViewer
 
         private void ui_readingWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            this.CurrentLog.CloseStream();
+            LoadingStatePop();
+
+            if (e.Cancelled)
+            {
+                this.CloseFile();
+                return;
+            }
 
             var sw = Stopwatch.StartNew();
             m_implementation.m_items.ResumeUpdating();
             m_implementation.m_items.Update();
             sw.Stop();
             Console.WriteLine("Updated items in {0}", sw.Elapsed);
-            LoadingStatePop();
 
             if (e.Error != null)
             {
