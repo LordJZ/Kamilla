@@ -446,9 +446,8 @@ namespace NetworkLogViewer
             this.CloseFile();
 
             m_currentFile = filename;
-            this.CurrentLog = log;
 
-            ui_readingWorker.RunWorkerAsync();
+            ui_readingWorker.RunWorkerAsync(log);
             this.LoadingStatePush(new LoadingState(string.Format(Strings.LoadingFile, filename)));
         }
 
@@ -457,22 +456,30 @@ namespace NetworkLogViewer
             UICulture.Initialize();
 
             var sw = Stopwatch.StartNew();
+            var log = (NetworkLog)e.Argument;
 
-            this.CurrentLog.OpenForReading(m_currentFile);
+            log.OpenForReading(m_currentFile);
 
-            if (this.CurrentLog.Capacity > m_implementation.m_items.Capacity)
-                m_implementation.m_items.Capacity = this.CurrentLog.Capacity;
+            if (log.Capacity > m_implementation.m_items.Capacity)
+                m_implementation.m_items.Capacity = log.Capacity;
 
             m_implementation.m_items.SuspendUpdating();
-            this.CurrentLog.Read(progress =>
+            log.Read(progress =>
             {
                 LoadingStateSetProgress(progress);
             });
 
-            e.Result = this.CurrentLog.SuggestedProtocol ?? ProtocolManager.FindWrapper(typeof(DefaultProtocol));
+            e.Result = log.SuggestedProtocol ?? ProtocolManager.FindWrapper(typeof(DefaultProtocol));
 
             sw.Stop();
-            Console.WriteLine("Reading Worker finished in {0}", sw.Elapsed);
+            Console.WriteLine("Finished reading file in {0}", sw.Elapsed);
+
+            // This way we also execute the event handlers from the worker thread.
+            Console.WriteLine("Debug: Changing network log...");
+            sw.Restart();
+            this.CurrentLog = log;
+            sw.Stop();
+            Console.WriteLine("Debug: Network Log changed in {0}", sw.Elapsed);
         }
 
         private void ui_readingWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
