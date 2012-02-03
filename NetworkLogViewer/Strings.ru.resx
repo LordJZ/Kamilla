@@ -430,4 +430,12 @@
   <data name="Menu_Plugins" xml:space="preserve">
     <value>Плагины</value>
   </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>Файл не найден.
+
+{0}</value>
+  </data>
+  <data name="Menu_RecentFiles" xml:space="preserve">
+    <value>Последние файлы</value>
+  </data>
 </root>

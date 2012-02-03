@@ -23,6 +23,8 @@
         <Separator/>
         <MenuItem Header="{x:Static viewer:Strings.Menu_OpenConsole}" InputGestureText="F10" Command="viewer:NetworkLogViewerCommands.OpenConsole"/>
         <Separator/>
+        <MenuItem Header="{x:Static viewer:Strings.Menu_RecentFiles}" Name="ui_miRecentFiles"/>
+        <Separator/>
         <MenuItem Header="{x:Static viewer:Strings.Menu_Exit}" Command="Close"/>
       </MenuItem>
 

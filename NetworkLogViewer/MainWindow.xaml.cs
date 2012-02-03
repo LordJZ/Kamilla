@@ -378,6 +378,7 @@ namespace NetworkLogViewer
                 m_implementation.SaveSettings();
                 Configuration.SetValue("Number of Views", m_currentNViews);
                 this.SaveCurrentViews();
+                this.SaveRecentFiles();
                 Configuration.SetValue("Vertical Splitter", new[] {
                     this.VerticalGrid.RowDefinitions[1].Height.Value,
                     this.VerticalGrid.RowDefinitions[2].Height.Value,
@@ -467,9 +468,11 @@ namespace NetworkLogViewer
             this.CloseFile();
 
             m_currentFile = filename;
-            this.ThreadSafeBegin(
-                _ => _.Title = Path.GetFileName(filename) + " – " + Strings.NetworkLogViewer_Title
-                );
+            this.ThreadSafeBegin(_ =>
+            {
+                _.AddRecentFile(filename);
+                _.Title = Path.GetFileName(filename) + " – " + Strings.NetworkLogViewer_Title;
+            });
 
             m_implementation.HookLog(log);
 
@@ -602,6 +605,7 @@ namespace NetworkLogViewer
                 _.ui_miAutoDropCache.IsChecked = _.m_implementation.EnableDeallocQueue;
                 _.ui_miAutoParse.IsChecked = _.m_implementation.AutoParse;
             });
+            InitializeRecentFilesMenu();
             m_implementation.InitializePlugins();
         }
 
@@ -1405,6 +1409,105 @@ namespace NetworkLogViewer
             }
             else
                 MessageWindow.Show(this, Strings.Menu_Search, Strings.Search_NotFound);
+        }
+        #endregion
+
+        #region Recent Files
+        const int maxRecentFiles = 10;
+        const int maxRecentFileLength = 120;
+        LinkedList<string> m_recentFiles;
+
+        void InitializeRecentFilesMenu()
+        {
+            var cumulative = Configuration.GetValue("RecentFiles", string.Empty);
+            var arr = cumulative.Split(new char[] { Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries);
+
+            m_recentFiles = new LinkedList<string>(arr);
+            while (m_recentFiles.Count > maxRecentFiles)
+                m_recentFiles.RemoveLast();
+
+            UpdateRecentFilesMenu();
+        }
+
+        void UpdateRecentFilesMenu()
+        {
+            this.ThreadSafeBegin(x =>
+            {
+                ui_miRecentFiles.Items.Clear();
+                ui_miRecentFiles.IsEnabled = m_recentFiles.Count > 0;
+
+                int i = 0;
+                foreach (var path in m_recentFiles)
+                {
+                    ++i;
+
+                    var item = new MenuItem();
+                    item.Tag = path;
+                    if (path.Length > maxRecentFileLength)
+                    {
+                        char sep = Path.DirectorySeparatorChar;
+                        var parts = path.Split(new char[] { sep }, StringSplitOptions.RemoveEmptyEntries);
+                        var builder = new StringBuilder(150);
+                        builder.Append(parts[0]).Append(sep).Append("...");
+                        int j = parts.Length;
+                        int len = builder.Length;
+                        while (len < maxRecentFileLength)
+                        {
+                            len += parts[--j].Length + 1;
+                            builder.Append(sep).Append(parts[j]);
+                        }
+
+                        item.Header = i + ". " + builder.ToString();
+                    }
+                    else
+                        item.Header = i + ". " + path;
+
+                    item.Click += new RoutedEventHandler(ui_recentFileMenuItem_Click);
+                    ui_miRecentFiles.Items.Add(item);
+                }
+            });
+        }
+
+        void ui_recentFileMenuItem_Click(object sender, EventArgs e)
+        {
+            var item = (MenuItem)sender;
+            var filename = (string)item.Tag;
+
+            if (!File.Exists(filename))
+                MessageWindow.Show(this, Strings.Error, string.Format(Strings.FileNotFound, filename));
+            else
+                OpenFile(filename);
+        }
+
+        void AddRecentFile(string filename)
+        {
+            filename = Path.GetFullPath(filename);
+
+            if (m_recentFiles.Count > 0)
+            {
+                // dummy rebuilding
+                if (m_recentFiles.First.Value == filename)
+                    return;
+
+                if (!m_recentFiles.Remove(filename) && m_recentFiles.Count >= maxRecentFiles)
+                    m_recentFiles.RemoveLast();
+            }
+
+            m_recentFiles.AddFirst(filename);
+
+            UpdateRecentFilesMenu();
+        }
+
+        void SaveRecentFiles()
+        {
+            if (m_recentFiles != null)
+            {
+                var builder = new StringBuilder(256);
+                foreach (var filename in m_recentFiles)
+                    builder.Append(filename).Append(Path.PathSeparator);
+
+                Configuration.SetValue("RecentFiles", builder.ToString());
+            }
         }
         #endregion
 

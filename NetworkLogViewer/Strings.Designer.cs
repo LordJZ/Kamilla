@@ -128,6 +128,17 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File not found.
+        ///
+        ///{0}.
+        /// </summary>
+        public static string FileNotFound {
+            get {
+                return ResourceManager.GetString("FileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Packet Number ({0} – {1}):.
         /// </summary>
         public static string GoTo_PacketNumber {
@@ -360,6 +371,15 @@ namespace NetworkLogViewer {
         public static string Menu_Protocols {
             get {
                 return ResourceManager.GetString("Menu_Protocols", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recent Files.
+        /// </summary>
+        public static string Menu_RecentFiles {
+            get {
+                return ResourceManager.GetString("Menu_RecentFiles", resourceCulture);
             }
         }
         
