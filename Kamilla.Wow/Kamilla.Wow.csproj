@@ -57,6 +57,7 @@
     <Compile Include="Network\Protocols\Wow\Genders.cs" />
     <Compile Include="Network\Protocols\Wow\Races.cs" />
     <Compile Include="Network\Protocols\Wow\StreamHandlerExtensions.cs" />
+    <Compile Include="Network\Protocols\Wow\VectorPackingExtensions.cs" />
     <Compile Include="Network\Protocols\Wow\WowLocales.cs" />
     <Compile Include="Network\Protocols\Wow\WowPacket.cs" />
     <Compile Include="Network\Protocols\Wow\WowStrings.Designer.cs">
