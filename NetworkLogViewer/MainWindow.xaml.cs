@@ -507,10 +507,13 @@ namespace NetworkLogViewer
 
         void MainWindow_NetworkLogChanged(object sender, NetworkLogChangedEventArgs e)
         {
-            var newLog = e.NewLog;
-            ui_sbiNetworkLog.Content = newLog != null ? newLog.Name : Strings.NoNetworkLog;
+            this.ThreadSafeBegin(_ =>
+            {
+                var newLog = _.CurrentLog;
+                _.ui_sbiNetworkLog.Content = newLog != null ? newLog.Name : Strings.NoNetworkLog;
 
-            UpdateUIAsProtocolOrLogChanges();
+                _.UpdateUIAsProtocolOrLogChanges();
+            });
         }
         #endregion
 
@@ -585,30 +588,30 @@ namespace NetworkLogViewer
 
         void MainWindow_ProtocolChanged(object sender, ProtocolChangedEventArgs e)
         {
-            var newProtocol = e.NewProtocol;
-            var newProtocolWrapper = (ProtocolWrapper)null;
-            if (newProtocol != null)
-                newProtocolWrapper = newProtocol.Wrapper;
-
             this.ThreadSafeBegin(_ =>
             {
-                UpdateUIAsProtocolOrLogChanges();
+                var newProtocol = _.CurrentProtocol;
+                var newProtocolWrapper = (ProtocolWrapper)null;
+                if (newProtocol != null)
+                    newProtocolWrapper = newProtocol.Wrapper;
+
+                _.UpdateUIAsProtocolOrLogChanges();
 
                 if (newProtocol != null)
                 {
-                    ui_sbiProtocol.Content = newProtocol.Name;
-                    ui_lvPackets.View = newProtocol.View;
+                    _.ui_sbiProtocol.Content = newProtocol.Name;
+                    _.ui_lvPackets.View = newProtocol.View;
                 }
                 else
                 {
-                    ui_sbiProtocol.Content = Strings.NoProtocol;
-                    ui_lvPackets.View = null;
+                    _.ui_sbiProtocol.Content = Strings.NoProtocol;
+                    _.ui_lvPackets.View = null;
                 }
 
-                foreach (MenuItem itrItem in ui_miProtocol.Items)
+                foreach (MenuItem itrItem in _.ui_miProtocol.Items)
                     itrItem.IsChecked = newProtocolWrapper == (ProtocolWrapper)itrItem.Tag;
 
-                this.UpdateViews();
+                _.UpdateViews();
             });
         }
         #endregion
@@ -1347,14 +1350,11 @@ namespace NetworkLogViewer
 
         void UpdateUIAsProtocolOrLogChanges()
         {
-            this.ThreadSafeBegin(_ =>
-            {
-                bool haveProtocolAndLog = _.CurrentProtocol != null && _.CurrentLog != null;
+            bool haveProtocolAndLog = this.CurrentProtocol != null && this.CurrentLog != null;
 
-                ui_miSaveBinaryContents.IsEnabled = haveProtocolAndLog;
-                ui_miSaveParserOutput.IsEnabled = haveProtocolAndLog;
-                ui_miSaveTextContents.IsEnabled = haveProtocolAndLog;
-            });
+            ui_miSaveBinaryContents.IsEnabled = haveProtocolAndLog;
+            ui_miSaveParserOutput.IsEnabled = haveProtocolAndLog;
+            ui_miSaveTextContents.IsEnabled = haveProtocolAndLog;
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
