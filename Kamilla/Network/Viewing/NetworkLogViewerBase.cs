@@ -134,7 +134,7 @@ namespace Kamilla.Network.Viewing
         /// <summary>
         /// Gets the collection of items currently loaded.
         /// </summary>
-        public abstract IEnumerable<ViewerItem> Items { get; }
+        public abstract IList<ViewerItem> Items { get; }
 
         /// <summary>
         /// Gets the handle of the viewer window. This value can be <see cref="System.IntPtr.Zero"/>.

@@ -328,7 +328,7 @@ namespace NetworkLogViewer
         /// <summary>
         /// Gets the collection of items currently loaded.
         /// </summary>
-        public override IEnumerable<ViewerItem> Items { get { return m_items; } }
+        public override IList<ViewerItem> Items { get { return m_items; } }
 
         public override ViewerItem SelectedItem { get { return m_window.SelectedItem; } }
 
