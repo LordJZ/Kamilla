@@ -61,7 +61,7 @@ namespace NetworkLogViewer
                 var tokens = text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var tok in tokens)
                 {
-                    var run = new Run(tok.Trim());
+                    var run = new Run(tok);
                     if (brush != null)
                         run.Foreground = brush;
 

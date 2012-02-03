@@ -86,7 +86,7 @@ namespace Kamilla
                 OnConsoleWrite(text);
 
                 if (m_writer != null)
-                    m_writer.WriteLine(string.Concat("[", DateTime.Now.ToString("HH:mm:ss.fff"), "] ", text).Trim());
+                    m_writer.WriteLine(string.Concat("[", DateTime.Now.ToString("HH:mm:ss.fff"), "] ", text));
             }
         }
 
