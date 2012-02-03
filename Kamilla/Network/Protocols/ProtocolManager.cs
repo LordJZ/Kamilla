@@ -35,22 +35,22 @@ namespace Kamilla.Network.Protocols
         /// <summary>
         /// Finds a <see cref="Kamilla.Network.Protocols.Protocol"/> with the specified typename.
         /// </summary>
-        /// <param name="typename">
-        /// Typename of the <see cref="Kamilla.Network.Protocols.ProtocolWrapper"/>.
+        /// <param name="codename">
+        /// Code name of the <see cref="Kamilla.Network.Protocols.ProtocolWrapper"/>.
         /// </param>
         /// <returns>
-        /// <see cref="Kamilla.Network.Protocols.ProtocolWrapper"/> of the
-        /// specified <see cref="System.Type"/> if found; otherwise, null.
+        /// The <see cref="Kamilla.Network.Protocols.ProtocolWrapper"/> with the
+        /// specified code name if found; otherwise, null.
         /// </returns>
         /// <exception cref="System.ArgumentNullException">
-        /// typename is null.
+        /// <c>codename</c> is null.
         /// </exception>
-        public static ProtocolWrapper FindWrapper(string typename)
+        public static ProtocolWrapper FindWrapper(string codename)
         {
-            if (typename == null)
+            if (codename == null)
                 throw new ArgumentNullException();
 
-            return FindWrapper(wrapper => wrapper.TypeName == typename);
+            return FindWrapper(wrapper => wrapper.CodeName == codename);
         }
 
         /// <summary>

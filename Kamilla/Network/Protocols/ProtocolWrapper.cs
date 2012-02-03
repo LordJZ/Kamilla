@@ -15,8 +15,10 @@ namespace Kamilla.Network.Protocols
         {
             this.Index = index;
             this.Type = type;
-            this.TypeName = this.Type.Name;
-            this.Name = this.Activate().Name;
+
+            var dummy = this.Activate();
+            this.CodeName = dummy.CodeName;
+            this.Name = dummy.Name;
         }
 
         /// <summary>
@@ -42,16 +44,16 @@ namespace Kamilla.Network.Protocols
         public readonly Type Type;
 
         /// <summary>
-        /// Gets the name of the <see cref="System.Type"/>
-        /// of the underlying <see cref="Kamilla.Network.Protocols.Protocol"/>.
-        /// </summary>
-        public readonly string TypeName;
-
-        /// <summary>
         /// Gets the localized name of the underlying
         /// <see cref="Kamilla.Network.Protocols.Protocol"/>.
         /// </summary>
         public readonly string Name;
+
+        /// <summary>
+        /// Gets the code name of the underlying
+        /// <see cref="Kamilla.Network.Protocols.Protocol"/>.
+        /// </summary>
+        public readonly string CodeName;
 
         /// <summary>
         /// Creates a new instance of the underlying <see cref="Kamilla.Network.Protocols.Protocol"/>.

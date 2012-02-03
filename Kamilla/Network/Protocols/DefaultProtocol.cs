@@ -139,6 +139,11 @@ namespace Kamilla.Network.Protocols
             get { return NetworkStrings.Protocol_Default; }
         }
 
+        public override string CodeName
+        {
+            get { return "Default"; }
+        }
+
         public override Type OpcodesEnumType
         {
             get { return null; }

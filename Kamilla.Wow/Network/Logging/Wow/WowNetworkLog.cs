@@ -117,8 +117,15 @@ namespace Kamilla.Network.Logging.Wow
                 14976, // World of Warcraft patch 4.3.0 PTR
                 14980, // World of Warcraft patch 4.3.0 PTR
                 14995, // World of Warcraft patch 4.3.0 PTR
-                15005, // World of Warcraft patch 4.3.0 PTR
-                15050, // World of Warcraft patch 4.3.0a PTR
+                15005, // World of Warcraft patch 4.3.0
+                15050, // World of Warcraft patch 4.3.0a
+            });
+            ChainAdd(new Version(4, 3, 2), new uint[] {
+                15148, // World of Warcraft patch 4.3.2 PTR
+                15171, // World of Warcraft patch 4.3.2 PTR
+                15176, // World of Warcraft patch 4.3.2 PTR
+                15201, // World of Warcraft patch 4.3.2 PTR
+                15211, // World of Warcraft patch 4.3.2
             });
 
             s_clientBuildInfos.Sort(new ClientBuildInfoComparer());
@@ -134,7 +141,7 @@ namespace Kamilla.Network.Logging.Wow
 
         protected Version GetClientBuildInfo(uint clientBuild)
         {
-            var latest = m_suggestedProtocol = ProtocolManager.FindWrapper("WowLatestProtocol");
+            var latest = m_suggestedProtocol = ProtocolManager.FindWrapper("WowLatest");
 
             if (clientBuild != 0)
             {
@@ -143,7 +150,7 @@ namespace Kamilla.Network.Logging.Wow
                 {
                     var info = s_clientBuildInfos[index];
 
-                    var protocol = ProtocolManager.FindWrapper("Wow" + info.LatestBuild + "Protocol");
+                    var protocol = ProtocolManager.FindWrapper("Wow" + info.LatestBuild);
                     if (protocol != null)
                         m_suggestedProtocol = protocol;
 

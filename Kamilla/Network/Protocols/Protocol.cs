@@ -33,6 +33,11 @@ namespace Kamilla.Network.Protocols
         /// </summary>
         public abstract string Name { get; }
 
+        /// <summary>
+        /// Gets the code name of the current <see cref="Kamilla.Network.Protocols.Protocol"/>.
+        /// </summary>
+        public abstract string CodeName { get; }
+
         public abstract ViewBase View { get; }
 
         protected virtual PacketParser InternalCreateParser(ViewerItem item)
