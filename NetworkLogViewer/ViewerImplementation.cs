@@ -186,6 +186,13 @@ namespace NetworkLogViewer
             if (m_currentProtocol == value)
                 return;
 
+            if (m_currentProtocol != null && value != null &&
+                m_currentProtocol.Wrapper == value.Wrapper)
+            {
+                Console.WriteLine("Error: Got same protocol {0}", value.Name);
+                return;
+            }
+
             this.StopParsing();
 
             var old = m_currentProtocol;

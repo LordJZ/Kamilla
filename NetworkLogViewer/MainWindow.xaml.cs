@@ -542,7 +542,7 @@ namespace NetworkLogViewer
             Console.WriteLine("Debug: Changing current log and/or protocol...");
             sw.Restart();
 
-            if (wrapper != null)
+            if (wrapper != null && this.CurrentProtocol.Wrapper != wrapper)
                 this.CurrentProtocol = wrapper.Activate();
 
             this.CurrentLog = log;
@@ -669,9 +669,10 @@ namespace NetworkLogViewer
             var item = (MenuItem)sender;
             var wrapper = (ProtocolWrapper)item.Tag;
 
-            var protocol = wrapper.Activate();
+            if (this.CurrentProtocol.Wrapper == wrapper)
+                return;
 
-            this.CurrentProtocol = protocol;
+            this.CurrentProtocol = wrapper.Activate();
         }
 
         void MainWindow_ProtocolChanged(object sender, EventArgs e)
