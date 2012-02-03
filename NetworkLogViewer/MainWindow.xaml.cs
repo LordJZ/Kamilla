@@ -433,6 +433,9 @@ namespace NetworkLogViewer
         {
             m_implementation.CloseFile();
             this.CurrentLog = null;
+            m_currentFile = null;
+
+            this.ThreadSafeBegin(_ => _.Title = Strings.NetworkLogViewer_Title);
         }
 
         void OpenFile(string filename)
@@ -464,6 +467,9 @@ namespace NetworkLogViewer
             this.CloseFile();
 
             m_currentFile = filename;
+            this.ThreadSafeBegin(
+                _ => _.Title = Path.GetFileName(filename) + " – " + Strings.NetworkLogViewer_Title
+                );
 
             m_implementation.HookLog(log);
 
