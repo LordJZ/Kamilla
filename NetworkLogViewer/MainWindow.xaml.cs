@@ -371,7 +371,6 @@ namespace NetworkLogViewer
             e.Cancel = false;
             ui_readingWorker.CancelAsync();
             ui_savingWorker.CancelAsync();
-            m_implementation.CloseFile();
 
             using (Configuration.SuspendSaving())
             {
@@ -379,6 +378,8 @@ namespace NetworkLogViewer
                 Configuration.SetValue("Number of Views", m_currentNViews);
                 this.SaveCurrentViews();
                 this.SaveRecentFiles();
+                Configuration.SetValue("Last File Name", m_currentFile ?? string.Empty);
+                Configuration.SetValue("Last File Position", ui_lvPackets.SelectedIndex);
                 Configuration.SetValue("Vertical Splitter", new[] {
                     this.VerticalGrid.RowDefinitions[1].Height.Value,
                     this.VerticalGrid.RowDefinitions[2].Height.Value,
@@ -388,6 +389,8 @@ namespace NetworkLogViewer
                 Configuration.SetValue("Window Width", this.Width);
                 Configuration.SetValue("Window Left", this.Left);
                 Configuration.SetValue("Window Top", this.Top);
+
+                m_implementation.CloseFile();
                 this.CurrentLog = null;
                 this.CurrentProtocol = null;
             }
@@ -439,7 +442,7 @@ namespace NetworkLogViewer
             this.ThreadSafeBegin(_ => _.Title = Strings.NetworkLogViewer_Title);
         }
 
-        void OpenFile(string filename)
+        void OpenFile(string filename, int pos = -1)
         {
             NetworkLog log;
             try
@@ -454,10 +457,10 @@ namespace NetworkLogViewer
             if (log == null)
                 throw new NotImplementedException("Select Network Log window is not implemented");
 
-            this.OpenFile(filename, log);
+            this.OpenFile(filename, log, pos);
         }
 
-        void OpenFile(string filename, NetworkLog log)
+        void OpenFile(string filename, NetworkLog log, int pos)
         {
             if (filename == null)
                 throw new ArgumentNullException("filename");
@@ -476,7 +479,7 @@ namespace NetworkLogViewer
 
             m_implementation.HookLog(log);
 
-            ui_readingWorker.RunWorkerAsync(log);
+            ui_readingWorker.RunWorkerAsync(new Tuple<NetworkLog, int>(log, pos));
             this.LoadingStatePush(new LoadingState(string.Format(Strings.LoadingFile, filename),
                 _ => _.ui_readingWorker.CancelAsync()));
         }
@@ -486,7 +489,9 @@ namespace NetworkLogViewer
             UICulture.Initialize();
 
             var sw = Stopwatch.StartNew();
-            var log = (NetworkLog)e.Argument;
+            var tuple = (Tuple<NetworkLog, int>)e.Argument;
+            var log = tuple.Item1;
+            e.Result = tuple.Item2;
 
             try
             {
@@ -562,10 +567,12 @@ namespace NetworkLogViewer
             sw.Stop();
             Console.WriteLine("Updated items in {0}", sw.Elapsed);
 
+            int index = (int)e.Result;
+            if (index >= 0 && index < m_implementation.m_items.Count)
+                this.SelectedIndex = index;
+
             if (e.Error != null)
-            {
                 MessageWindow.Show(this, Strings.Error, Strings.ErrorReading.LocalizedFormat(e.Error.ToString()));
-            }
         }
 
         void MainWindow_NetworkLogChanged(object sender, EventArgs e)
@@ -612,6 +619,23 @@ namespace NetworkLogViewer
         private void ui_loadingWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             this.LoadingStatePop();
+
+            string filename = null;
+            int pos = 0;
+
+            var args = Environment.GetCommandLineArgs();
+
+            // First argument is the entry executable path
+            if (args.Length == 2)
+                filename = args[1];
+            else
+            {
+                filename = Configuration.GetValue("Last File Name", string.Empty);
+                pos = Configuration.GetValue("Last File Position", -1);
+            }
+
+            if (!string.IsNullOrEmpty(filename) && File.Exists(filename))
+                this.OpenFile(filename, pos);
         }
         #endregion
 
@@ -754,6 +778,47 @@ namespace NetworkLogViewer
                     return m_implementation.m_items[index];
 
                 return null;
+            }
+            set
+            {
+                int index = value == null ? -1 : m_implementation.m_items.IndexOf(value);
+
+                this.ThreadSafeBegin(_ =>
+                {
+                    _.ui_lvPackets.SelectedIndex = index;
+                    if (index >= 0)
+                    {
+                        _.ui_lvPackets.ScrollIntoView(value);
+                        ((ListViewItem)_.ui_lvPackets.ItemContainerGenerator.ContainerFromIndex(index)).Focus();
+                    }
+                });
+            }
+        }
+
+        public int SelectedIndex
+        {
+            get
+            {
+                return ui_lvPackets.SelectedIndex;
+            }
+            set
+            {
+                if (value >= m_implementation.m_items.Count)
+                    throw new ArgumentOutOfRangeException("value");
+
+                this.ThreadSafeBegin(_ =>
+                {
+                    int index = _.ui_lvPackets.SelectedIndex;
+
+                    _.ui_lvPackets.SelectedIndex = value;
+                    if (value >= 0)
+                    {
+                        _.ui_lvPackets.ScrollIntoView(m_implementation.m_items[value]);
+                        var item = (ListViewItem)_.ui_lvPackets.ItemContainerGenerator.ContainerFromIndex(value);
+                        if (item != null)
+                            item.Focus();
+                    }
+                });
             }
         }
 
@@ -1402,11 +1467,7 @@ namespace NetworkLogViewer
         void FinishSearch(ViewerItem item)
         {
             if (item != null)
-            {
-                ui_lvPackets.SelectedIndex = item.Index;
-                ui_lvPackets.ScrollIntoView(item);
-                ((ListViewItem)ui_lvPackets.ItemContainerGenerator.ContainerFromItem(item)).Focus();
-            }
+                this.SelectedItem = item;
             else
                 MessageWindow.Show(this, Strings.Menu_Search, Strings.Search_NotFound);
         }
