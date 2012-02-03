@@ -12,13 +12,8 @@ namespace Kamilla.Network.Protocols
 {
     public sealed class DefaultProtocol : Protocol
     {
-        public abstract class BaseItemData : INotifyPropertyChanged
+        public abstract class BaseItemData
         {
-            /// <summary>
-            /// Occurs when a property is changed.
-            /// </summary>
-            public event PropertyChangedEventHandler PropertyChanged;
-
             protected readonly ViewerItem m_item;
             protected string m_arrivalTime;
             protected string m_arrivalTicks;
@@ -41,26 +36,6 @@ namespace Kamilla.Network.Protocols
                     throw new ArgumentNullException("item");
 
                 m_item = item;
-            }
-
-            /// <summary>
-            /// Fires the
-            /// <see cref="Kamilla.Network.Protocols.DefaultProtocol.BaseItemData.PropertyChanged"/>
-            /// event.
-            /// </summary>
-            /// <param name="propertyName">
-            /// Name of the property that was changed.
-            /// </param>
-            /// <exception cref="System.ArgumentNullException">
-            /// <c>propertyName</c> is null.
-            /// </exception>
-            protected void Changed(string propertyName)
-            {
-                if (propertyName == null)
-                    throw new ArgumentNullException("propertyName");
-
-                if (this.PropertyChanged != null)
-                    this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
 
             public virtual string ArrivalTime

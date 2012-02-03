@@ -163,8 +163,22 @@ namespace NetworkLogViewer
                 item.Parser = null;
                 item.Data = null;
             }
+        }
 
-            m_items.Update();
+        internal void StopParsing()
+        {
+            if (m_parsingWorker.IsBusy)
+                m_parsingWorker.CancelAsync();
+
+            ViewerItem item;
+            while (!m_parsingQueue.IsEmpty)
+                m_parsingQueue.TryDequeue(out item);
+        }
+
+        internal void StartParsing()
+        {
+            if (!m_parsingWorker.IsBusy && !m_parsingQueue.IsEmpty)
+                m_parsingWorker.RunWorkerAsync();
         }
 
         internal void SetProtocol(Protocol value)
@@ -172,7 +186,7 @@ namespace NetworkLogViewer
             if (m_currentProtocol == value)
                 return;
 
-            m_parsingWorker.CancelAsync();
+            this.StopParsing();
 
             var old = m_currentProtocol;
 
@@ -190,6 +204,10 @@ namespace NetworkLogViewer
                 this.DropCache();
             });
 
+            Console.WriteLine("Debug: Switching Protocol:{0}       Old: {1}{2}       New: {3}",
+                Environment.NewLine, old != null ? old.Name : "null",
+                Environment.NewLine, value != null ? value.Name : "null");
+
             if (this.ProtocolChanged != null)
                 this.ProtocolChanged(this, EventArgs.Empty);
         }
@@ -205,7 +223,7 @@ namespace NetworkLogViewer
             if (m_currentLog == value)
                 return;
 
-            m_parsingWorker.CancelAsync();
+            this.StopParsing();
 
             var old = m_currentLog;
             if (old != null)
@@ -215,6 +233,8 @@ namespace NetworkLogViewer
 
             if (this.NetworkLogChanged != null)
                 this.NetworkLogChanged(this, EventArgs.Empty);
+
+            this.StartParsing();
         }
 
         protected override void OnParsingDone(ViewerItem item)
@@ -229,7 +249,6 @@ namespace NetworkLogViewer
         {
             m_items.Clear();
             this.SetLog(null);
-            m_parsingWorker.CancelAsync();
         }
 
         #region Plugins
@@ -385,15 +404,11 @@ namespace NetworkLogViewer
 
             do
             {
-                while (!worker.CancellationPending && !m_parsingQueue.IsEmpty && m_currentProtocol != null)
+                Protocol protocol;
+                ViewerItem item;
+                while (!worker.CancellationPending && (protocol = m_currentProtocol) != null
+                    && m_parsingQueue.TryDequeue(out item))
                 {
-                    // Cache protocol
-                    var protocol = m_currentProtocol;
-
-                    ViewerItem item;
-                    if (!m_parsingQueue.TryDequeue(out item))
-                        break;
-
                     if (item.Viewer != this || item.Log != m_currentLog)
                         continue;
 
@@ -427,8 +442,8 @@ namespace NetworkLogViewer
         public override void EnqueueParsing(ViewerItem item)
         {
             m_parsingQueue.Enqueue(item);
-            if (!m_parsingWorker.IsBusy)
-                m_parsingWorker.RunWorkerAsync();
+
+            this.StartParsing();
         }
         #endregion
     }

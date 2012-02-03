@@ -10,13 +10,13 @@ namespace Kamilla.Network.Viewing
     /// of a <see cref="Kamilla.Network.Packet"/> in a
     /// <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase"/>.
     /// </summary>
-    public class ViewerItem
+    public class ViewerItem : INotifyPropertyChanged
     {
         NetworkLogViewerBase m_viewer;
         NetworkLog m_log;
         Packet m_packet;
         PacketParser m_parser;
-        INotifyPropertyChanged m_data;
+        object m_data;
         int m_index;
 
         /// <summary>
@@ -55,10 +55,34 @@ namespace Kamilla.Network.Viewing
         /// 
         /// This value can be null.
         /// </summary>
-        public INotifyPropertyChanged Data
+        public object Data
         {
             get { return m_data; }
-            set { m_data = value; }
+            set
+            {
+                var old = m_data;
+                m_data = value;
+
+                if (old != value)
+                    this.NotifyDataChanged();
+            }
+        }
+
+        /// <summary>
+        /// Occurs when a property is changed.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        static PropertyChangedEventArgs s_args;
+
+        /// <summary>
+        /// Raises the <see cref="Kamilla.Network.Viewing.ViewerItem.PropertyChanged"/> event
+        /// for the <see cref="Kamilla.Network.Viewing.ViewerItem.Data"/> property.
+        /// </summary>
+        public void NotifyDataChanged()
+        {
+            if (this.PropertyChanged != null)
+                this.PropertyChanged(this, s_args ?? (s_args = new PropertyChangedEventArgs("Data")));
         }
 
         /// <summary>
