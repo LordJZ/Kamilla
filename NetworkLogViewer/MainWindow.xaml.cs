@@ -392,12 +392,6 @@ namespace NetworkLogViewer
             }
         }
 
-        void CloseFile()
-        {
-            m_implementation.CloseFile();
-            this.CurrentLog = null;
-        }
-
         private void DropCache_Click(object sender, RoutedEventArgs e)
         {
             m_implementation.DropCache();
@@ -413,11 +407,33 @@ namespace NetworkLogViewer
         {
             m_implementation.EnableDeallocQueue = ui_miAutoDropCache.IsChecked;
         }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!e.Handled)
+            {
+                foreach (MenuItem item in ui_miPlugins.Items)
+                {
+                    var command = (PluginCommand)item.Tag;
+                    if (command.Gesture.Matches(sender, e))
+                    {
+                        command.Callback();
+                        e.Handled = true;
+                    }
+                }
+            }
+        }
         #endregion
 
         #region Reading
         BackgroundWorker ui_readingWorker;
         string m_currentFile;
+
+        void CloseFile()
+        {
+            m_implementation.CloseFile();
+            this.CurrentLog = null;
+        }
 
         void OpenFile(string filename)
         {
@@ -1393,22 +1409,6 @@ namespace NetworkLogViewer
             ui_miSaveBinaryContents.IsEnabled = haveProtocolAndLog;
             ui_miSaveParserOutput.IsEnabled = haveProtocolAndLog;
             ui_miSaveTextContents.IsEnabled = haveProtocolAndLog;
-        }
-
-        private void Window_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (!e.Handled)
-            {
-                foreach (MenuItem item in ui_miPlugins.Items)
-                {
-                    var command = (PluginCommand)item.Tag;
-                    if (command.Gesture.Matches(sender, e))
-                    {
-                        command.Callback();
-                        e.Handled = true;
-                    }
-                }
-            }
         }
     }
 }
