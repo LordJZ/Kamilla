@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
-using Microsoft.Win32;
 using System.Text;
-using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using Kamilla;
@@ -10,6 +8,7 @@ using Kamilla.Network;
 using Kamilla.Network.Protocols;
 using Kamilla.Network.Viewing;
 using Kamilla.WPF;
+using Microsoft.Win32;
 
 namespace NetworkLogViewer.ViewTabs
 {

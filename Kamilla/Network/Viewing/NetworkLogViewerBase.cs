@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Input;
 using Kamilla.Network.Logging;
 using Kamilla.Network.Protocols;
 using Kamilla.Network.Viewing.Plugins;

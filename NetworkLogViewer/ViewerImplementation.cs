@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
-using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Interop;
 using Kamilla;
 using Kamilla.Network.Logging;
 using Kamilla.Network.Protocols;
 using Kamilla.Network.Viewing;
-using Kamilla.WPF;
-using System.Windows.Input;
 using Kamilla.Network.Viewing.Plugins;
-using System.Windows.Controls;
+using Kamilla.WPF;
 
 namespace NetworkLogViewer
 {
@@ -223,13 +221,6 @@ namespace NetworkLogViewer
                 m_deallocQueue.Push(item);
         }
 
-        internal void OnStyleChanged(Style oldStyle, Style newStyle)
-        {
-            m_window.ThreadSafe(_ =>
-            {
-            });
-        }
-
         internal void CloseFile()
         {
             m_items.Clear();
@@ -237,6 +228,7 @@ namespace NetworkLogViewer
             m_parsingWorker.CancelAsync();
         }
 
+        #region Plugins
         internal void InitializePlugins()
         {
             m_plugins = PluginManager.CreatePluginSet();
@@ -318,6 +310,7 @@ namespace NetworkLogViewer
                     _.ui_miPlugins.IsEnabled = false;
             });
         }
+        #endregion
 
         #region Overrides
         /// <summary>
