@@ -394,6 +394,7 @@ namespace NetworkLogViewer
         void CloseFile()
         {
             m_implementation.CloseFile();
+            this.CurrentLog = null;
         }
 
         private void DropCache_Click(object sender, RoutedEventArgs e)
