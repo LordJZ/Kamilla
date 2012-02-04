@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -1279,32 +1280,75 @@ namespace NetworkLogViewer
                         MessageWindow.Show(this, Strings.Error, Strings.SearchFailedNoOpcodes);
                         return null;
                     }
-                    uint opcode;
-                    try
+
+                    if (m_regex)
                     {
                         try
                         {
-                            opcode = (uint)Enum.Parse(type, text, true);
+                            regex = new Regex(text, m_matchCase ? RegexOptions.None : RegexOptions.IgnoreCase);
                         }
                         catch
                         {
-                            opcode = text.ParseUInt32();
+                            MessageWindow.Show(this, Strings.Error,
+                                Strings.SearchString2RegexFailed.LocalizedFormat(text));
+                            return null;
                         }
-                    }
-                    catch
-                    {
-                        MessageWindow.Show(this, Strings.Error,
-                            Strings.SearchString2OpcodeFailed.LocalizedFormat(text));
-                        return null;
-                    }
-                    return item =>
-                    {
-                        var packet = item.Packet as IPacketWithOpcode;
-                        if (packet == null)
-                            return false;
 
-                        return packet.Opcode == opcode;
-                    };
+                        var fields = type.GetFields(BindingFlags.Static | BindingFlags.Public);
+                        var count = fields.Length;
+                        var opcodes = new List<uint>(count / 2);
+                        for (int i = 0; i < count; ++i)
+                        {
+                            var field = fields[i];
+                            if (regex.IsMatch(field.Name))
+                                opcodes.Add((uint)field.GetRawConstantValue());
+                        }
+
+                        if (opcodes.Count == 0)
+                        {
+                            MessageWindow.Show(this, Strings.Error, Strings.SearchFailedNoMatchingOpcodes);
+                            return null;
+                        }
+
+                        var arr = opcodes.ToArray();
+                        return item =>
+                        {
+                            var packet = item.Packet as IPacketWithOpcode;
+                            if (packet == null)
+                                return false;
+
+                            return arr.Contains(packet.Opcode);
+                        };
+                    }
+                    else
+                    {
+                        uint opcode;
+                        try
+                        {
+                            try
+                            {
+                                opcode = (uint)Enum.Parse(type, text, !m_matchCase);
+                            }
+                            catch
+                            {
+                                opcode = text.ParseUInt32();
+                            }
+                        }
+                        catch
+                        {
+                            MessageWindow.Show(this, Strings.Error,
+                                Strings.SearchString2OpcodeFailed.LocalizedFormat(text));
+                            return null;
+                        }
+                        return item =>
+                        {
+                            var packet = item.Packet as IPacketWithOpcode;
+                            if (packet == null)
+                                return false;
+
+                            return packet.Opcode == opcode;
+                        };
+                    }
                 case SearchMode.BinaryContents:
                     if (!ToByteSequence(text, out byteSequence))
                         return null;

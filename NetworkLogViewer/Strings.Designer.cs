@@ -636,6 +636,15 @@ namespace NetworkLogViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The regular expression doesn&apos;t match any opcodes..
+        /// </summary>
+        public static string SearchFailedNoMatchingOpcodes {
+            get {
+                return ResourceManager.GetString("SearchFailedNoMatchingOpcodes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot search by opcode with no opcodes provided by the protocol..
         /// </summary>
         public static string SearchFailedNoOpcodes {

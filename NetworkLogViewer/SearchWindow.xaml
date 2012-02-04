@@ -18,7 +18,7 @@
     <CheckBox Content="{x:Static viewer:Strings.SearchChars}" HorizontalAlignment="Left" Margin="198,0,0,67" Name="ui_cbAllowSpecialChars" VerticalAlignment="Bottom" Checked="ui_cbAllowSpecialChars_Checked" Unchecked="ui_cbAllowSpecialChars_Unchecked" />
     <Button Content="{x:Static viewer:Strings.SearchUp}" Height="23" HorizontalAlignment="Right" Margin="0,12,12,0" Name="ui_btnSearchUp" VerticalAlignment="Top" Width="120" Click="ui_btnSearchUp_Click" />
     <Button Content="{x:Static viewer:Strings.SearchDown}" Height="23" HorizontalAlignment="Right" IsDefault="True" Margin="0,41,12,0" Name="btn_SearchDown" VerticalAlignment="Top" Width="120" Click="btn_SearchDown_Click" />
-    <Button Content="{x:Static viewer:Strings.SearchCount}" Height="23" HorizontalAlignment="Right" Margin="0,70,12,0" Name="ui_btnCount" VerticalAlignment="Top" Width="120" />
+    <Button Content="{x:Static viewer:Strings.SearchCount}" Height="23" HorizontalAlignment="Right" Margin="0,70,12,0" Name="ui_btnCount" VerticalAlignment="Top" Width="120" IsEnabled="False" />
     <Button Content="{x:Static viewer:Strings.SearchMark}" Height="23" HorizontalAlignment="Right" Margin="0,99,12,0" Name="ui_btnMark" VerticalAlignment="Top" Width="120" IsEnabled="False" />
     <Button Content="{x:Static viewer:Strings.SearchClearMarks}" Height="23" HorizontalAlignment="Right" IsEnabled="False" Margin="0,128,12,0" Name="ui_btnClearMarks" VerticalAlignment="Top" Width="120" />
     <Button Content="{x:Static viewer:Strings.SearchClose}" Height="23" HorizontalAlignment="Right" Margin="0,157,12,0" Name="ui_btnClose" VerticalAlignment="Top" Width="120" IsCancel="True" Click="ui_btnClose_Click" />

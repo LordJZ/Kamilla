@@ -438,4 +438,7 @@
   <data name="Menu_RecentFiles" xml:space="preserve">
     <value>Recent Files</value>
   </data>
+  <data name="SearchFailedNoMatchingOpcodes" xml:space="preserve">
+    <value>The regular expression doesn't match any opcodes.</value>
+  </data>
 </root>

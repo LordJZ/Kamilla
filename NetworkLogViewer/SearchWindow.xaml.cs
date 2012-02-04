@@ -111,9 +111,11 @@ namespace NetworkLogViewer
             m_window.m_searchMode = mode;
 
             ui_cbAllowSpecialChars.IsEnabled =
+                mode != SearchMode.Opcodes &&
+                mode != SearchMode.PacketContents &&
+                mode != SearchMode.BinaryContents;
             ui_cbRegex.IsEnabled =
             ui_cbMatchCase.IsEnabled =
-                mode != SearchMode.Opcodes &&
                 mode != SearchMode.PacketContents &&
                 mode != SearchMode.BinaryContents;
 
