@@ -60,6 +60,7 @@
     <Compile Include="ConsoleWriteEventArgs.cs" />
     <Compile Include="ConsoleWriter.cs" />
     <Compile Include="EnumExtensions.cs" />
+    <Compile Include="CircularCollection.cs" />
     <Compile Include="IO\StreamHandler.cs" />
     <Compile Include="IO\StructHelper.cs" />
     <Compile Include="LocalizedNameAttribute.cs" />
