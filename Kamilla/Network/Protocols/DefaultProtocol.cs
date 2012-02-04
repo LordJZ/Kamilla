@@ -12,17 +12,15 @@ namespace Kamilla.Network.Protocols
 {
     public sealed class DefaultProtocol : Protocol
     {
-        public abstract class BaseItemData
+        sealed class ItemData
         {
-            protected readonly ViewerItem m_item;
-            protected string m_arrivalTime;
-            protected string m_arrivalTicks;
-            protected string m_c2sStr;
-            protected string m_s2cStr;
+            readonly ViewerItem m_item;
+            string m_c2sStr;
+            string m_s2cStr;
 
             /// <summary>
             /// Initializes a new instance of
-            /// <see cref="Kamilla.Network.Protocols.DefaultProtocol.BaseItemData"/> class.
+            /// <see cref="Kamilla.Network.Protocols.DefaultProtocol.ItemData"/> class.
             /// </summary>
             /// <param name="item">
             /// The underlying instance of <see cref="Kamilla.Network.Viewing.ViewerItem"/> class.
@@ -30,7 +28,7 @@ namespace Kamilla.Network.Protocols
             /// <exception cref="System.ArgumentNullException">
             /// <c>item</c> is null.
             /// </exception>
-            public BaseItemData(ViewerItem item)
+            public ItemData(ViewerItem item)
             {
                 if (item == null)
                     throw new ArgumentNullException("item");
@@ -38,27 +36,24 @@ namespace Kamilla.Network.Protocols
                 m_item = item;
             }
 
-            public virtual string ArrivalTime
+            public string ArrivalTime
             {
-                get { return m_arrivalTime ?? (m_arrivalTime = m_item.Packet.ArrivalTime.ToString("HH:mm:ss")); }
+                get { return m_item.Packet.ArrivalTime.ToString("HH:mm:ss"); }
             }
-            public virtual string ArrivalTicks
+
+            public string ArrivalTicks
             {
                 get
                 {
-                    if (m_arrivalTicks == null)
-                    {
-                        var log = m_item.Log as IHasStartTicks;
-                        if (log != null)
-                            m_arrivalTicks = ((int)(m_item.Packet.ArrivalTicks - log.StartTicks)).ToString();
-                        else
-                            m_arrivalTicks = m_item.Packet.ArrivalTicks.ToString();
-                    }
+                    var log = m_item.Log as IHasStartTicks;
+                    if (log != null)
+                        return ((int)(m_item.Packet.ArrivalTicks - log.StartTicks)).ToString();
 
-                    return m_arrivalTicks;
+                    return m_item.Packet.ArrivalTicks.ToString();
                 }
             }
-            public virtual string C2sStr
+
+            public string C2sStr
             {
                 get
                 {
@@ -74,7 +69,8 @@ namespace Kamilla.Network.Protocols
                     return m_c2sStr;
                 }
             }
-            public virtual string S2cStr
+
+            public string S2cStr
             {
                 get
                 {
@@ -89,14 +85,6 @@ namespace Kamilla.Network.Protocols
 
                     return m_s2cStr;
                 }
-            }
-        }
-
-        sealed class ItemData : BaseItemData
-        {
-            internal ItemData(ViewerItem item)
-                : base(item)
-            {
             }
         }
 
