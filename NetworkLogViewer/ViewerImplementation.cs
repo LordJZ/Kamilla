@@ -87,7 +87,7 @@ namespace NetworkLogViewer
 
         MainWindow m_window;
         PacketAddedEventHandler m_packetAddedHandler;
-        Protocol m_currentProtocol;
+        volatile Protocol m_currentProtocol;
         NetworkLog m_currentLog;
         internal readonly ViewerItemCollection m_items;
         WindowInteropHelper m_interopHelper;
@@ -183,19 +183,18 @@ namespace NetworkLogViewer
 
         internal void SetProtocol(Protocol value)
         {
-            if (m_currentProtocol == value)
+            var old = m_currentProtocol;
+            if (old == value)
                 return;
 
-            if (m_currentProtocol != null && value != null &&
-                m_currentProtocol.Wrapper == value.Wrapper)
+            if (old != null && value != null &&
+                old.Wrapper == value.Wrapper)
             {
                 Console.WriteLine("Error: Got same protocol {0}", value.Name);
                 return;
             }
 
             this.StopParsing();
-
-            var old = m_currentProtocol;
 
             // We should allow the protocol to integrate with viewer in viewer's thread.
             m_window.ThreadSafe(_ =>
