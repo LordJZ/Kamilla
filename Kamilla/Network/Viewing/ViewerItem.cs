@@ -16,8 +16,9 @@ namespace Kamilla.Network.Viewing
         NetworkLog m_log;
         Packet m_packet;
         PacketParser m_parser;
-        object m_data;
+        object m_visualData;
         int m_index;
+        bool m_visualDataQueried;
 
         /// <summary>
         /// Gets the <see cref="Kamilla.Network.Viewing.NetworkLogViewerBase"/> to which
@@ -40,7 +41,16 @@ namespace Kamilla.Network.Viewing
         public PacketParser Parser
         {
             get { return m_parser; }
-            set { m_parser = value; }
+            set
+            {
+                var old = m_parser;
+                if (old == value)
+                    return;
+
+                m_parser = value;
+
+                m_viewer.OnItemParserChanged(this, old, value);
+            }
         }
 
         /// <summary>
@@ -50,21 +60,33 @@ namespace Kamilla.Network.Viewing
         public NetworkLog Log { get { return m_log; } }
 
         /// <summary>
-        /// Gets or sets the data associated with the current instance
+        /// Gets or sets the visual data associated with the current instance
         /// of <see cref="Kamilla.Network.Viewing.ViewerItem"/>.
         /// 
         /// This value can be null.
         /// </summary>
-        public object Data
+        public object VisualData
         {
-            get { return m_data; }
+            get
+            {
+                if (!m_visualDataQueried)
+                {
+                    m_visualDataQueried = true;
+                    m_viewer.OnItemVisualDataQueried(this);
+                    m_visualDataQueried = false;
+                }
+
+                return m_visualData;
+            }
             set
             {
-                var old = m_data;
-                m_data = value;
+                var old = m_visualData;
+                if (old == value)
+                    return;
 
-                if (old != value)
-                    this.NotifyDataChanged();
+                m_visualData = value;
+
+                m_viewer.OnItemVisualDataChanged(this, old, value);
             }
         }
 
@@ -77,12 +99,12 @@ namespace Kamilla.Network.Viewing
 
         /// <summary>
         /// Raises the <see cref="Kamilla.Network.Viewing.ViewerItem.PropertyChanged"/> event
-        /// for the <see cref="Kamilla.Network.Viewing.ViewerItem.Data"/> property.
+        /// for the <see cref="Kamilla.Network.Viewing.ViewerItem.VisualData"/> property.
         /// </summary>
         public void NotifyDataChanged()
         {
             if (this.PropertyChanged != null)
-                this.PropertyChanged(this, s_args ?? (s_args = new PropertyChangedEventArgs("Data")));
+                this.PropertyChanged(this, s_args ?? (s_args = new PropertyChangedEventArgs("VisualData")));
         }
 
         /// <summary>

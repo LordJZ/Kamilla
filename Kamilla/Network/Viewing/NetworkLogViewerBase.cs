@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Kamilla.Network.Logging;
+using Kamilla.Network.Parsing;
 using Kamilla.Network.Protocols;
 using Kamilla.Network.Viewing.Plugins;
 
@@ -24,7 +25,7 @@ namespace Kamilla.Network.Viewing
         /// <exception cref="System.ArgumentException">
         /// <c>item</c> is invalid.
         /// </exception>
-        protected internal virtual void OnParsingDone(ViewerItem item)
+        protected internal virtual void OnItemParsingDone(ViewerItem item)
         {
             if (item == null)
                 throw new ArgumentNullException();
@@ -34,6 +35,36 @@ namespace Kamilla.Network.Viewing
 
             if (this.ItemParsingDone != null)
                 this.ItemParsingDone(this, new ViewerItemEventArgs(item));
+        }
+
+        protected internal virtual void OnItemVisualDataQueried(ViewerItem item)
+        {
+            if (item == null)
+                throw new ArgumentNullException();
+
+            if (item.Viewer != this)
+                throw new ArgumentException();
+
+            if (this.ItemVisualDataQueried != null)
+                this.ItemVisualDataQueried(this, new ViewerItemEventArgs(item));
+        }
+
+        protected internal virtual void OnItemVisualDataChanged(ViewerItem item,
+            object oldData, object newData)
+        {
+            if (item == null)
+                throw new ArgumentNullException();
+
+            if (item.Viewer != this)
+                throw new ArgumentException();
+
+            if (this.ItemVisualDataChanged != null)
+                this.ItemVisualDataChanged(this, new ViewerItemEventArgs(item));
+        }
+
+        protected internal virtual void OnItemParserChanged(ViewerItem item,
+            PacketParser oldParser, PacketParser newParser)
+        {
         }
 
         /// <summary>
@@ -112,6 +143,22 @@ namespace Kamilla.Network.Viewing
         /// Handlers of this event should be called from any suiting thread.
         /// </summary>
         public event ViewerItemEventHandler ItemParsingDone;
+
+        /// <summary>
+        /// Occurs when visual data of a
+        /// <see cref="Kamilla.Network.Viewing.ViewerItem"/> is queried.
+        /// 
+        /// Handlers of this event should be called from any suiting thread.
+        /// </summary>
+        public event ViewerItemEventHandler ItemVisualDataQueried;
+
+        /// <summary>
+        /// Occurs when visual data of a
+        /// <see cref="Kamilla.Network.Viewing.ViewerItem"/> is changed.
+        /// 
+        /// Handlers of this event should be called from any suiting thread.
+        /// </summary>
+        public event ViewerItemEventHandler ItemVisualDataChanged;
         #endregion
 
         #region Properties

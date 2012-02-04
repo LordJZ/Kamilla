@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using Kamilla;
 using Kamilla.Network.Logging;
+using Kamilla.Network.Parsing;
 using Kamilla.Network.Protocols;
 using Kamilla.Network.Viewing;
 using Kamilla.Network.Viewing.Plugins;
@@ -17,45 +18,6 @@ namespace NetworkLogViewer
 {
     internal sealed class ViewerImplementation : NetworkLogViewerBase
     {
-        #region Dealloc Queue
-        class DeallocQueue
-        {
-            ViewerItem[] m_items;
-            int m_index;
-            int m_capacity;
-
-            internal DeallocQueue(int capacity)
-            {
-                if (capacity <= 0)
-                    throw new ArgumentOutOfRangeException("capacity");
-
-                m_items = new ViewerItem[capacity];
-                m_capacity = capacity;
-            }
-
-            internal void Push(ViewerItem item)
-            {
-                ++m_index;
-                m_index %= m_capacity;
-
-                var old = m_items[m_index];
-                if (old != null)
-                {
-                    old.Parser = null;
-                    old.Data = null;
-                }
-
-                m_items[m_index] = item;
-            }
-
-            internal void Clear()
-            {
-                Array.Clear(m_items, 0, m_capacity);
-                m_index = 0;
-            }
-        }
-        #endregion
-
         bool m_autoParse;
         bool m_deallocQueueEnabled;
 
@@ -81,7 +43,10 @@ namespace NetworkLogViewer
                 if (value)
                     this.DropCache();
                 else
-                    m_deallocQueue.Clear();
+                {
+                    m_parserItems.Clear();
+                    m_dataItems.Clear();
+                }
             }
         }
 
@@ -92,9 +57,12 @@ namespace NetworkLogViewer
         internal readonly ViewerItemCollection m_items;
         WindowInteropHelper m_interopHelper;
         BackgroundWorker m_parsingWorker;
-        DeallocQueue m_deallocQueue;
         INetworkLogViewerPlugin[] m_plugins;
         List<PluginCommand> m_pluginCommands;
+
+        const int s_maxAllocations = 1024;
+        CircularCollection<ViewerItem> m_dataItems = new CircularCollection<ViewerItem>(1024);
+        CircularCollection<ViewerItem> m_parserItems = new CircularCollection<ViewerItem>(1024);
 
         internal ViewerImplementation(MainWindow window)
         {
@@ -104,8 +72,6 @@ namespace NetworkLogViewer
             m_items = new ViewerItemCollection(this);
             m_items.ItemQueried += new ViewerItemEventHandler(m_items_ItemQueried);
             m_packetAddedHandler = new PacketAddedEventHandler(m_currentLog_PacketAdded);
-
-            m_deallocQueue = new DeallocQueue(100);
 
             m_parsingWorker = new BackgroundWorker()
             {
@@ -161,8 +127,11 @@ namespace NetworkLogViewer
             foreach (var item in m_items)
             {
                 item.Parser = null;
-                item.Data = null;
+                item.VisualData = null;
             }
+
+            m_parserItems.Clear();
+            m_dataItems.Clear();
         }
 
         internal void StopParsing()
@@ -243,18 +212,40 @@ namespace NetworkLogViewer
             this.StartParsing();
         }
 
-        protected override void OnParsingDone(ViewerItem item)
-        {
-            base.OnParsingDone(item);
-
-            if (m_deallocQueueEnabled)
-                m_deallocQueue.Push(item);
-        }
-
         internal void CloseFile()
         {
             m_items.Clear();
             this.SetLog(null);
+            m_dataItems.Clear();
+            m_parserItems.Clear();
+        }
+
+        protected override void OnItemVisualDataChanged(ViewerItem item, object oldData, object newData)
+        {
+            base.OnItemVisualDataChanged(item, oldData, newData);
+
+            if (oldData == null && newData != null)
+            {
+                var back = m_dataItems.Back;
+                if (back != null)
+                    back.VisualData = null;
+
+                m_dataItems.PushFront(item);
+            }
+        }
+
+        protected override void OnItemParserChanged(ViewerItem item, PacketParser oldParser, PacketParser newParser)
+        {
+            base.OnItemParserChanged(item, oldParser, newParser);
+
+            if (oldParser == null && newParser != null)
+            {
+                var back = m_parserItems.Back;
+                if (back != null)
+                    back.Parser = null;
+
+                m_parserItems.PushFront(item);
+            }
         }
 
         #region Plugins

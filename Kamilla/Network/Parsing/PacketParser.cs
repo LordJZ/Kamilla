@@ -141,7 +141,7 @@ namespace Kamilla.Network.Parsing
                 this.IsParsed = true;
             }
 
-            m_item.Viewer.OnParsingDone(m_item);
+            m_item.Viewer.OnItemParsingDone(m_item);
         }
 
         protected string m_output;

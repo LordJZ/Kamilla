@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,7 +11,7 @@ namespace Kamilla.Network.Protocols
 {
     public sealed class DefaultProtocol : Protocol
     {
-        sealed class ItemData
+        sealed class ItemVisualData
         {
             readonly ViewerItem m_item;
             string m_c2sStr;
@@ -20,7 +19,7 @@ namespace Kamilla.Network.Protocols
 
             /// <summary>
             /// Initializes a new instance of
-            /// <see cref="Kamilla.Network.Protocols.DefaultProtocol.ItemData"/> class.
+            /// <see cref="Kamilla.Network.Protocols.DefaultProtocol.ItemVisualData"/> class.
             /// </summary>
             /// <param name="item">
             /// The underlying instance of <see cref="Kamilla.Network.Viewing.ViewerItem"/> class.
@@ -28,7 +27,7 @@ namespace Kamilla.Network.Protocols
             /// <exception cref="System.ArgumentNullException">
             /// <c>item</c> is null.
             /// </exception>
-            public ItemData(ViewerItem item)
+            public ItemVisualData(ViewerItem item)
             {
                 if (item == null)
                     throw new ArgumentNullException("item");
@@ -90,11 +89,11 @@ namespace Kamilla.Network.Protocols
 
         NetworkLogViewerBase m_viewer;
         GridView m_view;
-        ViewerItemEventHandler m_itemQueriedHandler;
+        ViewerItemEventHandler m_itemVisualDataQueriedHandler;
 
         public DefaultProtocol()
         {
-            m_itemQueriedHandler = new ViewerItemEventHandler(viewer_ItemQueried);
+            m_itemVisualDataQueriedHandler = new ViewerItemEventHandler(viewer_ItemVisualDataQueried);
         }
 
         public override string Name
@@ -112,11 +111,11 @@ namespace Kamilla.Network.Protocols
             get { return null; }
         }
 
-        void viewer_ItemQueried(object sender, ViewerItemEventArgs e)
+        void viewer_ItemVisualDataQueried(object sender, ViewerItemEventArgs e)
         {
             var item = e.Item;
-            if (item.Data == null)
-                item.Data = new ItemData(item);
+            if (item.VisualData == null)
+                item.VisualData = new ItemVisualData(item);
         }
 
         class GridViewColumnWithId : GridViewColumn
@@ -137,10 +136,10 @@ namespace Kamilla.Network.Protocols
         static readonly string[] s_columnBindings = new string[]
         {
             ".Index",
-            ".Data.ArrivalTime",
-            ".Data.ArrivalTicks",
-            ".Data.C2sStr",
-            ".Data.S2cStr",
+            ".VisualData.ArrivalTime",
+            ".VisualData.ArrivalTicks",
+            ".VisualData.C2sStr",
+            ".VisualData.S2cStr",
             ".Packet.Data.Length",
         };
 
@@ -155,7 +154,7 @@ namespace Kamilla.Network.Protocols
                 throw new InvalidOperationException();
 
             m_viewer = viewer;
-            viewer.ItemQueried += m_itemQueriedHandler;
+            viewer.ItemVisualDataQueried += m_itemVisualDataQueriedHandler;
 
             var view = m_view = new GridView();
 
@@ -191,7 +190,7 @@ namespace Kamilla.Network.Protocols
                 item.Width = widths[col];
 
                 var dataTemplate = new DataTemplate();
-                dataTemplate.DataType = typeof(ItemData);
+                dataTemplate.DataType = typeof(ItemVisualData);
 
                 var block = new FrameworkElementFactory(typeof(TextBlock));
                 block.SetValue(TextBlock.TextProperty, new Binding(s_columnBindings[col]));
@@ -227,7 +226,7 @@ namespace Kamilla.Network.Protocols
             Configuration.SetValue("Column Order", order);
             m_view = null;
 
-            m_viewer.ItemQueried -= m_itemQueriedHandler;
+            m_viewer.ItemVisualDataQueried -= m_itemVisualDataQueriedHandler;
             m_viewer = null;
         }
 
