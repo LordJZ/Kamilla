@@ -4,7 +4,8 @@
         xmlns:viewer="clr-namespace:NetworkLogViewer"
         Title="{x:Static viewer:Strings.NetworkLogViewer_Title}"
         Height="428" Width="698" MinHeight="300" MinWidth="400"
-        Closing="Window_Closing" Loaded="Window_Loaded" KeyDown="Window_KeyDown">
+        Closing="Window_Closing" Loaded="Window_Loaded" KeyDown="Window_KeyDown"
+        DragEnter="Window_DragEnter" Drop="Window_Drop" AllowDrop="True">
   <Grid Name="VerticalGrid">
     <Grid.RowDefinitions>
       <RowDefinition Height="23" />

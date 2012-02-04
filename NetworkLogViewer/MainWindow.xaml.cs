@@ -585,6 +585,22 @@ namespace NetworkLogViewer
                 _.UpdateUIAsProtocolOrLogChanges();
             });
         }
+
+
+        private void Window_DragEnter(object sender, DragEventArgs e)
+        {
+            Console.WriteLine("Debug: Something dragged");
+
+            if (e.Data.GetDataPresent(DataFormats.FileDrop, false))
+                e.Effects = DragDropEffects.All;
+        }
+
+        private void Window_Drop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files.Length > 0)
+                this.OpenFile(files[0]);
+        }
         #endregion
 
         #region Loading
