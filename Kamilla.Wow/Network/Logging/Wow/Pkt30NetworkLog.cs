@@ -306,6 +306,8 @@ namespace Kamilla.Network.Logging.Wow
                     if ((wowFlags & WowPacketFlags.HelloPacket) != 0)
                         opcode = SpecialWowOpcodes.HelloOpcode;
 
+                    flags &= PacketFlags.All;
+
                     var packet = new WowPacket(data, header->Direction,
                         flags, wowFlags, header->UnixTime.AsUnixTime(),
                         header->TickCount, opcode, connId);
