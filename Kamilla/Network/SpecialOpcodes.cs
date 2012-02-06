@@ -8,7 +8,7 @@ namespace Kamilla.Network
     /// <summary>
     /// Defines opcode values with special meaning.
     /// </summary>
-    public static class SpecialOpcodes
+    public class SpecialOpcodes
     {
         /// <summary>
         /// Defines an unknown opcode. This field is constant.

@@ -12,6 +12,7 @@ namespace Kamilla.Network.Protocols.Wow
     {
         int m_connectionId;
         uint m_opcode;
+        WowPacketFlags m_wowFlags;
 
         /// <summary>
         /// Gets the connection id of the current <see cref="Kamilla.Network.Protocols.Wow.WowPacket"/>.
@@ -22,6 +23,8 @@ namespace Kamilla.Network.Protocols.Wow
         /// Gets the opcode of the current <see cref="Kamilla.Network.Protocols.Wow.WowPacket"/>.
         /// </summary>
         public uint Opcode { get { return m_opcode; } }
+
+        public WowPacketFlags WowFlags { get { return m_wowFlags; } }
 
         /// <summary>
         /// Initializes a new instance of <see cref="Kamilla.Network.Protocols.Wow.WowPacket"/> class.
@@ -34,7 +37,11 @@ namespace Kamilla.Network.Protocols.Wow
         /// the new <see cref="Kamilla.Network.Protocols.Wow.WowPacket"/>.
         /// </param>
         /// <param name="flags">
-        /// <see cref="Kamilla.Network.PacketFlags"/> of
+        /// The <see cref="Kamilla.Network.PacketFlags"/> of
+        /// the new <see cref="Kamilla.Network.Protocols.Wow.WowPacket"/>.
+        /// </param>
+        /// <param name="wowFlags">
+        /// The <see cref="Kamilla.Network.Protocols.Wow.WowPacketFlags"/> of
         /// the new <see cref="Kamilla.Network.Protocols.Wow.WowPacket"/>.
         /// </param>
         /// <param name="arrivalTicks">
@@ -50,12 +57,13 @@ namespace Kamilla.Network.Protocols.Wow
         /// <param name="connectionId">
         /// The connection id of the new <see cref="Kamilla.Network.Protocols.Wow.WowPacket"/>.
         /// </param>
-        public WowPacket(byte[] data, TransferDirection direction, PacketFlags flags,
+        public WowPacket(byte[] data, TransferDirection direction, PacketFlags flags, WowPacketFlags wowFlags,
             DateTime arrivalTime, uint arrivalTicks, uint opcode, int connectionId)
             : base(data, direction, flags, arrivalTime, arrivalTicks)
         {
             m_opcode = opcode;
             m_connectionId = connectionId;
+            m_wowFlags = wowFlags;
         }
     }
 }

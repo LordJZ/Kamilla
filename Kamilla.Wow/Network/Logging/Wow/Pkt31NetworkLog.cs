@@ -310,8 +310,12 @@ namespace Kamilla.Network.Logging.Wow
                     var opcode = m_stream.ReadUInt32();
                     var data = m_stream.ReadBytes(header->DataLength - 4);
 
+                    var wowFlags = (WowPacketFlags)(flags & ~PacketFlags.All);
+                    if ((wowFlags & WowPacketFlags.HelloPacket) != 0)
+                        opcode = SpecialWowOpcodes.HelloOpcode;
+
                     var packet = new WowPacket(data, header->Direction,
-                        flags, this.StartTime.AddMilliseconds(header->TickCount - startTicks),
+                        flags, wowFlags, this.StartTime.AddMilliseconds(header->TickCount - startTicks),
                         header->TickCount, opcode, header->ConnectionId);
                     this.InternalAddPacket(packet);
                     this.OnPacketAdded(packet);

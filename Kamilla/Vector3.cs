@@ -4,7 +4,7 @@ using System.Globalization;
 namespace Kamilla
 {
     /// <summary>
-    /// Represents a 2-dimensional vector.
+    /// Represents a 3-dimensional vector.
     /// </summary>
     public struct Vector3 : IEquatable<Vector3>, IFormattable
     {
