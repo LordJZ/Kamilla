@@ -3,6 +3,8 @@ namespace Kamilla.Network.Protocols.Wow
 {
     public enum WowPacketFlags : byte
     {
+        None = 0,
+
         /// <summary>
         /// The long packet's header is fragmented and was not read
         /// fully when the tcp packet was originally received.
