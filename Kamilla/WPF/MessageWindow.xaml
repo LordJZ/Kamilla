@@ -6,7 +6,7 @@
       <RowDefinition Height="*" />
       <RowDefinition Height="40" />
     </Grid.RowDefinitions>
-    <Button Content="OK" Grid.Row="1" Height="23" HorizontalAlignment="Right" VerticalAlignment="Center" Width="75" Margin="0,0,10,0" Command="Close" />
+    <Button Content="OK" Grid.Row="1" Height="23" HorizontalAlignment="Right" VerticalAlignment="Center" Width="75" Margin="0,0,10,0" IsCancel="True" IsDefault="True" Click="Button_Click" />
     <TextBox Margin="15,15,15,0" Name="ui_tbMain" Text="TextBlock" IsReadOnly="True" AcceptsReturn="True" IsReadOnlyCaretVisible="True" BorderBrush="{x:Null}" BorderThickness="0" />
   </Grid>
 </Window>
