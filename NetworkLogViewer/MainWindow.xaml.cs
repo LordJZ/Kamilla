@@ -440,7 +440,11 @@ namespace NetworkLogViewer
             this.CurrentLog = null;
             m_currentFile = null;
 
-            this.ThreadSafeBegin(_ => _.Title = Strings.NetworkLogViewer_Title);
+            this.ThreadSafeBegin(_ =>
+            {
+                _.Title = Strings.NetworkLogViewer_Title;
+                _.UpdateViews();
+            });
         }
 
         void OpenFile(string filename, int pos = -1)
