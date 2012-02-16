@@ -392,7 +392,6 @@ namespace NetworkLogViewer
                 Configuration.SetValue("Window Top", this.Top);
 
                 m_implementation.CloseFile();
-                this.CurrentLog = null;
                 this.CurrentProtocol = null;
             }
         }
@@ -436,15 +435,15 @@ namespace NetworkLogViewer
 
         void CloseFile()
         {
-            m_implementation.CloseFile();
-            this.CurrentLog = null;
             m_currentFile = null;
-
             this.ThreadSafeBegin(_ =>
             {
+                _.SelectedIndex = -1;
                 _.Title = Strings.NetworkLogViewer_Title;
                 _.UpdateViews();
             });
+
+            m_implementation.CloseFile();
         }
 
         void OpenFile(string filename, int pos = -1)
@@ -825,7 +824,7 @@ namespace NetworkLogViewer
             }
             set
             {
-                if (value >= m_implementation.m_items.Count)
+                if (value >= m_implementation.m_items.Count || value < -1)
                     throw new ArgumentOutOfRangeException("value");
 
                 this.ThreadSafeBegin(_ =>
