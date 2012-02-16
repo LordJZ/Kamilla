@@ -275,9 +275,6 @@ namespace NetworkLogViewer
             if (m_pluginCommands.Contains(command))
                 throw new ArgumentException("Such command is already registered.", "command");
 
-            Console.WriteLine("Debug: RegisterPluginCommand '{0}' ({1}, {2})",
-                command.Title, command.Gesture.DisplayString, command.Gesture);
-
             m_pluginCommands.Add(command);
 
             m_window.ThreadSafeBegin(_ =>
