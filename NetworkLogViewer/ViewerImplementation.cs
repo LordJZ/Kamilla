@@ -29,7 +29,7 @@ namespace NetworkLogViewer
         BackgroundWorker m_parsingWorker;
         INetworkLogViewerPlugin[] m_plugins;
         List<PluginCommand> m_pluginCommands;
-        ConcurrentQueue<ViewerItem> m_parsingQueue = new ConcurrentQueue<ViewerItem>();
+        Queue<ViewerItem> m_parsingQueue = new Queue<ViewerItem>();
 
         const int s_maxAllocations = 1024;
         CircularCollection<ViewerItem> m_dataItems = new CircularCollection<ViewerItem>(1024);
@@ -132,22 +132,6 @@ namespace NetworkLogViewer
 
             m_parserItems.Clear();
             m_dataItems.Clear();
-        }
-
-        internal void StopParsing()
-        {
-            if (m_parsingWorker.IsBusy)
-                m_parsingWorker.CancelAsync();
-
-            ViewerItem item;
-            while (!m_parsingQueue.IsEmpty)
-                m_parsingQueue.TryDequeue(out item);
-        }
-
-        internal void StartParsing()
-        {
-            if (!m_parsingWorker.IsBusy && !m_parsingQueue.IsEmpty)
-                m_parsingWorker.RunWorkerAsync();
         }
 
         internal void SetProtocol(Protocol value)
@@ -393,48 +377,75 @@ namespace NetworkLogViewer
             // THREADING DANGER ZONE!
 
             var worker = (BackgroundWorker)sender;
+            var protocol = m_currentProtocol;
             int turnOffTimes = 0;
 
-            do
+            while (!worker.CancellationPending)
             {
-                Protocol protocol;
-                ViewerItem item;
-                while (!worker.CancellationPending && (protocol = m_currentProtocol) != null
-                    && m_parsingQueue.TryDequeue(out item))
+                ViewerItem item = null;
+
+                lock (m_parsingQueue)
                 {
-                    if (item.Viewer != this || item.Log != m_currentLog)
-                        continue;
-
-                    var parser = item.Parser;
-                    if (parser == null)
-                    {
-                        turnOffTimes = 0;
-                        protocol.CreateParser(item);
-                        parser = item.Parser;
-                    }
-
-                    if (!parser.IsParsed)
-                    {
-                        turnOffTimes = 0;
-                        parser.Parse();
-                    }
-
-                    Thread.Sleep(1);
+                    if (m_parsingQueue.Count > 0)
+                        item = m_parsingQueue.Dequeue();
                 }
 
-                while (!worker.CancellationPending && (m_parsingQueue.IsEmpty || m_currentProtocol == null))
+                if (item == null)
                 {
-                    Thread.Sleep(100);
-                    if (++turnOffTimes == 50)
+                    ++turnOffTimes;
+                    if (turnOffTimes == 50)
                         return;
+
+                    Thread.Sleep(100);
+                    continue;
+                }
+
+                if (item.Viewer != this || item.Log != m_currentLog)
+                    continue;
+
+                var parser = item.Parser;
+                if (parser == null)
+                {
+                    turnOffTimes = 0;
+                    protocol.CreateParser(item);
+                    parser = item.Parser;
+                }
+
+                if (!parser.IsParsed)
+                {
+                    turnOffTimes = 0;
+                    parser.Parse();
+                }
+
+                Thread.Sleep(1);
+            }
+        }
+
+        internal void StopParsing()
+        {
+            if (m_parsingWorker.IsBusy)
+                m_parsingWorker.CancelAsync();
+
+            lock (m_parsingQueue)
+                m_parsingQueue.Clear();
+        }
+
+        internal void StartParsing()
+        {
+            if (!m_parsingWorker.IsBusy)
+            {
+                lock (m_parsingQueue)
+                {
+                    if (m_parsingQueue.Count > 0)
+                        m_parsingWorker.RunWorkerAsync();
                 }
             }
-            while (!worker.CancellationPending);
         }
 
         public override void EnqueueParsing(ViewerItem item)
         {
-            m_parsingQueue.Enqueue(item);
+            lock (m_parsingQueue)
+                m_parsingQueue.Enqueue(item);
 
             this.StartParsing();
         }
