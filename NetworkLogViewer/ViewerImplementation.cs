@@ -20,36 +20,6 @@ namespace NetworkLogViewer
     {
         bool m_autoParse;
         bool m_deallocQueueEnabled;
-
-        internal bool AutoParse
-        {
-            get { return m_autoParse; }
-            set
-            {
-                m_autoParse = value;
-
-                if (value)
-                    m_items.Update();
-            }
-        }
-
-        internal bool EnableDeallocQueue
-        {
-            get { return m_deallocQueueEnabled; }
-            set
-            {
-                m_deallocQueueEnabled = value;
-
-                if (value)
-                    this.DropCache();
-                else
-                {
-                    m_parserItems.Clear();
-                    m_dataItems.Clear();
-                }
-            }
-        }
-
         MainWindow m_window;
         PacketAddedEventHandler m_packetAddedHandler;
         volatile Protocol m_currentProtocol;
@@ -59,6 +29,7 @@ namespace NetworkLogViewer
         BackgroundWorker m_parsingWorker;
         INetworkLogViewerPlugin[] m_plugins;
         List<PluginCommand> m_pluginCommands;
+        ConcurrentQueue<ViewerItem> m_parsingQueue = new ConcurrentQueue<ViewerItem>();
 
         const int s_maxAllocations = 1024;
         CircularCollection<ViewerItem> m_dataItems = new CircularCollection<ViewerItem>(1024);
@@ -91,6 +62,35 @@ namespace NetworkLogViewer
         {
             Configuration.SetValue("AutoParse", m_autoParse);
             Configuration.SetValue("DeallocQueue", m_deallocQueueEnabled);
+        }
+
+        internal bool AutoParse
+        {
+            get { return m_autoParse; }
+            set
+            {
+                m_autoParse = value;
+
+                if (value)
+                    m_items.Update();
+            }
+        }
+
+        internal bool EnableDeallocQueue
+        {
+            get { return m_deallocQueueEnabled; }
+            set
+            {
+                m_deallocQueueEnabled = value;
+
+                if (value)
+                    this.DropCache();
+                else
+                {
+                    m_parserItems.Clear();
+                    m_dataItems.Clear();
+                }
+            }
         }
 
         void m_currentLog_PacketAdded(object sender, PacketAddedEventArgs e)
@@ -387,8 +387,6 @@ namespace NetworkLogViewer
         #endregion
 
         #region Parsing
-        ConcurrentQueue<ViewerItem> m_parsingQueue = new ConcurrentQueue<ViewerItem>();
-
         void m_parsingWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             // THREADING DANGER ZONE!
