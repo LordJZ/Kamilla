@@ -203,6 +203,10 @@ namespace NetworkLogViewer
             m_dataItems.Clear();
             m_parserItems.Clear();
             this.SetLog(null);
+
+            // We've got a lot of unreferenced object instances
+            // at this point, and we can collect them instantly.
+            GC.Collect();
         }
 
         protected override void OnItemVisualDataChanged(ViewerItem item, object oldData, object newData)
