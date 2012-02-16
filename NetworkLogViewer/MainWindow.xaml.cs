@@ -435,15 +435,10 @@ namespace NetworkLogViewer
 
         void CloseFile()
         {
-            m_currentFile = null;
-            this.ThreadSafeBegin(_ =>
-            {
-                _.SelectedIndex = -1;
-                _.Title = Strings.NetworkLogViewer_Title;
-                _.UpdateViews();
-            });
-
             m_implementation.CloseFile();
+
+            m_currentFile = null;
+            this.ThreadSafeBegin(_ => _.Title = Strings.NetworkLogViewer_Title);
         }
 
         void OpenFile(string filename, int pos = -1)
@@ -829,8 +824,6 @@ namespace NetworkLogViewer
 
                 this.ThreadSafeBegin(_ =>
                 {
-                    int index = _.ui_lvPackets.SelectedIndex;
-
                     _.ui_lvPackets.SelectedIndex = value;
                     if (value >= 0)
                     {
