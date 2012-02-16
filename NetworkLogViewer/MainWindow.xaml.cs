@@ -550,26 +550,31 @@ namespace NetworkLogViewer
 
         private void ui_readingWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            LoadingStatePop();
-
-            if (e.Cancelled)
+            try
             {
-                this.CloseFile();
-                return;
+                if (e.Error != null)
+                    MessageWindow.Show(this, Strings.Error, Strings.ErrorReading.LocalizedFormat(e.Error.ToString()));
+
+                if (e.Cancelled)
+                {
+                    this.CloseFile();
+                    return;
+                }
+
+                var sw = Stopwatch.StartNew();
+                m_implementation.m_items.ResumeUpdating();
+                m_implementation.m_items.Update();
+                sw.Stop();
+                Console.WriteLine("Updated items in {0}", sw.Elapsed);
+
+                int index = (int)e.Result;
+                if (index >= 0 && index < m_implementation.m_items.Count)
+                    this.SelectedIndex = index;
             }
-
-            var sw = Stopwatch.StartNew();
-            m_implementation.m_items.ResumeUpdating();
-            m_implementation.m_items.Update();
-            sw.Stop();
-            Console.WriteLine("Updated items in {0}", sw.Elapsed);
-
-            int index = (int)e.Result;
-            if (index >= 0 && index < m_implementation.m_items.Count)
-                this.SelectedIndex = index;
-
-            if (e.Error != null)
-                MessageWindow.Show(this, Strings.Error, Strings.ErrorReading.LocalizedFormat(e.Error.ToString()));
+            finally
+            {
+                LoadingStatePop();
+            }
         }
 
         void MainWindow_NetworkLogChanged(object sender, EventArgs e)
