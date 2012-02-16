@@ -29,21 +29,6 @@
         <MenuItem Header="{x:Static viewer:Strings.Menu_Exit}" Command="Close"/>
       </MenuItem>
 
-      <MenuItem Header="{x:Static viewer:Strings.Menu_Edit}">
-        <MenuItem Header="{x:Static viewer:Strings.Menu_Protocols}" Name="ui_miProtocol"/>
-      </MenuItem>
-
-      <MenuItem Header="{x:Static viewer:Strings.Menu_Search}">
-        <MenuItem Name="ui_miSearch" Header="{x:Static viewer:Strings.SearchEllipsis}" Command="viewer:NetworkLogViewerCommands.Search"/>
-        <MenuItem Name="ui_miSearchUp" Header="{x:Static viewer:Strings.SearchUp}" Command="viewer:NetworkLogViewerCommands.SearchUp"/>
-        <MenuItem Name="ui_miSearchDown" Header="{x:Static viewer:Strings.SearchDown}" Command="viewer:NetworkLogViewerCommands.SearchDown"/>
-        <Separator/>
-        <MenuItem Name="ui_miGoToPacket" Header="{x:Static viewer:Strings.Menu_GoToPacketN}" Command="viewer:NetworkLogViewerCommands.GoToPacketN"/>
-        <MenuItem Name="ui_miNextError" Header="{x:Static viewer:Strings.Menu_NextError}" Command="viewer:NetworkLogViewerCommands.NextError"/>
-        <MenuItem Name="ui_miNextUndefinedParser" Header="{x:Static viewer:Strings.Menu_NextUndefinedParser}" Command="viewer:NetworkLogViewerCommands.NextUndefinedParser"/>
-        <MenuItem Name="ui_miNextUnknownOpcode" Header="{x:Static viewer:Strings.Menu_NextUnknownOpcode}" Command="viewer:NetworkLogViewerCommands.NextUnknownOpcode"/>
-      </MenuItem>
-
       <MenuItem Header="{x:Static viewer:Strings.Menu_View}">
         <MenuItem Name="ui_miSkins" Header="{x:Static viewer:Strings.Menu_Skins}"/>
 
@@ -59,9 +44,21 @@
         <MenuItem Header="{x:Static viewer:Strings.Menu_AlignPanels}" Click="AlignPanels_Click"/>
 
         <Separator/>
+        <MenuItem Header="{x:Static viewer:Strings.Menu_Protocols}" Name="ui_miProtocol"/>
         <MenuItem Header="{x:Static viewer:Strings.Menu_DropCache}" Click="DropCache_Click"/>
         <MenuItem Header="{x:Static viewer:Strings.Menu_AutoParse}" IsCheckable="True" Name="ui_miAutoParse" Checked="AutoParse_CheckedChanged" Unchecked="AutoParse_CheckedChanged"/>
         <MenuItem Header="{x:Static viewer:Strings.Menu_AutoDropCache}" IsCheckable="True" Name="ui_miAutoDropCache" Checked="AutoDropCache_CheckedChanged" Unchecked="AutoDropCache_CheckedChanged"/>
+      </MenuItem>
+
+      <MenuItem Header="{x:Static viewer:Strings.Menu_Search}">
+        <MenuItem Name="ui_miSearch" Header="{x:Static viewer:Strings.SearchEllipsis}" Command="viewer:NetworkLogViewerCommands.Search"/>
+        <MenuItem Name="ui_miSearchUp" Header="{x:Static viewer:Strings.SearchUp}" Command="viewer:NetworkLogViewerCommands.SearchUp"/>
+        <MenuItem Name="ui_miSearchDown" Header="{x:Static viewer:Strings.SearchDown}" Command="viewer:NetworkLogViewerCommands.SearchDown"/>
+        <Separator/>
+        <MenuItem Name="ui_miGoToPacket" Header="{x:Static viewer:Strings.Menu_GoToPacketN}" Command="viewer:NetworkLogViewerCommands.GoToPacketN"/>
+        <MenuItem Name="ui_miNextError" Header="{x:Static viewer:Strings.Menu_NextError}" Command="viewer:NetworkLogViewerCommands.NextError"/>
+        <MenuItem Name="ui_miNextUndefinedParser" Header="{x:Static viewer:Strings.Menu_NextUndefinedParser}" Command="viewer:NetworkLogViewerCommands.NextUndefinedParser"/>
+        <MenuItem Name="ui_miNextUnknownOpcode" Header="{x:Static viewer:Strings.Menu_NextUnknownOpcode}" Command="viewer:NetworkLogViewerCommands.NextUnknownOpcode"/>
       </MenuItem>
 
       <MenuItem Header="{x:Static viewer:Strings.Menu_Plugins}" Name="ui_miPlugins" x:FieldModifier="internal" IsEnabled="False" />
