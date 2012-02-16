@@ -17,6 +17,8 @@ namespace NetworkLogViewer.ViewTabs
 
         void IViewTab.Reset()
         {
+            ui_tbMain.Text = string.Empty;
+
             this.IsFilled = false;
         }
 
