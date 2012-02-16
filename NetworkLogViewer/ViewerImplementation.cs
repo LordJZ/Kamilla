@@ -29,11 +29,11 @@ namespace NetworkLogViewer
         BackgroundWorker m_parsingWorker;
         INetworkLogViewerPlugin[] m_plugins;
         List<PluginCommand> m_pluginCommands;
-        Queue<ViewerItem> m_parsingQueue = new Queue<ViewerItem>();
+        Queue<ViewerItem> m_parsingQueue = new Queue<ViewerItem>(64);
 
         const int s_maxAllocations = 1024;
-        CircularCollection<ViewerItem> m_dataItems = new CircularCollection<ViewerItem>(1024);
-        CircularCollection<ViewerItem> m_parserItems = new CircularCollection<ViewerItem>(1024);
+        Queue<ViewerItem> m_dataItems = new Queue<ViewerItem>(s_maxAllocations);
+        Queue<ViewerItem> m_parserItems = new Queue<ViewerItem>(s_maxAllocations);
 
         internal ViewerImplementation(MainWindow window)
         {
@@ -87,8 +87,11 @@ namespace NetworkLogViewer
                     this.DropCache();
                 else
                 {
-                    m_parserItems.Clear();
-                    m_dataItems.Clear();
+                    lock (m_parserItems)
+                        m_parserItems.Clear();
+
+                    lock (m_dataItems)
+                        m_dataItems.Clear();
                 }
             }
         }
@@ -124,14 +127,17 @@ namespace NetworkLogViewer
 
         internal void DropCache()
         {
+            lock (m_parserItems)
+                m_parserItems.Clear();
+
+            lock (m_dataItems)
+                m_dataItems.Clear();
+
             foreach (var item in m_items)
             {
                 item.Parser = null;
                 item.VisualData = null;
             }
-
-            m_parserItems.Clear();
-            m_dataItems.Clear();
         }
 
         internal void SetProtocol(Protocol value)
@@ -200,8 +206,13 @@ namespace NetworkLogViewer
         internal void CloseFile()
         {
             m_items.Clear();
-            m_dataItems.Clear();
-            m_parserItems.Clear();
+
+            lock (m_dataItems)
+                m_dataItems.Clear();
+
+            lock (m_parserItems)
+                m_parserItems.Clear();
+
             this.SetLog(null);
 
             // We've got a lot of unreferenced object instances
@@ -215,11 +226,13 @@ namespace NetworkLogViewer
 
             if (oldData == null && newData != null)
             {
-                var back = m_dataItems.Back;
-                if (back != null)
-                    back.VisualData = null;
+                lock (m_dataItems)
+                {
+                    if (m_dataItems.Count >= s_maxAllocations)
+                        m_dataItems.Dequeue().VisualData = null;
 
-                m_dataItems.PushFront(item);
+                    m_dataItems.Enqueue(item);
+                }
             }
         }
 
@@ -229,11 +242,13 @@ namespace NetworkLogViewer
 
             if (oldParser == null && newParser != null)
             {
-                var back = m_parserItems.Back;
-                if (back != null)
-                    back.Parser = null;
+                lock (m_parserItems)
+                {
+                    if (m_parserItems.Count >= s_maxAllocations)
+                        m_parserItems.Dequeue().Parser = null;
 
-                m_parserItems.PushFront(item);
+                    m_parserItems.Enqueue(item);
+                }
             }
         }
 
