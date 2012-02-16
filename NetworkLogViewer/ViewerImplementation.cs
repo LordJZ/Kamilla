@@ -209,15 +209,16 @@ namespace NetworkLogViewer
             if (this.NetworkLogChanged != null)
                 this.NetworkLogChanged(this, EventArgs.Empty);
 
-            this.StartParsing();
+            if (m_currentLog != null)
+                this.StartParsing();
         }
 
         internal void CloseFile()
         {
             m_items.Clear();
-            this.SetLog(null);
             m_dataItems.Clear();
             m_parserItems.Clear();
+            this.SetLog(null);
         }
 
         protected override void OnItemVisualDataChanged(ViewerItem item, object oldData, object newData)
