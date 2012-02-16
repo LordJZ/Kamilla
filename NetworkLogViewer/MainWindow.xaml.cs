@@ -443,15 +443,13 @@ namespace NetworkLogViewer
 
         void OpenFile(string filename, int pos = -1)
         {
-            NetworkLog log;
+            NetworkLog log = null;
             try
             {
                 log = NetworkLogFactory.GetNetworkLog(filename);
             }
             catch
             {
-                MessageWindow.Show(this, "FAIL!", "FAIL!");
-                return;
             }
             if (log == null)
                 throw new NotImplementedException("Select Network Log window is not implemented");
