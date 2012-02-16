@@ -20,20 +20,22 @@ namespace NetworkLogViewer
     {
         bool m_autoParse;
         bool m_deallocQueueEnabled;
-        MainWindow m_window;
-        PacketAddedEventHandler m_packetAddedHandler;
+
         volatile Protocol m_currentProtocol;
         NetworkLog m_currentLog;
         internal readonly ViewerItemCollection m_items;
-        WindowInteropHelper m_interopHelper;
-        BackgroundWorker m_parsingWorker;
+
+        readonly MainWindow m_window;
+        readonly PacketAddedEventHandler m_packetAddedHandler;
+        readonly WindowInteropHelper m_interopHelper;
+        readonly BackgroundWorker m_parsingWorker;
         INetworkLogViewerPlugin[] m_plugins;
-        List<PluginCommand> m_pluginCommands;
-        Queue<ViewerItem> m_parsingQueue = new Queue<ViewerItem>(64);
+        readonly List<PluginCommand> m_pluginCommands;
+        readonly Queue<ViewerItem> m_parsingQueue = new Queue<ViewerItem>(64);
 
         const int s_maxAllocations = 1024;
-        Queue<ViewerItem> m_dataItems = new Queue<ViewerItem>(s_maxAllocations);
-        Queue<ViewerItem> m_parserItems = new Queue<ViewerItem>(s_maxAllocations);
+        readonly Queue<ViewerItem> m_dataItems = new Queue<ViewerItem>(s_maxAllocations);
+        readonly Queue<ViewerItem> m_parserItems = new Queue<ViewerItem>(s_maxAllocations);
 
         internal ViewerImplementation(MainWindow window)
         {
