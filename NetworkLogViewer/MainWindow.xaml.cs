@@ -1051,6 +1051,8 @@ namespace NetworkLogViewer
 
         void ui_savingWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            UICulture.Initialize();
+
             e.Result = e.Argument;
             var worker = (BackgroundWorker)sender;
             var writer = (StreamWriter)e.Argument;
@@ -1469,6 +1471,8 @@ namespace NetworkLogViewer
 
         void ui_searchWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            UICulture.Initialize();
+
             e.Result = -1;
             var request = (SearchRequest)e.Argument;
             var worker = (BackgroundWorker)sender;

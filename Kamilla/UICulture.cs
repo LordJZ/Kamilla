@@ -16,18 +16,18 @@ namespace Kamilla
         /// </summary>
         public static void Initialize()
         {
-            if (s_culture != null)
-                return;
-
-            var cultureName = Configuration.GetValue("UI Language", string.Empty);
-            if (!string.IsNullOrEmpty(cultureName))
+            if (s_culture == null)
             {
-                try
+                var cultureName = Configuration.GetValue("UI Language", string.Empty);
+                if (!string.IsNullOrEmpty(cultureName))
                 {
-                    s_culture = CultureInfo.GetCultureInfo(cultureName);
-                }
-                catch
-                {
+                    try
+                    {
+                        s_culture = CultureInfo.GetCultureInfo(cultureName);
+                    }
+                    catch
+                    {
+                    }
                 }
             }
 

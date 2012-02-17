@@ -396,6 +396,7 @@ namespace NetworkLogViewer
         void m_parsingWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             // THREADING DANGER ZONE!
+            UICulture.Initialize();
 
             var worker = (BackgroundWorker)sender;
             var protocol = m_currentProtocol;
