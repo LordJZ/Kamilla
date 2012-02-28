@@ -28,8 +28,21 @@ namespace Kamilla.Network.Protocols.Wow
             return new StreamHandler(uncompressedBytes);
         }
 
+        public static StreamHandler ReadHasByte(this StreamHandler reader, out byte value)
+        {
+            if (reader == null)
+                throw new ArgumentNullException("reader");
+
+            value = reader.UnalignedReadBit() ? (byte)1 : (byte)0;
+
+            return reader;
+        }
+
         public static StreamHandler ReadXorByte(this StreamHandler reader, ref byte value)
         {
+            if (reader == null)
+                throw new ArgumentNullException("reader");
+
             if (value != 0)
             {
                 if (value != 1)
@@ -41,8 +54,21 @@ namespace Kamilla.Network.Protocols.Wow
             return reader;
         }
 
+        public static StreamHandler WriteHasByte(this StreamHandler writer, byte value)
+        {
+            if (writer == null)
+                throw new ArgumentNullException("reader");
+
+            writer.UnalignedWriteBit(value != 0);
+
+            return writer;
+        }
+
         public static StreamHandler WriteXorByte(this StreamHandler writer, byte value)
         {
+            if (writer == null)
+                throw new ArgumentNullException("reader");
+
             if (value != 0)
                 writer.WriteByte((byte)(value ^ 1));
 
