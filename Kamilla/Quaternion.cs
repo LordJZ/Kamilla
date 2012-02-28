@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Globalization;
 
 namespace Kamilla
 {
-    public struct Quaternion
+    public struct Quaternion : IFormattable
     {
         /// <summary>
         /// The X component of the <see cref="Kamilla.Quaternion"/>.
@@ -33,6 +31,29 @@ namespace Kamilla
             this.Y = y;
             this.Z = z;
             this.W = w;
+        }
+
+        public override string ToString()
+        {
+            return this.ToString(null, CultureInfo.CurrentCulture);
+        }
+
+        public string ToString(string format)
+        {
+            return this.ToString(format, CultureInfo.CurrentCulture);
+        }
+
+        public string ToString(IFormatProvider provider)
+        {
+            return this.ToString(null, provider);
+        }
+
+        public string ToString(string format, IFormatProvider provider)
+        {
+            if (format != null)
+                throw new FormatException();
+
+            return string.Format(provider, "{{X:{0} Y:{1} Z:{2} W:{3}}}", this.X, this.Y, this.Z, this.W);
         }
     }
 }
