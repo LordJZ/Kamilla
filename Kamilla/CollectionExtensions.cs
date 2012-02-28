@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Kamilla
 {
@@ -175,29 +176,29 @@ namespace Kamilla
             return InternalSequenceEqual(collection, collection2, 0, 0, -1, comparer, false);
         }
 
-        /// <summary>
-        /// Determines if the elements of two collections are equal using the default equality comparer.
-        /// </summary>
-        /// <typeparam name="T">
-        /// Element type of the collections.
-        /// </typeparam>
-        /// <param name="collection">
-        /// First collection to compare elements in.
-        /// </param>
-        /// <param name="collection2">
-        /// Second collection to compare elements in.
-        /// </param>
-        /// <returns>
-        /// true if the elements of the collections are equal according to
-        /// the default equality comparer; otherwise, false.
-        /// </returns>
-        /// <exception cref="System.ArgumentNullException">
-        /// collection is null, or collection2 is null.
-        /// </exception>
-        public static bool SequenceEqual<T>(this IEnumerable<T> collection, IEnumerable<T> collection2)
-        {
-            return InternalSequenceEqual(collection, collection2, 0, 0, -1, EqualityComparer<T>.Default, false);
-        }
+        ///// <summary>
+        ///// Determines if the elements of two collections are equal using the default equality comparer.
+        ///// </summary>
+        ///// <typeparam name="T">
+        ///// Element type of the collections.
+        ///// </typeparam>
+        ///// <param name="collection">
+        ///// First collection to compare elements in.
+        ///// </param>
+        ///// <param name="collection2">
+        ///// Second collection to compare elements in.
+        ///// </param>
+        ///// <returns>
+        ///// true if the elements of the collections are equal according to
+        ///// the default equality comparer; otherwise, false.
+        ///// </returns>
+        ///// <exception cref="System.ArgumentNullException">
+        ///// collection is null, or collection2 is null.
+        ///// </exception>
+        //public static bool SequenceEqual<T>(this IEnumerable<T> collection, IEnumerable<T> collection2)
+        //{
+        //    return InternalSequenceEqual(collection, collection2, 0, 0, -1, EqualityComparer<T>.Default, false);
+        //}
 
         /// <summary>
         /// Determines if the specified number of elements of two collections
@@ -547,6 +548,39 @@ namespace Kamilla
             {
                 if (pred(item))
                     return i;
+
+                ++i;
+            }
+
+            return -1;
+        }
+
+        /// <summary>
+        /// Reports the index of the first matching item in a collection.
+        /// </summary>
+        /// <typeparam name="T">
+        /// Element type of the collection.
+        /// </typeparam>
+        /// <param name="collection">
+        /// The collection to find matching items in.
+        /// </param>
+        /// <param name="pred">
+        /// Predicate which must be matched by the item.
+        /// </param>
+        /// <param name="start">
+        /// The starting index for the search.
+        /// </param>
+        /// <returns>
+        /// Index of the first matching item; if none found, -1.
+        /// </returns>
+        public static int IndexOf<T>(this IEnumerable<T> collection, Predicate<T> pred, int start)
+        {
+            int i = 0;
+
+            foreach (var item in collection.Skip(start))
+            {
+                if (pred(item))
+                    return i + start;
 
                 ++i;
             }
