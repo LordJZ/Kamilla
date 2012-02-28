@@ -127,6 +127,11 @@ namespace Kamilla.Network.Logging.Wow
                 15201, // World of Warcraft patch 4.3.2 PTR
                 15211, // World of Warcraft patch 4.3.2
             });
+            ChainAdd(new Version(4, 3, 3), new uint[] {
+                15314, // World of Warcraft patch 4.3.3 PTR
+                15338, // World of Warcraft patch 4.3.3 PTR
+                15354, // World of Warcraft patch 4.3.3
+            });
 
             s_clientBuildInfos.Sort(new ClientBuildInfoComparer());
         }
