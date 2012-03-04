@@ -131,6 +131,7 @@ namespace NetworkLogViewer
         {
             e.Cancel = true;
             this.Hide();
+            m_window.Focus();
         }
 
         private void ui_btnClose_Click(object sender, RoutedEventArgs e)
