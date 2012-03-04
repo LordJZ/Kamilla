@@ -1466,46 +1466,61 @@ namespace NetworkLogViewer
                 throw new ArgumentNullException("request");
 
             ui_searchWorker.RunWorkerAsync(request);
-            this.LoadingStatePush(new LoadingState(Strings.Searching, _ => _.ui_searchWorker.CancelAsync()));
         }
 
         void ui_searchWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            UICulture.Initialize();
-
-            e.Result = -1;
-            var request = (SearchRequest)e.Argument;
-            var worker = (BackgroundWorker)sender;
-
-            int delta = request.IsDown ? 1 : -1;
-            int start = request.IsContinue ? (ui_lvPackets.ThreadSafe(_ => _.SelectedIndex) + delta) : 0;
-
-            int progress = 0;
-            var items = m_implementation.m_items;
-            int count = items.Count;
-            ViewerItem result = null;
-
-            for (int i = start; i < count && i >= 0; i += delta)
+            bool statePushed = false;
+            try
             {
-                if (worker.CancellationPending)
-                    return;
+                UICulture.Initialize();
 
-                var item = items[i];
-                if (request.Matches(item))
+                e.Result = -1;
+                var request = (SearchRequest)e.Argument;
+                var worker = (BackgroundWorker)sender;
+
+                int delta = request.IsDown ? 1 : -1;
+                int start = request.IsContinue ? (ui_lvPackets.ThreadSafe(_ => _.SelectedIndex) + delta) : 0;
+
+                int progress = 0;
+                var items = m_implementation.m_items;
+                int count = items.Count;
+                ViewerItem result = null;
+                int ms = Environment.TickCount;
+
+                for (int i = start; i < count && i >= 0; i += delta)
                 {
-                    result = item;
-                    break;
+                    if (worker.CancellationPending)
+                        return;
+
+                    var item = items[i];
+                    if (request.Matches(item))
+                    {
+                        result = item;
+                        break;
+                    }
+
+                    int newProgress = i * 100 / count;
+                    if (newProgress != progress)
+                    {
+                        progress = newProgress;
+                        worker.ReportProgress(progress);
+                    }
+
+                    if (!statePushed && Environment.TickCount - ms > 200)
+                    {
+                        statePushed = true;
+                        this.ThreadSafeBegin(w => w.LoadingStatePush(new LoadingState(Strings.Searching, _ => _.ui_searchWorker.CancelAsync())));
+                    }
                 }
 
-                int newProgress = i * 100 / count;
-                if (newProgress != progress)
-                {
-                    progress = newProgress;
-                    worker.ReportProgress(progress);
-                }
+                e.Result = new Tuple<SearchRequest, ViewerItem>(request, result);
             }
-
-            e.Result = new Tuple<SearchRequest, ViewerItem>(request, result);
+            finally
+            {
+                if (statePushed)
+                    this.ThreadSafeBegin(w => w.LoadingStatePop());
+            }
         }
 
         void ui_searchWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -1515,8 +1530,6 @@ namespace NetworkLogViewer
 
         void ui_searchWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            LoadingStatePop();
-
             if (e.Error != null)
             {
                 MessageWindow.Show(this, Strings.Error, e.Error.ToString());
