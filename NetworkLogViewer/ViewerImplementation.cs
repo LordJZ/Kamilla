@@ -438,8 +438,6 @@ namespace NetworkLogViewer
                     turnOffTimes = 0;
                     parser.Parse();
                 }
-
-                Thread.Sleep(1);
             }
         }
 
