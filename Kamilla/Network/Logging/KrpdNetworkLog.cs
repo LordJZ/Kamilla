@@ -182,7 +182,7 @@ namespace Kamilla.Network.Logging
 
         protected override void InternalSave(Stream stream)
         {
-            if (m_stream != null)
+            if (this.StreamOpened)
                 throw new InvalidOperationException();
 
             m_stream = new StreamHandler(stream);

@@ -29,6 +29,9 @@ namespace Kamilla.Network.Logging
         /// </summary>
         protected StreamHandler m_stream;
         protected long m_streamOriginalPosition;
+
+        public virtual bool StreamOpened { get { return m_stream != null; } }
+
         /// <summary>
         /// Indicates whether the dump loaded from stream or file.
         /// </summary>
@@ -231,7 +234,7 @@ namespace Kamilla.Network.Logging
                 }
                 case NetworkLogMode.Writing:
                 {
-                    if (m_stream == null)
+                    if (!this.StreamOpened)
                         throw new ObjectDisposedException("Stream");
 
                     if (!m_stream.BaseStream.CanWrite)
@@ -329,7 +332,7 @@ namespace Kamilla.Network.Logging
             if (m_mode != NetworkLogMode.Writing)
                 throw new InvalidOperationException();
 
-            if (m_stream != null)
+            if (this.StreamOpened)
                 throw new InvalidOperationException("A stream is already opened.");
 
             if (filename == null)
@@ -371,7 +374,7 @@ namespace Kamilla.Network.Logging
             if (m_mode != NetworkLogMode.Writing)
                 throw new InvalidOperationException();
 
-            if (m_stream != null)
+            if (this.StreamOpened)
                 throw new InvalidOperationException("A stream is already opened.");
 
             if (stream == null)
@@ -409,7 +412,7 @@ namespace Kamilla.Network.Logging
             if (m_mode != NetworkLogMode.Writing)
                 throw new InvalidOperationException();
 
-            if (m_stream == null)
+            if (!this.StreamOpened)
                 throw new ObjectDisposedException("Stream");
 
             if (!m_stream.BaseStream.CanWrite)
@@ -552,7 +555,7 @@ namespace Kamilla.Network.Logging
             if (m_isLoaded)
                 throw new InvalidOperationException();
 
-            if (m_stream != null)
+            if (this.StreamOpened)
                 throw new InvalidOperationException("A stream is already opened.");
 
             if (filename == null)
@@ -603,7 +606,7 @@ namespace Kamilla.Network.Logging
             if (m_isLoaded)
                 throw new InvalidOperationException();
 
-            if (m_stream != null)
+            if (this.StreamOpened)
                 throw new InvalidOperationException("A stream is already opened.");
 
             if (stream == null)
@@ -654,7 +657,7 @@ namespace Kamilla.Network.Logging
             if (m_mode != NetworkLogMode.Reading)
                 throw new InvalidOperationException();
 
-            if (m_stream == null)
+            if (!this.StreamOpened)
                 throw new ObjectDisposedException("Stream");
 
             if (!m_stream.BaseStream.CanRead)
@@ -690,11 +693,8 @@ namespace Kamilla.Network.Logging
             if (reportProgressDelegate == null)
                 throw new ArgumentNullException("reportProgressDelegate");
 
-            if (m_stream == null)
+            if (!this.StreamOpened)
                 throw new ObjectDisposedException("Stream");
-
-            if (!m_stream.BaseStream.CanRead)
-                throw new EndOfStreamException();
 
             this.InternalRead(reportProgressDelegate);
         }
@@ -707,7 +707,7 @@ namespace Kamilla.Network.Logging
         /// Closes the underlying <see cref="System.IO.Stream"/> of the current
         /// instance of <see cref="Kamilla.Network.Logging.NetworkLog"/>.
         /// </summary>
-        public void CloseStream()
+        public virtual void CloseStream()
         {
             if (m_stream != null)
             {
@@ -718,11 +718,7 @@ namespace Kamilla.Network.Logging
 
         void IDisposable.Dispose()
         {
-            if (m_stream != null)
-            {
-                m_stream.Close();
-                m_stream = null;
-            }
+            this.CloseStream();
 
             m_packets = null;
         }
