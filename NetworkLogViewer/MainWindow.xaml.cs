@@ -448,8 +448,9 @@ namespace NetworkLogViewer
             {
                 log = NetworkLogFactory.GetNetworkLog(filename);
             }
-            catch
+            catch (Exception e)
             {
+                Console.WriteLine("Error: Failed to GetNetworkLog:{1}{0}", e, Environment.NewLine);
             }
             if (log == null)
                 throw new NotImplementedException("Select Network Log window is not implemented");

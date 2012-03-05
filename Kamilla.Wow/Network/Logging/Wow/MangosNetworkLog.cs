@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using Kamilla.IO;
 using System.Globalization;
+using System.IO;
+using System.Linq;
 using Kamilla.Network.Protocols.Wow;
 
 namespace Kamilla.Network.Logging.Wow
 {
     [NetworkLog(
-        FileExtension = "log",
+        FileExtension = ".log",
         HeaderString = "20",
         Flags = NetworkLogFlags.ReadOnly
         )]
@@ -31,7 +29,7 @@ namespace Kamilla.Network.Logging.Wow
             throw new NotSupportedException();
         }
 
-        protected override void InternalSave(System.IO.Stream stream)
+        protected override void InternalSave(Stream stream)
         {
             throw new NotSupportedException();
         }
@@ -116,6 +114,16 @@ namespace Kamilla.Network.Logging.Wow
                 {
                     ++nLine;
 
+                    if (nLine == 1)
+                    {
+                        if (line.StartsWith("EXPECTED CLIENT BUILD ", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            m_version = GetClientBuildInfo(uint.Parse(line.Substring("EXPECTED CLIENT BUILD ".Length)));
+                        }
+
+                        continue;
+                    }
+
                     if (line.Trim() == string.Empty)
                     {
                         readingData = false;
@@ -167,10 +175,6 @@ namespace Kamilla.Network.Logging.Wow
                     else if (readingData)
                     {
                         dataString += line;
-                    }
-                    else if (line.StartsWith("EXPECTED CLIENT BUILD ", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        m_version = GetClientBuildInfo(uint.Parse(line.Substring("EXPECTED CLIENT BUILD ".Length)));
                     }
                     else if (line.StartsWith("CLIENT"))
                     {

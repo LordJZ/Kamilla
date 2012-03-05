@@ -12,7 +12,7 @@ using System.IO;
 namespace Kamilla.Network.Logging
 {
     [NetworkLog(
-        FileExtension = "krpd",
+        FileExtension = ".krpd",
         HeaderString = SignatureString,
         Flags = NetworkLogFlags.None
         )]

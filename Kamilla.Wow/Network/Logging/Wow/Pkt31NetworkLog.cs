@@ -12,7 +12,7 @@ using Kamilla.Network.Protocols.Wow;
 namespace Kamilla.Network.Logging.Wow
 {
     [NetworkLog(
-        FileExtension = "pkt",
+        FileExtension = ".pkt",
         HeaderBytes = new byte[] { (byte)'P', (byte)'K', (byte)'T', 0x01, 0x03 }
         )]
     public class Pkt31NetworkLog : WowNetworkLog,
