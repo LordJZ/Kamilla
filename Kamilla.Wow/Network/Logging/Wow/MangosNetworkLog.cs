@@ -100,6 +100,7 @@ namespace Kamilla.Network.Logging.Wow
             var direction = TransferDirection.ToClient;
             uint opcode = SpecialWowOpcodes.UnknownOpcode;
             var time = DateTime.MinValue;
+            uint ticks = 0;
             byte conn_id = 0;
             byte[] data = null;
             bool waitingDate = true;
@@ -139,7 +140,7 @@ namespace Kamilla.Network.Logging.Wow
                             for (int i = 0; i < datas.Length; ++i)
                                 data[i] = byte.Parse(datas[i], NumberStyles.AllowHexSpecifier);
 
-                            var pkt = new WowPacket(data, direction, flags, flags2, time, 0, opcode, conn_id);
+                            var pkt = new WowPacket(data, direction, flags, flags2, time, ticks, opcode, conn_id);
                             this.InternalAddPacket(pkt);
                             this.OnPacketAdded(pkt);
 
@@ -155,22 +156,25 @@ namespace Kamilla.Network.Logging.Wow
 
                             dataString = null;
                             data = null;
+                            flags = PacketFlags.None;
+                            flags2 = WowPacketFlags.None;
+                            ticks = 0;
                         }
 
                         waitingDate = true;
                     }
                     else if (waitingDate)
                     {
-                        time = DateTime.Parse(line.Trim().Substring(0, 19), CultureInfo.InvariantCulture);
+                        var parts = line.Split(new char[] { ' ' }, 4);
+                        time = DateTime.Parse(parts[0] + ' ' + parts[1], CultureInfo.InvariantCulture);
                         waitingDate = false;
+                        if (parts.Length >= 4)
+                            ticks = uint.Parse(parts[2], NumberStyles.AllowHexSpecifier);
 
                         if (line.IndexOf("SERVER") != -1)
                             direction = TransferDirection.ToClient;
                         else if (line.IndexOf("CLIENT") != -1)
                             direction = TransferDirection.ToServer;
-
-                        flags = PacketFlags.None;
-                        flags2 = WowPacketFlags.None;
                     }
                     else if (readingData)
                     {
