@@ -421,11 +421,11 @@ namespace Kamilla.IO
 
                 int bitsWriteNow = Math.Min(bits, m_unalignedBits);
                 int bitsWriteNowMask = (1 << bitsWriteNow) - 1;
-                m_buffer[0] |= (byte)(((int)(value >> (bits - bitsWriteNow)) & bitsWriteNowMask)    // Grab the bits from the value
-                    << (m_unalignedBits - bitsWriteNow));                                           // Store them in the buffer
-
                 m_unalignedBits -= bitsWriteNow;
                 bits -= bitsWriteNow;
+
+                m_buffer[0] |= (byte)(((byte)(value >> bits) & bitsWriteNowMask)    // Grab the bits from the value
+                    << m_unalignedBits);                                            // Store them in the buffer
             }
 
             if (m_unalignedBits == 0)
