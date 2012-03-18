@@ -3,5 +3,5 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:tabs="clr-namespace:NetworkLogViewer.ViewTabs"
              >
-  <TextBox Name="ui_tbMain" FontFamily="Lucida Console" BorderThickness="0" VerticalScrollBarVisibility="Auto" IsReadOnly="True" HorizontalScrollBarVisibility="Auto" />
+  <TextBox Name="ui_tbMain" FontFamily="Lucida Console" BorderThickness="0" VerticalScrollBarVisibility="Auto" IsReadOnly="True" HorizontalScrollBarVisibility="Auto" IsReadOnlyCaretVisible="True" />
 </UserControl>
