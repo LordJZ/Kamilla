@@ -19,7 +19,7 @@
       <ColumnDefinition Width="100"/>
     </Grid.ColumnDefinitions>
 
-    <TextBox Grid.Row="1" Grid.ColumnSpan="3" Name="ui_tbMain" FontFamily="Lucida Console" AcceptsReturn="True" IsReadOnly="True" BorderThickness="0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
+    <TextBox Grid.Row="1" Grid.ColumnSpan="3" Name="ui_tbMain" FontFamily="Lucida Console" AcceptsReturn="True" IsReadOnly="True" BorderThickness="0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsReadOnlyCaretVisible="True" />
     <ComboBox Margin="2,2,1,2" Name="ui_cbDatas" SelectionChanged="ui_cbDatas_SelectionChanged" IsEnabled="False" />
     <ComboBox Grid.Column="1" Margin="1,2" Name="ui_cbEncodings" IsEditable="True">
       <ComboBoxItem Content="UTF-8" IsSelected="True" />

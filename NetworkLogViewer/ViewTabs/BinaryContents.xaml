@@ -18,7 +18,7 @@
       <ColumnDefinition Width="100"/>
     </Grid.ColumnDefinitions>
 
-    <TextBox Grid.Row="1" Grid.ColumnSpan="2" Name="ui_tbMain" FontFamily="Lucida Console" AcceptsReturn="True" IsReadOnly="True" BorderThickness="0" />
+    <TextBox Grid.Row="1" Grid.ColumnSpan="2" Name="ui_tbMain" FontFamily="Lucida Console" AcceptsReturn="True" IsReadOnly="True" BorderThickness="0" IsReadOnlyCaretVisible="True" />
     <ComboBox Margin="2,2,1,2" Name="ui_cbDatas" SelectionChanged="ui_cbDatas_SelectionChanged" IsEnabled="False" />
     <Button IsEnabled="false" Grid.Column="1" Margin="1,2,2,2" Name="ui_btnSave" Content="{x:Static viewer:Strings.Menu_SaveEllipsis}" Click="ui_btnSave_Click" />
   </Grid>
