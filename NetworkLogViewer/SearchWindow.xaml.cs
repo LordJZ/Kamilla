@@ -69,21 +69,24 @@ namespace NetworkLogViewer
 
         void Implementation_ProtocolChanged(object sender, EventArgs e)
         {
-            var newProtocol = m_window.CurrentProtocol;
-            var type = newProtocol != null ? newProtocol.OpcodesEnumType : null;
-            if (type == null)
+            this.ThreadSafeBegin(_ =>
             {
-                ui_rbOpcodes.IsEnabled = false;
-                if (ui_rbOpcodes.IsChecked == true)
-                    ui_cbSearch.ItemsSource = null;
-            }
-            else
-            {
-                ui_rbOpcodes.IsEnabled = true;
-                this.UpdateOpcodeNames();
-                if (ui_rbOpcodes.IsChecked == true)
-                    ui_cbSearch.ItemsSource = m_opcodeNames;
-            }
+                var newProtocol = _.m_window.CurrentProtocol;
+                var type = newProtocol != null ? newProtocol.OpcodesEnumType : null;
+                if (type == null)
+                {
+                    _.ui_rbOpcodes.IsEnabled = false;
+                    if (_.ui_rbOpcodes.IsChecked == true)
+                        _.ui_cbSearch.ItemsSource = null;
+                }
+                else
+                {
+                    _.ui_rbOpcodes.IsEnabled = true;
+                    _.UpdateOpcodeNames();
+                    if (_.ui_rbOpcodes.IsChecked == true)
+                        _.ui_cbSearch.ItemsSource = _.m_opcodeNames;
+                }
+            });
         }
 
         void UpdateOpcodeNames()
