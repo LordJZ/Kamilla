@@ -36,7 +36,6 @@ namespace Kamilla
         static readonly Type s_attrContnrType = typeof(LocalizedNameContainerAttribute);
         static readonly Type s_attrFlagsType = typeof(FlagsAttribute);
         static readonly Type s_resMgrType = typeof(ResourceManager);
-        static readonly Type s_ulongType = typeof(ulong);
         static readonly MethodInfo s_EnumGetValue;
 
         static EnumExtensions()
