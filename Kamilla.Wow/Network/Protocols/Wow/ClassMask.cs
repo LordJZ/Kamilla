@@ -9,7 +9,7 @@ namespace Kamilla.Network.Protocols.Wow
     /// </summary>
     [Flags]
     [LocalizedNameContainer(typeof(WowStrings))]
-    public enum ClassMask
+    public enum ClassMask : uint
     {
         /// <summary>
         /// Represents the empty class mask.
@@ -82,5 +82,8 @@ namespace Kamilla.Network.Protocols.Wow
         /// </summary>
         [LocalizedName("AllClasses")]
         All = Warrior | Paladin | Hunter | Rogue | Priest | DeathKnight | Shaman | Mage | Warlock | Druid,
+
+        [LocalizedName("AllClasses")]
+        AllValues = uint.MaxValue
     }
 }

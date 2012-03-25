@@ -56,6 +56,7 @@
     <Compile Include="Network\Protocols\Wow\CultureInfoExtensions.cs" />
     <Compile Include="Network\Protocols\Wow\Expansions.cs" />
     <Compile Include="Network\Protocols\Wow\Genders.cs" />
+    <Compile Include="Network\Protocols\Wow\RaceMask.cs" />
     <Compile Include="Network\Protocols\Wow\Races.cs" />
     <Compile Include="Network\Protocols\Wow\SpecialWowOpcodes.cs" />
     <Compile Include="Network\Protocols\Wow\StreamHandlerExtensions.cs" />

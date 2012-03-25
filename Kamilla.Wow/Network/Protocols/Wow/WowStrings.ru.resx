@@ -180,7 +180,7 @@
   <data name="Gender2" xml:space="preserve">
     <value>Нет</value>
   </data>
-  <data name="HordeRace" xml:space="preserve">
+  <data name="HordeRaces" xml:space="preserve">
     <value>Расы Орды</value>
   </data>
   <data name="NoClasses" xml:space="preserve">
