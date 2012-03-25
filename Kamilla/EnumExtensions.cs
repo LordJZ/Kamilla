@@ -79,12 +79,13 @@ namespace Kamilla
             var fields = enumType.GetFields(BindingFlags.Public | BindingFlags.Static);
             var ei = new EnumInfo();
 
+            bool isULong = enumType.GetEnumUnderlyingType() == typeof(ulong);
             foreach (var field in fields)
             {
                 var obj = (IConvertible)field.GetRawConstantValue();
 
                 long value;
-                if (obj.GetTypeCode() == TypeCode.UInt64)
+                if (isULong)
                     value = (long)(ulong)obj;
                 else
                     value = obj.ToInt64(null);
@@ -109,6 +110,9 @@ namespace Kamilla
             {
                 if (checkForFlags)
                 {
+                    if (value == 0)
+                        return "0";
+
                     ulong uvalue = (ulong)value;
                     var builder = new StringBuilder(1024);
 
@@ -118,11 +122,12 @@ namespace Kamilla
                     {
                         if ((uvalue & bit) != 0)
                         {
-                            if (!builderEmpty)
+                            if (builderEmpty)
+                                builderEmpty = false;
+                            else
                                 builder.Append(", ");
 
                             builder.Append(GetName((long)bit, resources, info, false));
-                            builderEmpty = false;
                         }
                     }
 
