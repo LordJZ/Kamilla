@@ -161,12 +161,12 @@ namespace Kamilla
 
         public override string ToString()
         {
-            return this.ToString(null, CultureInfo.CurrentCulture);
+            return this.ToString(null, CultureInfo.InvariantCulture);
         }
 
         public string ToString(string format)
         {
-            return this.ToString(format, CultureInfo.CurrentCulture);
+            return this.ToString(format, CultureInfo.InvariantCulture);
         }
 
         public string ToString(IFormatProvider provider)
