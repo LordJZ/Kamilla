@@ -207,8 +207,8 @@ namespace Kamilla.Network.Logging.Wow
                     else if (line.StartsWith("OPCODE"))
                     {
                         string substr = line.Substring(line.IndexOf('(') + 1 + 2).TrimEnd(')');
-                        opcode = ushort.Parse(substr, NumberStyles.AllowHexSpecifier);
-                        if (opcode == 0x4F57)
+                        opcode = uint.Parse(substr, NumberStyles.AllowHexSpecifier);
+                        if (opcode == 0x4F57 || opcode == 0x4C524F57)
                         {
                             flags2 |= WowPacketFlags.HelloPacket;
                             opcode = SpecialWowOpcodes.HelloOpcode;
