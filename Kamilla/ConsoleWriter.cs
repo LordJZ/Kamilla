@@ -70,10 +70,17 @@ namespace Kamilla
             {
                 base.Close();
 
-                m_writer.Close();
-                m_writer = null;
-                m_stream.Close();
-                m_stream = null;
+                if (m_writer != null)
+                {
+                    m_writer.Close();
+                    m_writer = null;
+                }
+
+                if (m_stream != null)
+                {
+                    m_stream.Close();
+                    m_stream = null;
+                }
             } 
 
             #endregion
