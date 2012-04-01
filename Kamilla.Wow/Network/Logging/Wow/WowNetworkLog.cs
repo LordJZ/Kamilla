@@ -12,23 +12,32 @@ namespace Kamilla.Network.Logging.Wow
         #region Static Members And Nested Classes
         class ClientBuildInfo
         {
-            public ClientBuildInfo(Version version, uint latestBuild)
+            public ClientBuildInfo(Version version, uint latestBuild, string explicitName = null)
             {
                 this.ClientVersion = version;
-                this.ClientBuild = (uint)version.Revision;
                 this.LatestBuild = latestBuild;
+                this.ExplicitName = explicitName;
             }
 
-            public readonly uint ClientBuild;
+            public uint ClientBuild { get { return (uint)ClientVersion.Revision; } }
             public readonly Version ClientVersion;
             public readonly uint LatestBuild;
+            public readonly string ExplicitName;
+
+            public override string ToString()
+            {
+                var str = ClientVersion.ToString() + " (latest build " + LatestBuild + ")";
+                if (ExplicitName != null)
+                    str += " (\"" + ExplicitName + "\")";
+                return str;
+            }
         }
 
-        struct ClientBuildInfoComparer: IComparer<ClientBuildInfo>
+        struct ClientBuildInfoComparer : IComparer<ClientBuildInfo>
         {
             public int Compare(ClientBuildInfo x, ClientBuildInfo y)
             {
-                return x.ClientVersion.CompareTo(y.ClientVersion);
+                return x.ClientBuild.CompareTo(y.ClientBuild);
             }
         }
 
@@ -36,11 +45,16 @@ namespace Kamilla.Network.Logging.Wow
 
         static void ChainAdd(Version baseVersion, params uint[] builds)
         {
+            ChainAdd(baseVersion, null, builds);
+        }
+
+        static void ChainAdd(Version baseVersion, string explicitName, params uint[] builds)
+        {
             var latestBuild = builds.Max();
 
             foreach (var info in builds.Select(build => new ClientBuildInfo(
                 new Version(baseVersion.Major, baseVersion.Minor, baseVersion.Build, (int)build),
-                latestBuild)))
+                latestBuild, explicitName)))
             {
                 s_clientBuildInfos.Add(info);
             }
@@ -132,6 +146,13 @@ namespace Kamilla.Network.Logging.Wow
                 15338, // World of Warcraft patch 4.3.3 PTR
                 15354, // World of Warcraft patch 4.3.3
             });
+            ChainAdd(new Version(4, 3, 4), new uint[] {
+                15499, // World of Warcraft patch 4.3.4 PTR
+            });
+            ChainAdd(new Version(5, 0, 1), "MistsOfPandariaBeta", new uint[] {
+                15464, // World of Warcraft patch 5.0.1 Beta
+                15508, // World of Warcraft patch 5.0.1 Beta
+            });
 
             s_clientBuildInfos.Sort(new ClientBuildInfoComparer());
         }
@@ -155,7 +176,8 @@ namespace Kamilla.Network.Logging.Wow
                 {
                     var info = s_clientBuildInfos[index];
 
-                    var protocol = ProtocolManager.FindWrapper("Wow" + info.LatestBuild);
+                    var wrapperName = "Wow" + (info.ExplicitName ?? info.LatestBuild.ToString());
+                    var protocol = ProtocolManager.FindWrapper(wrapperName);
                     if (protocol != null)
                         m_suggestedProtocol = protocol;
 
