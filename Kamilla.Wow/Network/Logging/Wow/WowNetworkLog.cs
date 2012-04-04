@@ -148,6 +148,7 @@ namespace Kamilla.Network.Logging.Wow
             });
             ChainAdd(new Version(4, 3, 4), new uint[] {
                 15499, // World of Warcraft patch 4.3.4 PTR
+                15531, // World of Warcraft patch 4.3.4 PTR
             });
             ChainAdd(new Version(5, 0, 1), "MistsOfPandariaBeta", new uint[] {
                 15464, // World of Warcraft patch 5.0.1 Beta
