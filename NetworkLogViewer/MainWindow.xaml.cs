@@ -1582,14 +1582,17 @@ namespace NetworkLogViewer
                 ui_miRecentFiles.IsEnabled = m_recentFiles.Count > 0;
 
                 int i = 0;
-                foreach (var path in m_recentFiles)
+                foreach (var _path in m_recentFiles)
                 {
+                    var path = _path;
+
                     ++i;
 
                     var item = new MenuItem();
                     item.Tag = path;
                     if (path.Length > maxRecentFileLength)
                     {
+                        path = path.Replace("_", "__");
                         char sep = Path.DirectorySeparatorChar;
                         var parts = path.Split(new char[] { sep }, StringSplitOptions.RemoveEmptyEntries);
                         var builder = new StringBuilder(150);
@@ -1605,7 +1608,7 @@ namespace NetworkLogViewer
                         item.Header = i + ". " + builder.ToString();
                     }
                     else
-                        item.Header = i + ". " + path;
+                        item.Header = i + ". " + path.Replace("_", "__");
 
                     item.Click += new RoutedEventHandler(ui_recentFileMenuItem_Click);
                     ui_miRecentFiles.Items.Add(item);
