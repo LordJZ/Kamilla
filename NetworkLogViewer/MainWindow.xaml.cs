@@ -1466,6 +1466,12 @@ namespace NetworkLogViewer
             if (request == null)
                 throw new ArgumentNullException("request");
 
+            if (ui_searchWorker.IsBusy)
+                ui_searchWorker.CancelAsync();
+
+            while (ui_searchWorker.IsBusy)
+                Thread.Sleep(0);
+
             ui_searchWorker.RunWorkerAsync(request);
         }
 
