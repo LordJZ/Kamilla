@@ -1576,7 +1576,6 @@ namespace NetworkLogViewer
             {
                 UICulture.Initialize();
 
-                e.Result = -1;
                 var request = (SearchRequest)e.Argument;
                 var worker = (BackgroundWorker)sender;
 
@@ -1637,9 +1636,12 @@ namespace NetworkLogViewer
                 return;
             }
 
-            var tuple = (Tuple<SearchRequest, ViewerItem>)e.Result;
+            if (e.Result != null)
+            {
+                var tuple = (Tuple<SearchRequest, ViewerItem>)e.Result;
 
-            tuple.Item1.Completed(tuple.Item2);
+                tuple.Item1.Completed(tuple.Item2);
+            }
         }
 
         void FinishSearch(ViewerItem item)
