@@ -109,5 +109,10 @@ namespace Kamilla.Network
             m_direction = direction;
             m_flags = flags;
         }
+
+        public bool HasFlags(PacketFlags flags)
+        {
+            return (m_flags & flags) != 0;
+        }
     }
 }
