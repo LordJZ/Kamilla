@@ -14,6 +14,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Kamilla;
+using Kamilla.IO;
 using Kamilla.Network;
 using Kamilla.Network.Logging;
 using Kamilla.Network.Parsing;
@@ -1048,10 +1049,10 @@ namespace NetworkLogViewer
 
             var filename = dialog.FileName;
 
-            StreamWriter writer;
+            StreamHandler writer;
             try
             {
-                writer = new StreamWriter(filename, false, Encoding.UTF8);
+                writer = new StreamHandler(filename, FileMode.Create);
             }
             catch
             {
@@ -1059,30 +1060,12 @@ namespace NetworkLogViewer
                 return;
             }
 
-            ui_savingWorker.RunWorkerAsync(writer);
-            this.LoadingStatePush(new LoadingState(Strings.ParsingPackets, _ => _.ui_savingWorker.CancelAsync()));
-        }
-
-        void ui_savingWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            UICulture.Initialize();
-
-            e.Result = e.Argument;
-            var worker = (BackgroundWorker)sender;
-            var writer = (StreamWriter)e.Argument;
-
-            int progress = 0;
-            var items = m_implementation.m_items;
-            int count = items.Count;
             var protocol = this.CurrentProtocol;
             var format = "__ " + Strings.PacketN + " _________________________";
-            for (int i = 0; i < count; i++)
+            var newline = Environment.NewLine.Select(chr => (byte)chr).ToArray();
+
+            var tuple = new Tuple<StreamHandler, Action<StreamHandler, ViewerItem, int>>(writer, (wr, item, i) =>
             {
-                if (worker.CancellationPending)
-                    return;
-
-                var item = items[i];
-
                 var parser = item.Parser;
                 if (parser == null)
                 {
@@ -1093,12 +1076,110 @@ namespace NetworkLogViewer
                 if (!parser.IsParsed)
                     parser.Parse();
 
-                writer.WriteLine(format.LocalizedFormat(i));
-                writer.WriteLine(protocol.PacketContentsViewHeader(item));
+                wr
+                    .WriteLine(format.LocalizedFormat(i))
+                    .WriteLine(protocol.PacketContentsViewHeader(item))
+                    ;
 
                 var text = parser.ParsedText;
                 if (!string.IsNullOrEmpty(text))
-                    writer.WriteLine(text);
+                    wr.WriteLine(text);
+            });
+            ui_savingWorker.RunWorkerAsync(tuple);
+            this.LoadingStatePush(new LoadingState(Strings.ParsingPackets, _ => _.ui_savingWorker.CancelAsync()));
+        }
+
+        private void ui_miSaveTextContents_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SaveFileDialog();
+            dialog.AddExtension = true;
+            dialog.Filter = Strings.TextFiles + " (*.txt)|*.txt|" + NetworkStrings.AllFiles + " (*.*)|*.*";
+            dialog.FilterIndex = 0;
+            try
+            {
+                var file = MainWindow.SaveFileName;
+                dialog.FileName = Path.GetFileName(file);
+                dialog.InitialDirectory = Path.GetDirectoryName(file);
+            }
+            catch
+            {
+            }
+
+            if (dialog.ShowDialog(Window.GetWindow(this)) != true)
+                return;
+
+            var filename = dialog.FileName;
+
+            StreamHandler writer;
+            try
+            {
+                writer = new StreamHandler(filename, FileMode.Create);
+            }
+            catch
+            {
+                MessageWindow.Show(this, Strings.Error, Strings.FailedToOpenFile);
+                return;
+            }
+
+            var protocol = this.CurrentProtocol;
+            var format = "-- " + Strings.PacketN + " --";
+            var newline = Environment.NewLine.Select(chr => (byte)chr).ToArray();
+
+            var tuple = new Tuple<StreamHandler, Action<StreamHandler, ViewerItem, int>>(writer, (wr, item, i) =>
+            {
+                var parser = item.Parser;
+                if (parser == null)
+                {
+                    protocol.CreateParser(item);
+                    parser = item.Parser;
+                }
+
+                if (!parser.IsParsed)
+                    parser.Parse();
+
+                if (parser.HasContainedData)
+                {
+                    var strings = ParsingHelper.ExtractStrings(protocol, item);
+
+                    if (strings.Length != 0)
+                    {
+                        wr.WriteLine(format.LocalizedFormat(i));
+
+                        int j = 0;
+                        foreach (var pair in strings)
+                        {
+                            if (strings.Length != 1)
+                                wr.WriteLine("-- Text #" + j);
+                            wr.WriteLine(pair.Item2);
+                        }
+                    }
+                }
+            });
+            ui_savingWorker.RunWorkerAsync(tuple);
+            this.LoadingStatePush(new LoadingState(Strings.ParsingPackets, _ => _.ui_savingWorker.CancelAsync()));
+        }
+
+        void ui_savingWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            UICulture.Initialize();
+
+            e.Result = e.Argument;
+            var worker = (BackgroundWorker)sender;
+            var tuple = (Tuple<StreamHandler, Action<StreamHandler, ViewerItem, int>>)e.Argument;
+            var writer = tuple.Item1;
+            var func = tuple.Item2;
+
+            int progress = 0;
+            var items = m_implementation.m_items;
+            int count = items.Count;
+            for (int i = 0; i < count; i++)
+            {
+                if (worker.CancellationPending)
+                    return;
+
+                var item = items[i];
+
+                func(writer, item, i);
 
                 int newProgress = i * 100 / count;
                 if (newProgress != progress)
@@ -1118,7 +1199,7 @@ namespace NetworkLogViewer
         {
             this.LoadingStatePop();
 
-            ((StreamWriter)e.Result).Close();
+            ((Tuple<StreamHandler, Action<StreamHandler, ViewerItem, int>>)e.Result).Item1.Close();
 
             if (e.Error != null)
                 MessageWindow.Show(this, Strings.Error, e.Error.ToString());
