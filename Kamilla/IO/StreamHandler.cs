@@ -12,7 +12,7 @@ namespace Kamilla.IO
     /// </summary>
     public class StreamHandler : IDisposable
     {
-        private static byte[] m_newLineBytes = Environment.NewLine.Select(c => (byte)c).ToArray();
+        private static byte[] s_newLineBytes = Environment.NewLine.Select(c => (byte)c).ToArray();
 
         #region Properties
         private Encoding m_encoding;
@@ -882,6 +882,22 @@ namespace Kamilla.IO
             return this;
         }
 
+        public StreamHandler WriteString(string value)
+        {
+            this.FlushUnalignedBits();
+
+            byte[] buffer = m_encoding.GetBytes(value);
+
+            m_stream.Write(buffer, 0, buffer.Length);
+
+            return this;
+        }
+
+        public StreamHandler WriteLine(string value)
+        {
+            return WriteString(value).WriteBytes(s_newLineBytes);
+        }
+
         /// <summary>
         /// Writes a four-byte unsigned integer to the current stream and advances the
         /// stream position by four bytes.
@@ -1495,6 +1511,15 @@ namespace Kamilla.IO
             CheckBits(bits, 32);
 
             return (uint)InternalReadBits(bits);
+        }
+
+        public StreamHandler UnalignedReadInt(int bits, out uint value)
+        {
+            CheckBits(bits, 32);
+
+            value = (uint)InternalReadBits(bits);
+
+            return this;
         }
 
         /// <summary>
@@ -2208,7 +2233,7 @@ namespace Kamilla.IO
                         if (list.Count == list.Capacity)
                             list.Capacity += list.Capacity;
 
-                        list.AddRange(m_newLineBytes);
+                        list.AddRange(s_newLineBytes);
                         caretReturn = false;
                         break;
                     default:
@@ -2217,7 +2242,7 @@ namespace Kamilla.IO
 
                         if (caretReturn)
                         {
-                            list.AddRange(m_newLineBytes);
+                            list.AddRange(s_newLineBytes);
                             caretReturn = false;
                         }
 
@@ -2304,8 +2329,7 @@ namespace Kamilla.IO
 
             this.FillBuffer(4);
             fixed (byte* buf = m_buffer)
-            fixed (uint* pvalue = &value)
-                *pvalue = *(uint*)buf;
+                value = *(uint*)buf;
 
             return this;
         }
@@ -2360,8 +2384,7 @@ namespace Kamilla.IO
 
             this.FillBuffer(8);
             fixed (byte* buf = m_buffer)
-            fixed (ulong* pvalue = &value)
-                *pvalue = *(ulong*)buf;
+                value = *(ulong*)buf;
 
             return this;
         }
