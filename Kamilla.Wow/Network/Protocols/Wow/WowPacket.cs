@@ -65,5 +65,10 @@ namespace Kamilla.Network.Protocols.Wow
             m_connectionId = connectionId;
             m_wowFlags = wowFlags;
         }
+
+        public bool HasFlags(WowPacketFlags flags)
+        {
+            return (m_wowFlags & flags) != 0;
+        }
     }
 }
