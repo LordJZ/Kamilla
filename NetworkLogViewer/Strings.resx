@@ -441,4 +441,13 @@
   <data name="SearchFailedNoMatchingOpcodes" xml:space="preserve">
     <value>The regular expression doesn't match any opcodes.</value>
   </data>
+  <data name="Title_32bit" xml:space="preserve">
+    <value> (32-bit)</value>
+  </data>
+  <data name="Title_64bit" xml:space="preserve">
+    <value> (64-bit)</value>
+  </data>
+  <data name="Title_WOW" xml:space="preserve">
+    <value> (32-bit on 64-bit)</value>
+  </data>
 </root>

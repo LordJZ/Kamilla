@@ -441,4 +441,13 @@
   <data name="SearchFailedNoMatchingOpcodes" xml:space="preserve">
     <value>Критериям регулярного выражения не удовлетворяет ни один опкод.</value>
   </data>
+  <data name="Title_32bit" xml:space="preserve">
+    <value> (x86-32)</value>
+  </data>
+  <data name="Title_64bit" xml:space="preserve">
+    <value> (x86-64)</value>
+  </data>
+  <data name="Title_WOW" xml:space="preserve">
+    <value> (x86-32 на x86-64)</value>
+  </data>
 </root>

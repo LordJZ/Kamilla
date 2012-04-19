@@ -43,6 +43,8 @@ namespace NetworkLogViewer
             set { Configuration.SetValue("Save File Name", value); }
         }
 
+        string m_title;
+
         #region .ctor
         public MainWindow()
         {
@@ -56,6 +58,17 @@ namespace NetworkLogViewer
             UICulture.UICultureChanged += new EventHandler(UICulture_UICultureChanged);
 
             ConsoleWriter.Initialize();
+
+            m_title = Strings.NetworkLogViewer_Title;
+            if (Environment.Is64BitOperatingSystem)
+            {
+                if (Environment.Is64BitProcess)
+                    m_title += Strings.Title_64bit;
+                else
+                    m_title += Strings.Title_WOW;
+            }
+            else
+                m_title += Strings.Title_32bit;
 
             m_implementation = new ViewerImplementation(this);
 
@@ -438,7 +451,7 @@ namespace NetworkLogViewer
             m_implementation.CloseFile();
 
             m_currentFile = null;
-            this.ThreadSafeBegin(_ => _.Title = Strings.NetworkLogViewer_Title);
+            this.ThreadSafeBegin(_ => _.Title = _.m_title);
         }
 
         void OpenFile(string filename, int pos = -1)
@@ -472,7 +485,7 @@ namespace NetworkLogViewer
             this.ThreadSafeBegin(_ =>
             {
                 _.AddRecentFile(filename);
-                _.Title = Path.GetFileName(filename) + " – " + Strings.NetworkLogViewer_Title;
+                _.Title = Path.GetFileName(filename) + " – " + _.m_title;
             });
 
             m_implementation.HookLog(log);
