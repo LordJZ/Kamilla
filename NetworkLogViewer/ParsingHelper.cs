@@ -49,10 +49,14 @@ namespace NetworkLogViewer
             return parser;
         }
 
+        static ValueTuple<object, string>[] s_emptyStrings = new ValueTuple<object, string>[0];
         public static ValueTuple<object, string>[] ExtractStrings(Protocol protocol, ViewerItem item,
             Encoding stringEncoding = null)
         {
             var parser = ParseIfNeed(protocol, item);
+
+            if (!parser.HasContainedData)
+                return s_emptyStrings;
 
             var result = new List<ValueTuple<object, string>>(parser.ContainedData.Count);
 
@@ -94,6 +98,7 @@ namespace NetworkLogViewer
             return result.ToArray();
         }
 
+        static ValueTuple<object, byte[]>[] s_emptyBinaryDatas = new ValueTuple<object, byte[]>[0];
         public static ValueTuple<object, byte[]>[] ExtractBinaryDatas(Protocol protocol, ViewerItem item,
             Encoding stringEncoding = null, Type imageEncoderType = null)
         {
@@ -128,6 +133,9 @@ namespace NetworkLogViewer
                 if (ctor == null)
                     throw new ArgumentException("imageEncoderType");
             }
+
+            if (!parser.HasContainedData)
+                return s_emptyBinaryDatas;
 
             var result = new List<ValueTuple<object, byte[]>>(parser.ContainedData.Count);
 
@@ -184,10 +192,13 @@ namespace NetworkLogViewer
             return result.ToArray();
         }
 
+        static ValueTuple<object, ImageSource>[] s_emptyImages = new ValueTuple<object, ImageSource>[0];
         public static ValueTuple<object, ImageSource>[] ExtractImages(Protocol protocol, ViewerItem item,
             bool convertImages = false)
         {
             var parser = ParseIfNeed(protocol, item);
+            if (!parser.HasContainedData)
+                return s_emptyImages;
 
             var result = new List<ValueTuple<object, ImageSource>>(parser.ContainedData.Count);
 

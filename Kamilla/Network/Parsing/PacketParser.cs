@@ -145,7 +145,7 @@ namespace Kamilla.Network.Parsing
         }
 
         protected string m_output;
-        IList<object> m_containedData;
+        ICollection<object> m_containedData;
 
         /// <summary>
         /// Gets the text result of the underlying <see cref="Kamilla.Network.Packet"/> interpretation.
@@ -156,12 +156,12 @@ namespace Kamilla.Network.Parsing
 
         /// <summary>
         /// Gets the data that is contained in the underlying <see cref="Kamilla.Network.Packet"/>.
-        /// 
-        /// This value can be null.
         /// </summary>
-        public IList<object> ContainedData
+        public virtual ICollection<object> ContainedData
         {
             get { return m_containedData ?? (m_containedData = new List<object>()); }
         }
+
+        public virtual bool HasContainedData { get { return m_containedData != null && m_containedData.Count != 0; } }
     }
 }
