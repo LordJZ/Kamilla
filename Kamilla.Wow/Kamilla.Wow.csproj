@@ -50,6 +50,7 @@
     <Compile Include="Network\Logging\Wow\Pkt30NetworkLog.cs" />
     <Compile Include="Network\Logging\Wow\Pkt31NetworkLog.cs" />
     <Compile Include="Network\Logging\Wow\PktSnifferId.cs" />
+    <Compile Include="Network\Logging\Wow\TrinityNetworkLog.cs" />
     <Compile Include="Network\Logging\Wow\WowNetworkLog.cs" />
     <Compile Include="Network\Protocols\Wow\Classes.cs" />
     <Compile Include="Network\Protocols\Wow\ClassMask.cs" />
