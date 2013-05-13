@@ -66,6 +66,7 @@
     <Compile Include="LocalizedNameAttribute.cs" />
     <Compile Include="LocalizedNameContainerAttribute.cs" />
     <Compile Include="Network\IPacketWithOpcode.cs" />
+    <Compile Include="Network\Logging\IHasAddressInfo.cs" />
     <Compile Include="Network\Logging\IHasClientVersion.cs" />
     <Compile Include="Network\Logging\IHasCultureInfo.cs" />
     <Compile Include="Network\Logging\IHasServerVersion.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="Network\Logging\IHasSnifferDesc.cs" />
     <Compile Include="Network\Logging\IHasStartTicks.cs" />
     <Compile Include="Network\Logging\IHasStartTime.cs" />
+    <Compile Include="Network\Logging\Krpd2NetworkLog.cs" />
     <Compile Include="Network\Logging\KrpdNetworkLog.cs" />
     <Compile Include="Network\Logging\NetworkLogAttribute.cs" />
     <Compile Include="Network\Logging\NetworkLogFactory.cs" />
