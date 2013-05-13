@@ -6,7 +6,7 @@ namespace Kamilla.Network.Logging
     {
         IPAddress ClientAddress { get; set; }
         IPAddress ServerAddress { get; set; }
-        int ClientPort { get; }
-        int ServerPort { get; }
+        int ClientPort { get; set; }
+        int ServerPort { get; set; }
     }
 }
