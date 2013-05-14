@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Kamilla.Network.Logging
 {
@@ -16,7 +13,7 @@ namespace Kamilla.Network.Logging
         public readonly string FileFilter;
         public bool IsReadOnly { get { return (Flags & NetworkLogFlags.ReadOnly) != 0; } }
 
-        private Type m_type;
+        private readonly Type m_type;
 
         public NetworkLogWrapper(NetworkLogAttribute attr, Type type)
         {

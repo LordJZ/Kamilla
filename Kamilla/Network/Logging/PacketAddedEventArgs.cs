@@ -21,7 +21,7 @@ namespace Kamilla.Network.Logging
     /// </summary>
     public sealed class PacketAddedEventArgs : EventArgs
     {
-        Packet m_packet;
+        readonly Packet m_packet;
 
         /// <summary>
         /// Gets a <see cref="Kamilla.Network.Packet"/> that was added to storage.
