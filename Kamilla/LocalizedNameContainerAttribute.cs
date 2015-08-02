@@ -9,7 +9,7 @@ namespace Kamilla
     [AttributeUsage(AttributeTargets.Enum, Inherited = false, AllowMultiple = false)]
     public sealed class LocalizedNameContainerAttribute : Attribute
     {
-        Type m_resmgr;
+        readonly Type m_resmgr;
 
         /// <summary>
         /// Initializes a new instance of
