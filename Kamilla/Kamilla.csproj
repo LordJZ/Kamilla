@@ -115,7 +115,6 @@
     <Compile Include="Time.cs" />
     <Compile Include="TypeManager.cs" />
     <Compile Include="UICulture.cs" />
-    <Compile Include="ValueTuple.cs" />
     <Compile Include="Vector2.cs" />
     <Compile Include="Vector3.cs" />
     <Compile Include="Win32.cs" />
