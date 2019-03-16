@@ -15,7 +15,7 @@ namespace Kamilla.PoE.Viewer
             if (pkt.Data.Length < 2)
                 return null;
 
-            return (GameStreamOpcodes)(pkt.Data[0] | (pkt.Data[1] << 8));
+            return (GameStreamOpcodes)((pkt.Data[0] << 8) | pkt.Data[1]);
         }
 
         static readonly JsonSerializer _json = new JsonSerializer
