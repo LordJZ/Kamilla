@@ -18,12 +18,6 @@ namespace Kamilla.PoE.Viewer
             return (LoginStreamOpcodes)((pkt.Data[0] << 8) | pkt.Data[1]);
         }
 
-        static readonly JsonSerializer _json = new JsonSerializer
-        {
-            Formatting = Formatting.Indented,
-            Converters = { new StringEnumConverter(new DefaultNamingStrategy()) }
-        };
-
         protected override void InternalParse()
         {
             if (!(GetOpcode(this.Packet) is LoginStreamOpcodes op))
@@ -35,7 +29,7 @@ namespace Kamilla.PoE.Viewer
             PoEPacket packet = ser.Deserialize(this.Packet.Data.AsSpan(2), out int consumed);
             this.Reader.Skip(consumed + 2);
 
-            _json.Serialize(new StringWriter(Output), packet);
+            JsonPresenter.Serializer.Serialize(new StringWriter(Output), packet);
         }
     }
 }

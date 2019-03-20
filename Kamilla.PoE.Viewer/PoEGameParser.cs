@@ -18,24 +18,37 @@ namespace Kamilla.PoE.Viewer
             return (GameStreamOpcodes)((pkt.Data[0] << 8) | pkt.Data[1]);
         }
 
-        static readonly JsonSerializer _json = new JsonSerializer
-        {
-            Formatting = Formatting.Indented,
-            Converters = { new StringEnumConverter(new DefaultNamingStrategy()) }
-        };
-
         protected override void InternalParse()
         {
-            if (!(GetOpcode(this.Packet) is GameStreamOpcodes op))
-                return;
+            while (this.Reader.RemainingLength >= 2)
+            {
+                ushort opcode = Reader.ReadUInt16();
+                opcode = (ushort)((ushort)(opcode >> 8) | (ushort)(opcode << 8));
 
-            if (!GameStream.Serializers.TryGetValue(op, out PacketSerializer ser))
-                return;
+                if (Output.Length > 0)
+                {
+                    Output.AppendLine();
+                    Output.AppendLine();
+                    Output.AppendLine($"Trailing opcode 0x{(int)opcode:X} {opcode}");
+                }
 
-            PoEPacket packet = ser.Deserialize(this.Packet.Data.AsSpan(2), out int consumed);
-            this.Reader.Skip(consumed + 2);
+                if (!GameStream.Serializers.TryGetValue((GameStreamOpcodes)opcode, out PacketSerializer ser))
+                {
+                    Output.AppendLine("No serializer");
+                    return;
+                }
 
-            _json.Serialize(new StringWriter(Output), packet);
-        }
+                PoEPacket packet = ser.Deserialize(this.Packet.Data.AsSpan((int)Reader.Position), out int consumed);
+                if (packet == null)
+                {
+                    Output.AppendLine("Failed to deserialize");
+                    return;
+                }
+
+                JsonPresenter.Serializer.Serialize(new StringWriter(Output), packet);
+
+                this.Reader.Skip(consumed);
+            }
+       }
     }
 }
