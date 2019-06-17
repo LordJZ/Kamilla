@@ -640,7 +640,7 @@ namespace NetworkLogViewer
             InitializeProtocols();
             InitializeLanguages();
             m_implementation.LoadSettings();
-            this.ThreadSafeBegin(_ =>
+            this.ThreadSafe(_ =>
             {
                 _.ui_miAutoDropCache.IsChecked = _.m_implementation.EnableDeallocQueue;
                 _.ui_miAutoParse.IsChecked = _.m_implementation.AutoParse;
