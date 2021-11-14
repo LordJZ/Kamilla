@@ -395,6 +395,7 @@ namespace NetworkLogViewer
                 this.SaveRecentFiles();
                 Configuration.SetValue("Last File Name", m_currentFile ?? string.Empty);
                 Configuration.SetValue("Last File Position", ui_lvPackets.SelectedIndex);
+                Configuration.SetValue("Last Protocol Name", CurrentProtocol?.CodeName);
                 Configuration.SetValue("Vertical Splitter", new[] {
                     this.VerticalGrid.RowDefinitions[1].Height.Value,
                     this.VerticalGrid.RowDefinitions[2].Height.Value,
@@ -548,7 +549,7 @@ namespace NetworkLogViewer
 
             Console.WriteLine("Finished reading file in {0}", sw.Elapsed);
 
-            var wrapper = log.SuggestedProtocol ?? ProtocolManager.FindWrapper(typeof(DefaultProtocol));
+            var wrapper = log.SuggestedProtocol;
 
             // This way we also execute the event handlers from the worker thread.
             Console.WriteLine("Debug: Changing current log and/or protocol...");
@@ -679,13 +680,17 @@ namespace NetworkLogViewer
             {
                 mi.BeginInit();
 
+                string lastProtocol = Configuration.GetValue("Last Protocol Name", string.Empty);
+                ProtocolWrapper preferredWrapper =
+                    ProtocolManager.ProtocolWrappers.FirstOrDefault(x => x.CodeName == lastProtocol);
+
                 foreach (var wrapper in ProtocolManager.ProtocolWrappers)
                 {
                     var item = new MenuItem();
                     item.Header = wrapper.Name;
                     item.Tag = wrapper;
                     item.Click += new RoutedEventHandler(protocolItem_Click);
-                    if (this.CurrentProtocol == null)
+                    if (this.CurrentProtocol == null && (preferredWrapper == wrapper || preferredWrapper == null))
                     {
                         this.CurrentProtocol = wrapper.Activate();
                         item.IsChecked = true;
